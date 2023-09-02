@@ -1252,7 +1252,8 @@ static void ProcessInput(PLAYER *pPlayer)
         pPlayer->at30a = 0;
     else if (pPlayer->at30a >= 0)
         pPlayer->at30a += 4;
-    WeaponProcess(pPlayer);
+    if (gDemo.PlaybackStatus() || gDemo.RecordStatus() || (pXSprite->health == 0))
+        WeaponProcess(pPlayer);
     if (pXSprite->health == 0)
     {
         BOOL bSeqStat = playerSeqPlaying(pPlayer, 16);
@@ -1537,6 +1538,8 @@ static void ProcessInput(PLAYER *pPlayer)
             pPlayer->at7f = 0;
     }
     pPlayer->at83 = (-pPlayer->at7b)<<7;
+    if (!gDemo.PlaybackStatus() && !gDemo.RecordStatus())
+        WeaponProcess(pPlayer);
     if (pInput->keyFlags.prevItem)
     {
         pInput->keyFlags.prevItem = 0;
