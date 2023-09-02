@@ -36,6 +36,8 @@ jobs:
         run: |
           mkdir -p ./upload
           cp -a "blood/BLOOD.EXE" ./upload/
+          cp -a "BUILDLIC.TXT" ./upload/
+          cp -a "Readme.md" ./upload/
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
