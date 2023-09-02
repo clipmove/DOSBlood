@@ -23,6 +23,7 @@
 #include "typedefs.h"
 #include "build.h"
 #include "crc32.h"
+#include "actor.h"
 #include "db.h"
 #include "debug4g.h"
 #include "error.h"
@@ -369,6 +370,7 @@ ushort dbInsertXSprite(int nSprite)
     {
         ThrowError(756)("Out of free XSprites");
     }
+    memset(&gSpriteHit[nXSprite], 0, sizeof(SPRITEHIT));
     memset(&xsprite[nXSprite], 0, sizeof(XSPRITE));
     sprite[nSprite].extra = nXSprite;
     xsprite[nXSprite].reference = nSprite;
