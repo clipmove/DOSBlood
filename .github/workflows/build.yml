@@ -19,6 +19,7 @@ jobs:
           repository: clipmove/watcom106
           path: ./WC10S/
           fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
       - name: install-prerequisites
         run: |
           ls
