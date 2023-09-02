@@ -1,5 +1,7 @@
-# Blood-RE
-Blood (1997) source code reconstruction by nukeykt.
+# DOSBlood
+DOSBlood is a fork of the [Blood (1997) source code reconstruction by nukeykt](https://github.com/nukeykt/Blood-RE).
+
+It adds faster mouse input response, fixes save difficulty bug and other memory issues - nothing extra.
 
 Watcom 10.6 and TASM 3.2 are required to build.
 
