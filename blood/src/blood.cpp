@@ -966,7 +966,7 @@ void GameErrorHandler(const Error &err)
 
 void BannerToTIO(void)
 {
-    sprintf(buffer, "One Unit: WHOLE BLOOD %s [%s] -- DO NOT DISTRIBUTE", GetVersionString(), gBuildDate);
+    sprintf(buffer, "One Unit: WHOLE BLOOD %s [%s] -- github.com/clipmove/DOSBlood", GetVersionString(), gBuildDate);
     tioCenterString(0, 0, tioScreenCols-1, buffer, 0x4e);
     tioCenterString(tioScreenRows-1, 0, tioScreenCols-1, "Copyright (c)1994-1997 Monolith Productions Inc.", 0x4e);
     tioWindow(1, 0, tioScreenRows-3, tioScreenCols);
