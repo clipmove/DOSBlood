@@ -179,6 +179,7 @@ BOOL packItemActive(PLAYER *, int);
 int powerupCheck(PLAYER *, int);
 
 BOOL playerSeqPlaying(PLAYER *, int);
+void playerSetRace(PLAYER *, int);
 int playerDamageSprite(int, PLAYER *, DAMAGE_TYPE, int);
 
 void playerResetInertia(PLAYER*);

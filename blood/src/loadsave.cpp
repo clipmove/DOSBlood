@@ -36,6 +36,7 @@
 #include "network.h"
 #include "messages.h"
 #include "menu.h"
+#include "player.h"
 #include "resource.h"
 #include "screen.h"
 #include "sectorfx.h"
@@ -141,6 +142,8 @@ void LoadSave::LoadGame(char *pzFile)
     gCheckTail = 0;
     gBufferJitter = 0;
     bOutOfSync = 0;
+    for (int i = 0; i < gNetPlayers; i++)
+        playerSetRace(&gPlayer[i], gPlayer[i].at5f);
     viewSetMessage("");
     viewSetErrorMessage("");
     if (gGameStarted == 0)
