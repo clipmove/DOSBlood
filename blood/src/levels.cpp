@@ -377,6 +377,7 @@ void LevelsLoadSave::Load(void)
     Read(&gGameOptions, sizeof(gGameOptions));
     Read(&gGameStarted, sizeof(gGameStarted));
     Read(&gWeatherType, sizeof(gWeatherType));
+    gSkill = gGameOptions.nDifficulty;
 }
 
 void LevelsLoadSave::Save(void)
