@@ -29,9 +29,12 @@ jobs:
         shell: bash
         run: |
           export SDL_VIDEODRIVER=dummy
-          dosbox -c "mount c ./" -c "C:" -c "PATH C:\WC10S\BINW;%path%" -c "SET INCLUDE=C:\WC10S\H" -c "SET WATCOM=C:\WC10S" -c "SET EDPATH=C:\WC10S\EDDAT" -c "cd helix32" -c "wmake" -c "exit" -noconsole
-          dosbox -c "mount c ./" -c "C:" -c "PATH C:\WC10S\BINW;%path%" -c "SET INCLUDE=C:\WC10S\H" -c "SET WATCOM=C:\WC10S" -c "SET EDPATH=C:\WC10S\EDDAT" -c "cd qtools" -c "wmake" -c "exit" -noconsole
-          dosbox -c "mount c ./" -c "C:" -c "PATH C:\WC10S\BINW;%path%" -c "SET INCLUDE=C:\WC10S\H" -c "SET WATCOM=C:\WC10S" -c "SET EDPATH=C:\WC10S\EDDAT" -c "cd blood" -c "wmake" -c "exit" -noconsole
+          dosbox -c "mount c ./" -c "C:" -c "PATH C:\WC10S\BINW;%path%" -c "SET INCLUDE=C:\WC10S\H" -c "SET WATCOM=C:\WC10S" -c "SET EDPATH=C:\WC10S\EDDAT" -c "cd helix32" -c "wmake > C:\HELIX32.LOG" -c "exit" -noconsole
+          cat HELIX32.LOG
+          dosbox -c "mount c ./" -c "C:" -c "PATH C:\WC10S\BINW;%path%" -c "SET INCLUDE=C:\WC10S\H" -c "SET WATCOM=C:\WC10S" -c "SET EDPATH=C:\WC10S\EDDAT" -c "cd qtools" -c "wmake > C:\QTOOLS.LOG" -c "exit" -noconsole
+          cat QTOOLS.LOG
+          dosbox -c "mount c ./" -c "C:" -c "PATH C:\WC10S\BINW;%path%" -c "SET INCLUDE=C:\WC10S\H" -c "SET WATCOM=C:\WC10S" -c "SET EDPATH=C:\WC10S\EDDAT" -c "cd blood" -c "wmake > C:\BLOOD.LOG" -c "exit" -noconsole
+          cat BLOOD.LOG
       - name: Prepare artifact for artifact
         run: |
           mkdir -p ./upload
