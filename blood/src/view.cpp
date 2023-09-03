@@ -1286,6 +1286,27 @@ static void UpdateStatusBar(int arg)
             TileHGauge(2208, 250, 191, pPlayer->at33e[2], 3200);
             DrawStatNumber("%3d", pPlayer->at33e[2]>>4, 2230, 255, 194);
         }
+        if (gGameOptions.nGameType <= GAMETYPE_1) // don't show keys for bloodbath/teams as all players have every key
+        {
+            for (i = 0; i < 6; i++)
+            {
+                int x, nStat = 0;
+                int y = 200-6;
+                if (!pPlayer->at88[i+1])
+                    continue;
+                if (i&1)
+                {
+                    x = 320-(78+(i>>1)*10);
+                    nStat |= 512;
+                }
+                else
+                {
+                    x = 73+(i>>1)*10;
+                    nStat |= 256;
+                }
+                DrawStatSprite(2220+i, x, y, 0, 0, nStat);
+            }
+        }
         DrawPackItemInStatusBar(pPlayer, 286, 186, 302, 183);
     }
     else if (gViewSize > 1)
