@@ -1251,7 +1251,7 @@ static void ProcessInput(PLAYER *pPlayer)
     int nSprite = pPlayer->at5b;
     POSTURE *pPosture = &gPosture[pPlayer->at5f][pPlayer->at2f];
     INPUT *pInput = &pPlayer->atc;
-    pPlayer->at2e = pInput->syncFlags.run;
+    pPlayer->at2e = gDemo.PlaybackStatus() || gDemo.RecordStatus() ? pInput->syncFlags.run : 0;
     if (pInput->buttonFlags.byte || pInput->forward || pInput->strafe || pInput->turn)
         pPlayer->at30a = 0;
     else if (pPlayer->at30a >= 0)
