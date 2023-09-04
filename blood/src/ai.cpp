@@ -901,6 +901,11 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
             DUDEEXTRA *pDudeExtra = &gDudeExtra[pSprite->extra];
             pDudeExtra->at4 = 1;
         }
+        else if (!VanillaMode()) // reset tesla hit state if received different type of damage
+        {
+            DUDEEXTRA *pDudeExtra = &gDudeExtra[pSprite->extra];
+            pDudeExtra->at4 = 0;
+        }
         switch (pSprite->type)
         {
         case 201:
