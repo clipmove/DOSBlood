@@ -940,7 +940,7 @@ static void FirePitchfork(int, PLAYER *pPlayer)
     int r2 = Random2(2000);
     int r3 = Random2(2000);
     for (int i = 0; i < 4; i++)
-        actFireVector(pPlayer->pSprite, (2*i-3)*40, pPlayer->at6f-pPlayer->pSprite->z, aim->dx+r1, aim->dy+r2, aim->dz+r3, VECTOR_TYPE_0);
+        actFireVector(pPlayer->pSprite, (2*i-3)*40, pPlayer->at6f-pPlayer->pSprite->z, aim->dx+r1, aim->dy+r2, aim->dz+r3, kVectorPitchfork);
 }
 
 static void FireSpray(int, PLAYER *pPlayer)
@@ -1100,14 +1100,14 @@ static void FireShotgun(int nTrigger, PLAYER *pPlayer)
             r1 = Random3(1500);
             r2 = Random3(1500);
             r3 = Random3(500);
-            nType = VECTOR_TYPE_1;
+            nType = kVectorShot;
         }
         else
         {
             r1 = Random3(2500);
             r2 = Random3(2500);
             r3 = Random3(1500);
-            nType = VECTOR_TYPE_4;
+            nType = kVectorShotgun;
         }
         actFireVector(pPlayer->pSprite, 0, pPlayer->at6f-pPlayer->pSprite->z, pPlayer->at1be.dx+r1, pPlayer->at1be.dy+r2, pPlayer->at1be.dz+r3, nType);
     }
@@ -1130,16 +1130,16 @@ static void FireTommy(int nTrigger, PLAYER *pPlayer)
     {
     case 1:
     {
-        actFireVector(pPlayer->pSprite, 0, pPlayer->at6f-pPlayer->pSprite->z, aim->dx+Random3(1200), aim->dy+Random3(1200), aim->dz+Random3(400), VECTOR_TYPE_5);
+        actFireVector(pPlayer->pSprite, 0, pPlayer->at6f-pPlayer->pSprite->z, aim->dx+Random3(1200), aim->dy+Random3(1200), aim->dz+Random3(400), kVectorTommy);
         SpawnBulletEject(pPlayer, -15, -45);
         pPlayer->at362 = 20;
         break;
     }
     case 2:
     {
-        actFireVector(pPlayer->pSprite, -120, pPlayer->at6f-pPlayer->pSprite->z, aim->dx+Random3(1200), aim->dy+Random3(1200), aim->dz+Random3(400), VECTOR_TYPE_5);
+        actFireVector(pPlayer->pSprite, -120, pPlayer->at6f-pPlayer->pSprite->z, aim->dx+Random3(1200), aim->dy+Random3(1200), aim->dz+Random3(400), kVectorTommy);
         SpawnBulletEject(pPlayer, -140, -45);
-        actFireVector(pPlayer->pSprite, 120, pPlayer->at6f-pPlayer->pSprite->z, aim->dx+Random3(1200), aim->dy+Random3(1200), aim->dz+Random3(400), VECTOR_TYPE_5);
+        actFireVector(pPlayer->pSprite, 120, pPlayer->at6f-pPlayer->pSprite->z, aim->dx+Random3(1200), aim->dy+Random3(1200), aim->dz+Random3(400), kVectorTommy);
         SpawnBulletEject(pPlayer, 140, 45);
         pPlayer->at362 = 30;
         break;
@@ -1160,7 +1160,7 @@ static void FireSpread(int nTrigger, PLAYER *pPlayer)
     int dy = Sin(angle)>>16;
     SPRITE *pSprite = pPlayer->pSprite;
     sfxPlay3DSound(pSprite, 431);
-    actFireVector(pPlayer->pSprite, 0, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), VECTOR_TYPE_3);
+    actFireVector(pPlayer->pSprite, 0, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), kVectorTommySpread);
     SpawnBulletEject(pPlayer, Random2(30), Random2(90));
     pPlayer->at362 = 20;
     UseAmmo(pPlayer, pPlayer->atc7, 1);
@@ -1176,9 +1176,9 @@ static void AltFireSpread(int nTrigger, PLAYER *pPlayer)
     int dy = Sin(angle)>>16;
     SPRITE *pSprite = pPlayer->pSprite;
     sfxPlay3DSound(pSprite, 431);
-    actFireVector(pPlayer->pSprite, -120, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), VECTOR_TYPE_3);
+    actFireVector(pPlayer->pSprite, -120, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), kVectorTommySpread);
     SpawnBulletEject(pPlayer, Random2(120), Random2(45));
-    actFireVector(pPlayer->pSprite, 120, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), VECTOR_TYPE_3);
+    actFireVector(pPlayer->pSprite, 120, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), kVectorTommySpread);
     SpawnBulletEject(pPlayer, Random2(-120), Random2(-45));
     pPlayer->at35e = 20;
     pPlayer->at362 = 30;
@@ -1197,9 +1197,9 @@ static void AltFireSpread2(int nTrigger, PLAYER *pPlayer)
     sfxPlay3DSound(pSprite, 431);
     if (powerupCheck(pPlayer, 17) && func_4B2C8(pPlayer, 3, 2))
     {
-        actFireVector(pPlayer->pSprite, -120, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), VECTOR_TYPE_3);
+        actFireVector(pPlayer->pSprite, -120, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), kVectorTommySpread);
         SpawnBulletEject(pPlayer, Random2(120), Random2(45));
-        actFireVector(pPlayer->pSprite, 120, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), VECTOR_TYPE_3);
+        actFireVector(pPlayer->pSprite, 120, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), kVectorTommySpread);
         SpawnBulletEject(pPlayer, Random2(-120), Random2(-45));
         pPlayer->at35e = 30;
         pPlayer->at362 = 45;
@@ -1207,7 +1207,7 @@ static void AltFireSpread2(int nTrigger, PLAYER *pPlayer)
     }
     else
     {
-        actFireVector(pPlayer->pSprite, 0, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), VECTOR_TYPE_3);
+        actFireVector(pPlayer->pSprite, 0, pPlayer->at6f-pPlayer->pSprite->z, dx+Random3(600), dy+Random3(600), aim->dz+Random3(300), kVectorTommySpread);
         SpawnBulletEject(pPlayer, Random2(30), Random2(90));
         pPlayer->at35e = 20;
         pPlayer->at362 = 30;
@@ -1268,18 +1268,18 @@ static void FireVoodoo(int nTrigger, PLAYER *pPlayer)
     SPRITE *pSprite = pPlayer->pSprite;
     if (nTrigger == 4)
     {
-        actDamageSprite(nSprite, pSprite, DAMAGE_TYPE_2, 1<<4);
+        actDamageSprite(nSprite, pSprite, kDamageBullet, 1<<4);
         return;
     }
-    dassert(pPlayer->voodooTarget >= 0, 1916);
-    SPRITE *pTarget = &sprite[pPlayer->voodooTarget];
+    dassert(pPlayer->playerVoodooTarget >= 0, 1916);
+    SPRITE *pTarget = &sprite[pPlayer->playerVoodooTarget];
     switch (nTrigger)
     {
     case 0:
     {
         sfxPlay3DSound(pSprite, 460, 2);
         fxSpawnBlood(pTarget, 17<<4);
-        int nDamage = actDamageSprite(nSprite, pTarget, DAMAGE_TYPE_5, 17<<4);
+        int nDamage = actDamageSprite(nSprite, pTarget, kDamageSpirit, 17<<4);
         UseAmmo(pPlayer, 9, nDamage/4);
         break;
     }
@@ -1287,7 +1287,7 @@ static void FireVoodoo(int nTrigger, PLAYER *pPlayer)
     {
         sfxPlay3DSound(pSprite, 460, 2);
         fxSpawnBlood(pTarget, 17<<4);
-        int nDamage = actDamageSprite(nSprite, pTarget, DAMAGE_TYPE_5, 9<<4);
+        int nDamage = actDamageSprite(nSprite, pTarget, kDamageSpirit, 9<<4);
         if (pTarget->type >= kDudePlayer1 && pTarget->type <= kDudePlayer8)
             WeaponLower(&gPlayer[pTarget->type-kDudePlayer1]);
         UseAmmo(pPlayer, 9, nDamage/4);
@@ -1297,7 +1297,7 @@ static void FireVoodoo(int nTrigger, PLAYER *pPlayer)
     {
         sfxPlay3DSound(pSprite, 463, 2);
         fxSpawnBlood(pTarget, 17<<4);
-        int nDamage = actDamageSprite(nSprite, pTarget, DAMAGE_TYPE_5, 49<<4);
+        int nDamage = actDamageSprite(nSprite, pTarget, kDamageSpirit, 49<<4);
         UseAmmo(pPlayer, 9, nDamage/4);
         break;
     }
@@ -1305,7 +1305,7 @@ static void FireVoodoo(int nTrigger, PLAYER *pPlayer)
     {
         sfxPlay3DSound(pSprite, 460, 2);
         fxSpawnBlood(pTarget, 17<<4);
-        int nDamage = actDamageSprite(nSprite, pTarget, DAMAGE_TYPE_5, 11<<4);
+        int nDamage = actDamageSprite(nSprite, pTarget, kDamageSpirit, 11<<4);
         if (pTarget->type >= kDudePlayer1 && pTarget->type <= kDudePlayer8)
         {
             PLAYER *pOtherPlayer = &gPlayer[pTarget->type-kDudePlayer1];
@@ -1340,7 +1340,7 @@ static void AltFireVoodoo(int nTrigger, PLAYER *pPlayer)
             {
                 int t = pPlayer->at181[9];
                 int nDamage = ((t<<1)+Random2(t>>3))<<4;
-                nDamage = actDamageSprite(pPlayer->at5b, pTarget, DAMAGE_TYPE_5, (nDamage*((51200-nDist)+1))/51200);
+                nDamage = actDamageSprite(pPlayer->at5b, pTarget, kDamageSpirit, (nDamage*((51200-nDist)+1))/51200);
                 UseAmmo(pPlayer, 9, nDamage);
                 if (pTarget->type >= kDudePlayer1 && pTarget->type <= kDudePlayer8)
                 {
@@ -1495,7 +1495,7 @@ static void FireLifeLeech(int nTrigger, PLAYER *pPlayer)
     if (func_4B2C8(pPlayer, 8))
         UseAmmo(pPlayer, 8, 1);
     else
-        actDamageSprite(pPlayer->at5b, pPlayer->pSprite, DAMAGE_TYPE_5, 16);
+        actDamageSprite(pPlayer->at5b, pPlayer->pSprite, kDamageSpirit, 16);
     pPlayer->at362 = ClipHigh(pPlayer->at362+5, 50);
 }
 
@@ -1517,7 +1517,7 @@ static void AltFireLifeLeech(int nTrigger, PLAYER *pPlayer)
             int nAmmo = pPlayer->at181[8];
             if (nAmmo < 25 && pPlayer->pXSprite->health > ((25-nAmmo)<<4))
             {
-                actDamageSprite(pPlayer->at5b, pPlayer->pSprite, DAMAGE_TYPE_5, ((25-nAmmo)<<4));
+                actDamageSprite(pPlayer->at5b, pPlayer->pSprite, kDamageSpirit, ((25-nAmmo)<<4));
                 nAmmo = 25;
             }
             pXSprite->at14_0 = nAmmo;
@@ -1537,7 +1537,7 @@ static void FireBeast(int nTrigger, PLAYER * pPlayer)
     int r1 = Random2(2000);
     int r2 = Random2(2000);
     int r3 = Random2(2000);
-    actFireVector(pPlayer->pSprite, 0, pPlayer->at6f-pPlayer->pSprite->z, pPlayer->at1be.dx+r1, pPlayer->at1be.dy+r2, pPlayer->at1be.dz+r3, VECTOR_TYPE_9);
+    actFireVector(pPlayer->pSprite, 0, pPlayer->at6f-pPlayer->pSprite->z, pPlayer->at1be.dx+r1, pPlayer->at1be.dy+r2, pPlayer->at1be.dz+r3, kVectorFireBeast);
 }
 
 BOOL gWeaponUpgrade[][13] = {
@@ -2137,8 +2137,8 @@ void WeaponProcess(PLAYER *pPlayer)
         {
             static int nChance[] = { 0xa000, 0xc000, 0xe000, 0x10000 };
             int vc = VoodooAnim(nChance);
-            pPlayer->voodooTarget = pPlayer->at1d6;
-            if (pPlayer->voodooTarget == -1 || sprite[pPlayer->voodooTarget].statnum != 6)
+            pPlayer->playerVoodooTarget = pPlayer->at1d6;
+            if (pPlayer->playerVoodooTarget == -1 || sprite[pPlayer->playerVoodooTarget].statnum != 6)
                 vc = 4;
             StartQAV(pPlayer,103+vc, nClientFireVoodoo);
             return;
@@ -2354,7 +2354,7 @@ void func_51340(SPRITE *pMissile, int a2)
                 int nDamage = ClipLow((nDist-(ksqrt(dx*dx+dy*dy)>>4)+20)>>1, 10);
                 if (nSprite == nOwner)
                     nDamage /= 2;
-                actDamageSprite(nOwner, pSprite, DAMAGE_TYPE_6, nDamage<<4);
+                actDamageSprite(nOwner, pSprite, kDamageTesla, nDamage<<4);
             }
         }
     }
@@ -2371,7 +2371,7 @@ void func_51340(SPRITE *pMissile, int a2)
                 int dx = pMissile->x-pSprite->x;
                 int dy = pMissile->y-pSprite->y;
                 int nDamage = ClipLow(nDist-(ksqrt(dx*dx+dy*dy)>>4)+20, 20);
-                actDamageSprite(nOwner, pSprite, DAMAGE_TYPE_6, nDamage<<4);
+                actDamageSprite(nOwner, pSprite, kDamageTesla, nDamage<<4);
             }
         }
     }
