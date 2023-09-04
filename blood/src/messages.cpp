@@ -271,6 +271,7 @@ void LevelWarpAndRecord(int nEpisode, int nLevel)
 {
     char buffer[144];
     levelSetupOptions(nEpisode, nLevel);
+    gGameOptions.uGameFlags = 0;
     gGameStarted = FALSE;
     strcpy(buffer, levelGetFilename(nEpisode, nLevel));
     ChangeExtension(buffer, ".DEM");

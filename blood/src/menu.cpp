@@ -813,6 +813,7 @@ void SetDifficultyAndStart(CGameMenuItemChain *pItem)
     DIFFICULTY t = (DIFFICULTY)pItem->at30;
     gSkill = gGameOptions.nDifficulty = t;
     gGameOptions.nLevel = 0;
+    gGameOptions.uGameFlags = 0;
     BOOL s = gDemo.at1;
     if (s)
         gDemo.StopPlayback();
