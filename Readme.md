@@ -3,12 +3,16 @@ DOSBlood is a fork of the [Blood reconstruction by nukeykt](https://github.com/n
 
 DOSBlood's goal is to provide quality-of-life features while retaining demo compatibility.
 
-### Features
+### Fixes
 * Fixes save difficulty bug
 * Add key icons to small HUD size
+* Fix infinite burning enemies bug
 * Improved mouse input response by 33ms
+* Fix tiny Calebs using the wrong sprite
+* Fix prone tesla Cultists infinitely firing
 * Initializes gSpriteHit on XSprite creation
 * Fixes inventory items resetting between levels
+* Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 
 ### Downloads
 Download can be found on [https://github.com/clipmove/DOSBlood/releases](https://github.com/clipmove/DOSBlood/releases)
