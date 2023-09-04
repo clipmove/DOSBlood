@@ -21,6 +21,7 @@
 #include "debug4g.h"
 #include "db.h"
 #include "dude.h"
+#include "globals.h"
 #include "eventq.h"
 #include "levels.h"
 #include "misc.h"
@@ -71,7 +72,8 @@ AISTATE cultistTFire = { 6, nTommyClient, 0, NULL, aiMoveTurn, thinkChase, &cult
 AISTATE cultistTsFire = { 6, nTeslaClient, 0, NULL, aiMoveTurn, thinkChase, &cultistChase };
 AISTATE cultistSProneFire = { 8, nShotClient, 60, NULL, NULL, NULL, &cultistProneChase };
 AISTATE cultistTProneFire = { 8, nTommyClient, 0, NULL, aiMoveTurn, thinkChase, &cultistTProneFire };
-AISTATE cultistTsProneFire = { 8, nTeslaClient, 0, NULL, aiMoveTurn, NULL, &cultistTsProneFire };
+AISTATE cultistTsProneFire = { 8, nTeslaClient, 0, NULL, aiMoveTurn, NULL, &cultistTsProneFire }; // vanilla, broken
+AISTATE cultistTsProneFireFixed = { 8, nTeslaClient, 0, NULL, aiMoveTurn, thinkChase, &cultistTsProneFireFixed };
 AISTATE cultistRecoil = { 5, -1, 0, NULL, NULL, NULL, &cultistDodge };
 AISTATE cultistProneRecoil = { 5, -1, 0, NULL, NULL, NULL, &cultistProneDodge };
 AISTATE cultistTeslaRecoil = { 4, -1, 0, NULL, NULL, NULL, &cultistDodge };
@@ -478,6 +480,7 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                     }
                     else if (nDist < 0x3200 && klabs(nDeltaAngle) < 28)
                     {
+                        AISTATE *pCultistTsProneFire = VanillaMode() ? &cultistTsProneFire : &cultistTsProneFireFixed; // use non-glitched prone fire state
                         int hit = HitScan(pSprite, pSprite->z, dx, dy, 0, CLIPMASK1, 0);
                         switch (hit)
                         {
@@ -485,7 +488,7 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                             if (!aiSeqPlaying(pSprite, 14) && pXSprite->at17_6 == 0)
                                 aiNewState(pSprite, pXSprite, &cultistTsFire);
                             else if (aiSeqPlaying(pSprite, 14) && pXSprite->at17_6 == 0)
-                                aiNewState(pSprite, pXSprite, &cultistTsProneFire);
+                                aiNewState(pSprite, pXSprite, pCultistTsProneFire);
                             else if (pXSprite->at17_6 == 1 || pXSprite->at17_6 == 2)
                                 aiNewState(pSprite, pXSprite, &cultistTsSwimFire);
                             break;
@@ -495,7 +498,7 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                                 if (!aiSeqPlaying(pSprite, 14) && pXSprite->at17_6 == 0)
                                     aiNewState(pSprite, pXSprite, &cultistTsFire);
                                 else if (aiSeqPlaying(pSprite, 14) && pXSprite->at17_6 == 0)
-                                    aiNewState(pSprite, pXSprite, &cultistTsProneFire);
+                                    aiNewState(pSprite, pXSprite, pCultistTsProneFire);
                                 else if (pXSprite->at17_6 == 1 || pXSprite->at17_6 == 2)
                                     aiNewState(pSprite, pXSprite, &cultistTsSwimFire);
                             }
@@ -513,7 +516,7 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                             if (!aiSeqPlaying(pSprite, 14) && pXSprite->at17_6 == 0)
                                 aiNewState(pSprite, pXSprite, &cultistTsFire);
                             else if (aiSeqPlaying(pSprite, 14) && pXSprite->at17_6 == 0)
-                                aiNewState(pSprite, pXSprite, &cultistTsProneFire);
+                                aiNewState(pSprite, pXSprite, pCultistTsProneFire);
                             else if (pXSprite->at17_6 == 1 || pXSprite->at17_6 == 2)
                                 aiNewState(pSprite, pXSprite, &cultistTsSwimFire);
                             break;
