@@ -2791,6 +2791,17 @@ void actKillDude(int a1, SPRITE *pSprite, DAMAGE_TYPE a3, int a4)
             return;
         }
         break;
+    case 250:
+        if (VanillaMode())
+            break;
+        if (a3 == kDamageBurn && pXSprite->at17_6 == 0)
+        {
+            pSprite->type = 252;
+            aiNewState(pSprite, pXSprite, &tinycalebBurnGoto);
+            actHealDude(pXSprite, dudeInfo[39].at2, dudeInfo[39].at2);
+            return;
+        }
+        break;
     }
     for (int i = connecthead; i >= 0; i = connectpoint2[i])
     {
