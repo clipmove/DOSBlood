@@ -24,7 +24,6 @@
 #include "config.h"
 #include "db.h"
 #include "debug4g.h"
-#include "demo.h"
 #include "error.h"
 #include "gamemenu.h"
 #include "globals.h"
@@ -314,7 +313,7 @@ void func_158B4(PLAYER *pPlayer)
 static void fakeProcessInput(PLAYER *pPlayer, INPUT *pInput)
 {
     POSTURE *pPosture = &gPosture[pPlayer->at5f][predict.at48];
-    predict.at70 = gDemo.PlaybackStatus() || gDemo.RecordStatus() ? pInput->syncFlags.run : 0;
+    predict.at70 = VanillaMode() ? pInput->syncFlags.run : 0;
     predict.at71 = pInput->buttonFlags.jump;
     switch (predict.at48)
     {

@@ -1251,12 +1251,12 @@ static void ProcessInput(PLAYER *pPlayer)
     int nSprite = pPlayer->at5b;
     POSTURE *pPosture = &gPosture[pPlayer->at5f][pPlayer->at2f];
     INPUT *pInput = &pPlayer->atc;
-    pPlayer->at2e = gDemo.PlaybackStatus() || gDemo.RecordStatus() ? pInput->syncFlags.run : 0;
+    pPlayer->at2e = VanillaMode() ? pInput->syncFlags.run : 0;
     if (pInput->buttonFlags.byte || pInput->forward || pInput->strafe || pInput->turn)
         pPlayer->at30a = 0;
     else if (pPlayer->at30a >= 0)
         pPlayer->at30a += 4;
-    if (gDemo.PlaybackStatus() || gDemo.RecordStatus() || (pXSprite->health == 0))
+    if (VanillaMode() || (pXSprite->health == 0))
         WeaponProcess(pPlayer);
     if (pXSprite->health == 0)
     {
@@ -1542,7 +1542,7 @@ static void ProcessInput(PLAYER *pPlayer)
             pPlayer->at7f = 0;
     }
     pPlayer->at83 = (-pPlayer->at7b)<<7;
-    if (!gDemo.PlaybackStatus() && !gDemo.RecordStatus())
+    if (!VanillaMode())
         WeaponProcess(pPlayer);
     if (pInput->keyFlags.prevItem)
     {

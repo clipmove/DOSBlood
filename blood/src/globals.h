@@ -84,6 +84,7 @@ extern int gOldDisplayMode;
 extern BOOL gAdultContent;
 
 char *GetVersionString(void);
+BOOL VanillaMode(void);
 void ClockStrobe(void);
 void LockClockStrobe(void);
 void UnlockClockStrobe(void);

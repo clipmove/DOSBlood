@@ -19,6 +19,7 @@
 #include "types.h"
 #include "build.h"
 #include "debug4g.h"
+#include "demo.h"
 #include "resource.h"
 #include "globals.h"
 
@@ -78,4 +79,9 @@ char *GetVersionString(void)
         sprintf(gVersionString, "%d.%02d", gGameVersion.b.major, gGameVersion.b.minor);
     }
     return gVersionString;
+}
+
+BOOL VanillaMode(void)
+{
+    return gDemo.PlaybackStatus() || gDemo.RecordStatus();
 }
