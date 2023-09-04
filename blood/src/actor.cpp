@@ -5372,7 +5372,9 @@ void actProcessSprites(void)
         if (nXSprite > 0)
         {
             XSPRITE *pXSprite = &xsprite[nXSprite];
-            if (pXSprite->at2c_0 > 0)
+            BOOL bBurningType = (pSprite->type == 239) || (pSprite->type == 240) || (pSprite->type == 241) || (pSprite->type == 242) || (pSprite->type == 252) || (pSprite->type == 253);
+            BOOL bFixBurnGlitch = bBurningType && !VanillaMode(); // if enemies are burning, always apply burning damage per tick
+            if ((pXSprite->at2c_0 > 0) || bFixBurnGlitch)
             {
                 switch (pSprite->type)
                 {
