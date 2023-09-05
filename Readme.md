@@ -16,6 +16,7 @@ Download can be found on [https://github.com/clipmove/DOSBlood/releases](https:/
 * Fix E4M8 cutscene playing on E4M1 start
 * Improved mouse input response by 33ms
 * Fix inventory items resetting between levels
+* Vanilla mode toggle to restore original enemy bugs
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 
 ### Installing

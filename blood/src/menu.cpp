@@ -51,6 +51,7 @@ void SetShowWeapons(CGameMenuItemZBool *);
 void SetSlopeTilting(CGameMenuItemZBool *);
 void SetViewBobbing(CGameMenuItemZBool *);
 void SetViewSwaying(CGameMenuItemZBool *);
+void SetVanillaMode(CGameMenuItemZBool *);
 void SetMouseSensitivity(CGameMenuItemSlider *);
 void SetMouseAimFlipped(CGameMenuItemZBool *);
 void SetTurnSpeed(CGameMenuItemSlider *);
@@ -200,8 +201,9 @@ CGameMenuItemZBool boolShowWeapons("SHOW WEAPONS:", 3, 66, 120, 180, gShowWeapon
 CGameMenuItemZBool boolSlopeTilting("SLOPE TILTING:", 3, 66, 130, 180, gSlopeTilting, SetSlopeTilting, NULL, NULL);
 CGameMenuItemZBool boolViewBobbing("VIEW BOBBING:", 3, 66, 140, 180, gViewVBobbing, SetViewBobbing, NULL, NULL);
 CGameMenuItemZBool boolViewSwaying("VIEW SWAYING:", 3, 66, 150, 180, gViewHBobbing, SetViewSwaying, NULL, NULL);
-CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 160, 320, 1);
-CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 170, 320, 1, &menuParentalLock, -1, NULL, 0);
+CGameMenuItemZBool boolVanillaMode("VANILLA MODE:", 3, 66, 160, 180, gViewHBobbing, SetVanillaMode, NULL, NULL);
+CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 170, 320, 1);
+CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 180, 320, 1, &menuParentalLock, -1, NULL, 0);
 
 CGameMenuItemTitle itemControlsTitle("CONTROLS", 1, 160, 20, 2038);
 CGameMenuItemSlider sliderMouseSpeed("Mouse Sensitivity:", 1, 10, 70, 300, gMouseSensitivity, 0, 0x20000, 0x1000, SetMouseSensitivity, -1,-1);
@@ -350,6 +352,7 @@ void SetupOptionsMenu(void)
     boolSlopeTilting.at20 = gSlopeTilting;
     boolViewBobbing.at20 = gViewVBobbing;
     boolViewSwaying.at20 = gViewHBobbing;
+    boolVanillaMode.at20 = gVanilla;
     boolMessages.at20 = gGameMessageMgr.at0;
     menuOptions.Add(&itemOptionsTitle, 0);
     menuOptions.Add(&itemOption1, 1);
@@ -364,6 +367,7 @@ void SetupOptionsMenu(void)
     menuOptions.Add(&boolSlopeTilting, 0);
     menuOptions.Add(&boolViewBobbing, 0);
     menuOptions.Add(&boolViewSwaying, 0);
+    menuOptions.Add(&boolVanillaMode, 0);
     menuOptions.Add(&itemVideoMode, 0);
     menuOptions.Add(&itemChainParentalLock, 0);
     menuOptions.Add(&itemBloodQAV, 0);
@@ -754,6 +758,11 @@ void SetViewBobbing(CGameMenuItemZBool *pItem)
 void SetViewSwaying(CGameMenuItemZBool *pItem)
 {
     gViewHBobbing = pItem->at20;
+}
+
+void SetVanillaMode(CGameMenuItemZBool *pItem)
+{
+    gVanilla = pItem->at20;
 }
 
 void SetDetail(CGameMenuItemSlider *pItem)
