@@ -125,6 +125,8 @@ void LoadSave::LoadGame(char *pzFile)
     InitSectorFX();
     viewInitializePrediction();
     PreloadCache();
+    if (!VanillaMode()) // set reverb sound effect state
+        sfxSetReverb(packItemActive(gMe, 1) || powerupCheck(gMe, 24));
     ambInit();
     memset(myMinLag, 0, sizeof(myMinLag));
     otherMinLag = 0;

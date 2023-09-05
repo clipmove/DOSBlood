@@ -394,11 +394,11 @@ void powerupDeactivate(PLAYER *pPlayer, int nPowerUp)
     }
     case 118:
         pPlayer->ata1[4]--;
-        if (pPlayer == gMe)
+        if ((pPlayer == gMe) && (VanillaMode() || !powerupCheck(pPlayer, 24)))
             sfxSetReverb(0);
         break;
     case 124:
-        if (pPlayer == gMe)
+        if ((pPlayer == gMe) && (VanillaMode() || !packItemActive(pPlayer, 1)))
             sfxSetReverb(0);
         break;
     case 119:
@@ -457,6 +457,11 @@ void powerupProcess(PLAYER *pPlayer)
 
 void powerupClear(PLAYER *pPlayer)
 {
+    if (!VanillaMode() && (pPlayer == gMe)) // turn off reverb sound effects
+    {
+        if (packItemActive(pPlayer, 1) || powerupCheck(pPlayer, 24)) // if diving suit/reflective shots powerup is active, turn off reverb effect
+            sfxSetReverb(0);
+    }
     for (int i = kMaxPowerUps-1; i >= 0; i--)
     {
         pPlayer->at202[i] = 0;
