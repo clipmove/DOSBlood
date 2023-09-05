@@ -8,6 +8,7 @@ Download can be found on [https://github.com/clipmove/DOSBlood/releases](https:/
 
 ### Features
 * Fix save difficulty bug
+* Fix Cerberus spinning on lava
 * Fix infinite burning enemies bug
 * Add key icons to small HUD size
 * Fix tiny Calebs using the wrong sprite

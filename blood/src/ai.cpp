@@ -106,6 +106,16 @@ void aiNewState(SPRITE *pSprite, XSPRITE *pXSprite, AISTATE *pAIState)
         pAIState->atc(pSprite, pXSprite);
 }
 
+BOOL aiDudeImmune(SPRITE* pSprite, DAMAGE_TYPE nDmgType, int nMinScale)
+{
+    if (nDmgType >= kDamageFall && nDmgType < kDamageMax && pSprite->extra >= 0 && xsprite[pSprite->extra].at17_5 != 1) {
+        if (IsDudeSprite(pSprite)) {
+            return (dudeInfo[pSprite->type-kDudeBase].at70[nDmgType] <= nMinScale);
+        }
+    }
+    return 1;
+}
+
 BOOL CanMove(SPRITE *pSprite, int a2, int nAngle, int nRange)
 {
     int top, bottom;
@@ -184,6 +194,21 @@ BOOL CanMove(SPRITE *pSprite, int a2, int nAngle, int nRange)
         if (!xsector[nXSector].at13_4 && !xsector[nXSector].at13_5 && floorZ-bottom > 0x2000)
             return 0;
         break;
+    case 228:
+        if (VanillaMode())
+        {
+            if (vdh)
+                return 0;
+            if (!xsector[nXSector].at13_4 && !xsector[nXSector].at13_5 && floorZ - bottom > 0x2000)
+                return 0;
+            break;
+        }
+    case 227:
+        // by NoOne: a quick fix for Cerberus spinning in E3M7-like maps, where damage sectors is used.
+        // It makes ignore danger if enemy immune to N damageType. As result Cerberus start acting like
+        // in Blood 1.0 so it can move normally to player
+        if (!VanillaMode() && vdh && aiDudeImmune(pSprite, (DAMAGE_TYPE)xsector[nXSector].at33_1, 16))
+            return 1;
     case 204:
     case 213:
     case 214:
@@ -191,7 +216,6 @@ BOOL CanMove(SPRITE *pSprite, int a2, int nAngle, int nRange)
     case 216:
     case 211:
     case 220:
-    case 227:
     case 245:
         if (vdh)
             return 0;
