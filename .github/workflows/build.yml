@@ -35,6 +35,8 @@ jobs:
           cat QTOOLS.LOG
           dosbox -c "mount c ./" -c "C:" -c "PATH C:\WC10S\BINW;%path%" -c "SET INCLUDE=C:\WC10S\H" -c "SET WATCOM=C:\WC10S" -c "SET EDPATH=C:\WC10S\EDDAT" -c "cd blood" -c "wmake > C:\BLOOD.LOG" -c "exit" -noconsole
           cat BLOOD.LOG
+          dosbox -c "mount c ./" -c "C:" -c "PATH C:\WC10S\BINW;%path%" -c "SET INCLUDE=C:\WC10S\H" -c "SET WATCOM=C:\WC10S" -c "SET EDPATH=C:\WC10S\EDDAT" -c "cd blood" -c "wstrip BLOOD.EXE > C:\WSTRIP.LOG" -c "exit" -noconsole
+          cat WSTRIP.LOG
       - name: Prepare artifact for artifact
         run: |
           mkdir -p ./upload
