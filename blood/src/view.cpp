@@ -3073,9 +3073,9 @@ void viewDrawScreen(void)
         DrawStatSprite(2048, xdim-15, 20);
     }
     viewDisplayMessage();
-    CalcFrameRate();
     if (gShowFrameRate)
     {
+        CalcFrameRate();
         int fX = gViewMode == 3 ? gViewX1 : xdim;
         int fY = gViewMode == 3 ? gViewY0 : 0;
         if (gViewMode == 4)

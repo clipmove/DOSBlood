@@ -604,6 +604,8 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
     if (nCheatCode == kCheat27)
     {
         gShowFrameRate = !gShowFrameRate;
+        if (gShowFrameRate)
+            CalcFrameRate();
         return;
     }
     if (gGameOptions.nGameType != GAMETYPE_0)
