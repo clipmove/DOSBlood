@@ -273,6 +273,7 @@ void LevelWarpAndRecord(int nEpisode, int nLevel)
     levelSetupOptions(nEpisode, nLevel);
     gGameOptions.uGameFlags = 0;
     gGameStarted = FALSE;
+    gCheatMgr.func_5BCF4();
     strcpy(buffer, levelGetFilename(nEpisode, nLevel));
     ChangeExtension(buffer, ".DEM");
     gDemo.Create(buffer);
@@ -502,7 +503,7 @@ void CPlayerMsg::ProcessKeys(void)
                 break;
             case bsc_Enter:
             case bsc_Pad_Enter:
-                if (gCheatMgr.Check(at4))
+                if ((gGameOptions.nGameType == GAMETYPE_0) && gCheatMgr.Check(at4))
                     Term();
                 else
                     Send();

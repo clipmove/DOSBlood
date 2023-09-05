@@ -23,6 +23,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix tiny Calebs using the wrong sprite
 * Fix prone tesla Cultists infinitely firing
 * Fix inventory items resetting between levels
+* Allow cheat phrases to be said in multiplayer
 * Fix choking hands to run at a constant framerate
 * Fix pod enemy projectiles using walls as enemy index
 * Fix demos desyncing if launched with -noaim argument
