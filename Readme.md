@@ -6,22 +6,26 @@ DOSBlood's goal is to provide quality-of-life features while retaining demo comp
 ### Downloads
 Download can be found on [https://github.com/clipmove/DOSBlood/releases](https://github.com/clipmove/DOSBlood/releases)
 
-### Features
-* Fix save difficulty bug
-* Fix Cerberus spinning on lava
-* Fix infinite burning enemies bug
-* Add key icons to small HUD size
-* Fix tiny Calebs using the wrong sprite
-* Fix prone tesla Cultists infinitely firing
-* Initializes gSpriteHit on XSprite creation
-* Fix E4M8 cutscene playing on E4M1 start
-* Improved mouse input response by 33ms
-* Fix inventory items resetting between levels
-* Vanilla mode toggle to restore original enemy bugs
-* Fix enemies always using tesla hit reaction after being hit by tesla projectile once
-
 ### Installing
 Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`.
+
+### Features
+* Add key icons to small HUD size
+* Improved aim vector response by 33ms
+* Vanilla mode option to restore original enemy bugs
+
+### Fixes
+* Fix game difficulty inverting on loading save
+* Fix E4M8 cutscene playing on E4M1 start
+* Initializes gSpriteHit on XSprite creation
+* Fix Cerberus spinning on lava
+* Fix infinite burning enemies bug
+* Fix tiny Calebs using the wrong sprite
+* Fix prone tesla Cultists infinitely firing
+* Fix inventory items resetting between levels
+* Fix pod enemy projectiles using walls as enemy index
+* Fix demos desyncing if launched with -noaim argument
+* Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 
 ### Notes
 * You must already have an installed copy of Blood.

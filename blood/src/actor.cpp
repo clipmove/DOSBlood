@@ -5188,25 +5188,22 @@ void actProcessSprites(void)
                             if ((hit&0xe000) == 0x4000)
                             {
                                 func_2A620(actSpriteOwnerToSpriteId(pSprite), pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum, 200, 1, 20, kDamageExplode, 6, 0);
-                                evPost(pSprite->index, 3, 0, CALLBACK_ID_19);
                             }
                             else
                             {
                                 int nObject = hit & 0x1fff;
-                                dassert(nObject >= 0 && nObject < kMaxSprites, 6000);
-                                SPRITE *pObject = &sprite[nObject];
-                                actDamageSprite(actSpriteOwnerToSpriteId(pSprite), pObject, kDamageFall, 12);
-                                evPost(pSprite->index, 3, 0, CALLBACK_ID_19);
+                                if (((hit&0xe000) == 0xc000) || VanillaMode())
+                                {
+                                    dassert(nObject >= 0 && nObject < kMaxSprites, 6000);
+                                    SPRITE *pObject = &sprite[nObject];
+                                    actDamageSprite(actSpriteOwnerToSpriteId(pSprite), pObject, kDamageFall, 12);
+                                }
                             }
+                            evPost(pSprite->index, 3, 0, CALLBACK_ID_19);
                             break;
                         case 429:
-                        {
-                            int nObject = hit & 0x1fff;
-                            dassert(nObject >= 0 && nObject < kMaxSprites, 6012);
-                            int nOwner = actSpriteOwnerToSpriteId(pSprite);
                             actExplodeSprite(pSprite);
                             break;
-                        }
                         }
                     }
                 }
