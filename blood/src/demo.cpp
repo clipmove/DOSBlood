@@ -266,6 +266,7 @@ _DEMOPLAYBACK:
         {
             if (!v4)
             {
+                int i;
                 viewResizeView(gViewSize);
                 viewSetMessage("");
                 gNetPlayers = atf.nNetPlayers;
@@ -275,9 +276,11 @@ _DEMOPLAYBACK:
                 memcpy(connectpoint2, atf.connectPoints, sizeof(atf.connectPoints));
                 memcpy(&gGameOptions, &atf.gameOptions, sizeof(GAMEOPTIONS));
                 gSkill = gGameOptions.nDifficulty;
-                for (int i = 0; i < 8; i++)
+                for (i = 0; i < 8; i++)
                     playerInit(i, 0);
                 StartLevel(&gGameOptions);
+                for (i = 0; i < 8; i++) // force autoaim on for demos
+                    gProfile[i].at0 = 1;
             }
             ProcessKeys();
             for (int p = connecthead; p >= 0; p = connectpoint2[p])
