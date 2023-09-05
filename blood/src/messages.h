@@ -64,6 +64,8 @@ public:
     void Set(char *pzString);
     void Send(void);
     void ProcessKeys(void);
+private:
+    BOOL IsWhitespaceOnly(char *pzString);
 };
 
 class CCheatMgr

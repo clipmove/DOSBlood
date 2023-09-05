@@ -447,7 +447,7 @@ void netGetPackets(void)
             pPacket += 4;
             if (*pPacket != '/' || (!*pPacket && !*(pPacket+1)) || (*(pPacket+1) >= '1' && *(pPacket+1) <= '8' && *(pPacket+1)-'1' == myconnectindex))
             {
-                sprintf(buffer, "%s : %s", gProfile[nPlayer].name, pPacket);
+                sprintf(buffer, VanillaMode() ? "%s : %s" : "%s: %s", gProfile[nPlayer].name, pPacket);
                 viewSetMessage(buffer);
                 sndStartSample("DMRADIO", 128);
             }

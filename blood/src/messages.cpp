@@ -448,8 +448,20 @@ void CPlayerMsg::Set(char * pzString)
 
 void CPlayerMsg::Send(void)
 {
-    netBroadcastMsg(myconnectindex, at4);
-    viewSetMessage(at4);
+    if (VanillaMode() || !IsWhitespaceOnly(at4))
+    {
+        netBroadcastMsg(myconnectindex, at4);
+        if (!VanillaMode())
+        {
+            char szTemp[128];
+            sprintf(szTemp, "%s: %s", gProfile[myconnectindex].name, at4);
+            viewSetMessage(szTemp);
+        }
+        else
+        {
+            viewSetMessage(at4);
+        }
+    }
     Term();
     keyFlushStream();
 }
@@ -506,6 +518,17 @@ void CPlayerMsg::ProcessKeys(void)
         }
         func_5A944(key);
     }
+}
+
+BOOL CPlayerMsg::IsWhitespaceOnly(char *pzString)
+{
+    char *p = pzString;
+    while (*p != '\0')
+    {
+        if (*p++ > ' ') // if found non-space character
+            return 0;
+    }
+    return 1;
 }
 
 CCheatMgr::CHEATINFO CCheatMgr::s_CheatInfo[] = {
