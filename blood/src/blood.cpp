@@ -92,6 +92,7 @@ char zCustomName[12];
 
 PLAYER gPlayerTemp[kMaxPlayers];
 int gHealthTemp[kMaxPlayers];
+int gChokeCounter = 0;
 
 static char buffer[256];
 
@@ -581,6 +582,7 @@ void StartLevel(GAMEOPTIONS *gameOptions)
     func_79760();
     gCacheMiss = 0;
     gFrame = 0;
+    gChokeCounter = 0;
     if (!gDemo.PlaybackStatus())
         gGameMenuMgr.Deactivate();
     if (!gRedBookInstalled)
@@ -910,6 +912,15 @@ void ProcessFrame(void)
     sndProcess();
     ambProcess();
     sfxUpdate3DSounds();
+    if (gMe->at376 == 1)
+    {
+        gChokeCounter += 8;
+        while (gChokeCounter >= 30)
+        {
+            gChoke.f_1c(&gChoke, gMe);
+            gChokeCounter -= 30;
+        }
+    }
     gFrame++;
     gFrameClock += 4;
     if ((gGameOptions.uGameFlags&1) != 0 && !gStartNewGame)

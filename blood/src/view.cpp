@@ -3063,10 +3063,6 @@ void viewDrawScreen(void)
     if (pPSprite->at376 == 1)
     {
         gChoke.func_84110(160, zn);
-        if ((gGameClock % 5) == 0)
-        {
-            gChoke.f_1c(&gChoke, pPSprite);
-        }
     }
     if (char_1A76C6)
     {
