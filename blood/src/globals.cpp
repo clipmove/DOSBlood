@@ -57,6 +57,9 @@ const BLOODVERSION gGameVersion = { 21, 1 };
 
 BOOL gAdultContent = 1;
 
+BOOL gVanilla = FALSE;
+BOOL gVanillaMode = 0;
+
 void ClockStrobe(void)
 {
     ++gGameClock;
@@ -81,7 +84,7 @@ char *GetVersionString(void)
     return gVersionString;
 }
 
-BOOL VanillaMode(void)
+void VanillaModeUpdate(void)
 {
-    return gDemo.PlaybackStatus() || gDemo.RecordStatus();
+    gVanillaMode = (gVanilla && numplayers <= 1) || gDemo.PlaybackStatus() || gDemo.RecordStatus();
 }

@@ -83,10 +83,18 @@ extern int gOldDisplayMode;
 
 extern BOOL gAdultContent;
 
+extern BOOL gVanilla;
+extern BOOL gVanillaMode;
+
 char *GetVersionString(void);
-BOOL VanillaMode(void);
 void ClockStrobe(void);
 void LockClockStrobe(void);
 void UnlockClockStrobe(void);
+void VanillaModeUpdate(void);
+
+inline BOOL VanillaMode(void)
+{
+    return gVanillaMode;
+}
 
 #endif // !_GLOBALS_H_

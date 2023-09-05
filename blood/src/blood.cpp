@@ -453,6 +453,7 @@ void StartLevel(GAMEOPTIONS *gameOptions)
     if (gDemo.RecordStatus() && gGameStarted)
         gDemo.Close();
     netWaitForEveryone(0);
+    VanillaModeUpdate();
     if (gGameOptions.nGameType == GAMETYPE_0)
     {
         if (!(gGameOptions.uGameFlags&1))
@@ -606,6 +607,7 @@ void StartNetworkLevel(void)
 {
     if (gDemo.RecordStatus())
         gDemo.Close();
+    VanillaModeUpdate();
     if (!(gGameOptions.uGameFlags&1))
     {
         gGameOptions.nEpisode = gPacketStartGame.episodeId;
@@ -840,6 +842,7 @@ void LocalKeys(void)
 
 void ProcessFrame(void)
 {
+    VanillaModeUpdate();
     if (gDemo.RecordStatus())
         gDemo.Write(gFifoInput[gNetFifoTail&255]);
     for (int i = connecthead; i >= 0; i = connectpoint2[i])
@@ -1392,6 +1395,7 @@ _RESTARTNOLOGO:
     viewResizeView(gViewSize);
     gQuitGame = 0;
     gRestartGame = 0;
+    VanillaModeUpdate();
     if (gGameOptions.nGameType > GAMETYPE_0)
     {
         KB_ClearKeysDown();
@@ -1505,6 +1509,7 @@ _RESTARTNOLOGO:
         gQuitGame = 0;
         gRestartGame = 0;
         gGameStarted = 0;
+        VanillaModeUpdate();
         levelSetupOptions(0,0);
         while (gGameMenuMgr.Active())
         {
