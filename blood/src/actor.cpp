@@ -4774,6 +4774,7 @@ static int MoveMissile(SPRITE *pSprite)
     int top, bottom;
     GetSpriteExtents(pSprite, &top, &bottom);
     int i = 1;
+    BOOL bButcherKnife = (pSprite->type == kMissile300) && (pSprite->owner >= 0) && (sprite[pSprite->owner].type == 204);
     while (1)
     {
         long x = pSprite->x;
@@ -4850,15 +4851,19 @@ static int MoveMissile(SPRITE *pSprite)
         bottom += vz;
         if (bottom >= floorZ)
         {
-            gSpriteHit[nXSprite].florhit = floorHit;
+            if (bButcherKnife && ((floorHit&0xe000) == 0xC000) && IsPlayerSprite(&sprite[floorHit&0x1fff]) && !VanillaMode()) // tweak butcher knife so it will hit players
+                gHitInfo.hitsprite = floorHit&0x1fff, vdi = 3;
+            else
+                gSpriteHit[nXSprite].florhit = floorHit, vdi = 2;
             vz += floorZ-bottom;
-            vdi = 2;
         }
         if (top <= ceilZ)
         {
-            gSpriteHit[nXSprite].ceilhit = ceilHit;
+            if (bButcherKnife && ((ceilHit&0xe000) == 0xC000) && IsPlayerSprite(&sprite[ceilHit&0x1fff]) && !VanillaMode()) // tweak butcher knife so it will hit players
+                gHitInfo.hitsprite = ceilHit&0x1fff, vdi = 3;
+            else
+                gSpriteHit[nXSprite].ceilhit = ceilHit, vdi = 1;
             vz += ClipLow(ceilZ-top, 0);
-            vdi = 1;
         }
         pSprite->x = x;
         pSprite->y = y;

@@ -26,6 +26,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`.
 * Fix choking hands to run at a constant framerate
 * Fix pod enemy projectiles using walls as enemy index
 * Fix demos desyncing if launched with -noaim argument
+* Fix bloated butcher knife attack not hitting player while crouched
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 
 ### Notes
