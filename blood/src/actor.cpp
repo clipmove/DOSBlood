@@ -5047,6 +5047,8 @@ void actProcessSprites(void)
         if (nXSprite > 0)
         {
             XSPRITE *pXSprite = &xsprite[nXSprite];
+            if ((pXSprite->atb_4 > 0) && !VanillaMode()) // don't process currently respawning thing
+                continue;
             if (pSprite->type == 425 || pSprite->type == 426 || pSprite->type == 427)
                 if (pXSprite->at17_5 && gFrameClock >= pXSprite->at20_0)
                     pXSprite->at17_5 = 0;
