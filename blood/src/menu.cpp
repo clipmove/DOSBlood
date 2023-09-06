@@ -926,6 +926,8 @@ void SaveGame(CGameMenuItemZEditBitmap *pItem, CGameMenuEvent *event)
             gSaveGameNum = nSlot;
             LoadSave::SaveGame(strSaveGameName);
             gQuickSaveSlot = nSlot;
+            memcpy(&gSaveGameOptions[gQuickSaveSlot], &gGameOptions, sizeof(GAMEOPTIONS));
+            UpdateSavedInfo(gQuickSaveSlot);
             break;
     }
     gGameMenuMgr.Deactivate();

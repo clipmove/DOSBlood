@@ -41,6 +41,8 @@ extern CGameMenu menuLoading;
 extern short gQuickLoadSlot;
 extern short gQuickSaveSlot;
 
+extern char *zDiffStrings[];
+
 void QuickLoadGame(void);
 void QuickSaveGame(void);
 void SetupMenus(void);

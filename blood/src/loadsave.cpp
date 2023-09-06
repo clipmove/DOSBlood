@@ -405,7 +405,7 @@ void LoadSavedInfo(void)
         int hFile = open(find.name, O_BINARY);
         if (hFile == -1)
             ThrowError(694)("File error #%d loading save file header.", errno);
-        int vc, v8;
+        int vc, v8, nSlot;
         ushort v4;
         vc = 0;
         v8 = 0;
@@ -437,10 +437,11 @@ void LoadSavedInfo(void)
             nCount++; nStatus = _dos_findnext(&find);
             continue;
         }
-        if (read(hFile, &gSaveGameOptions[nCount], sizeof(gSaveGameOptions[0])) == -1)
+        nSlot = ClipRange(atoi(&find.name[4]), 0, 9);
+        if (read(hFile, &gSaveGameOptions[nSlot], sizeof(gSaveGameOptions[0])) == -1)
             ThrowError(752)("File error #%d reading save file.", errno);
         close(hFile);
-        strcpy(strRestoreGameStrings[gSaveGameOptions[nCount].nSaveGameSlot], gSaveGameOptions[nCount].szUserGameName);
+        strcpy(strRestoreGameStrings[gSaveGameOptions[nSlot].nSaveGameSlot], gSaveGameOptions[nSlot].szUserGameName);
         nCount++; nStatus = _dos_findnext(&find);
     }
 }

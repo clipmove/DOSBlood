@@ -31,6 +31,7 @@
 #include "key.h"
 #include "keyboard.h"
 #include "levels.h"
+#include "loadsave.h"
 #include "menu.h"
 #include "misc.h"
 #include "qav.h"
@@ -1459,7 +1460,11 @@ void CGameMenuItemZEditBitmap::Draw(void)
     gMenuTextMgr.GetFontInfo(at8, NULL, &width1, NULL);
     int shade = 32;
     if (pMenu->IsFocusItem(this))
+    {
         shade = 32-(totalclock&63);
+        sprintf(buffer[0], "DIFFICULTY: %s", zDiffStrings[ClipRange(gSaveGameOptions[at28].nDifficulty, 0, 4)]);
+        gMenuTextMgr.DrawText(buffer[0], at8, 20, 50, 32, 0, TRUE);
+    }
     at2c->at24 = -1;
     if (at34)
         shade = -128;
