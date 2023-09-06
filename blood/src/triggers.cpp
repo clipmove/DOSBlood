@@ -227,7 +227,7 @@ unsigned int GetSourceBusy(EVENT a1)
     return 0;
 }
 
-void func_43CF8(SPRITE *pSprite, XSPRITE *pXSprite, EVENT a3)
+void LifeLeechOperate(SPRITE *pSprite, XSPRITE *pXSprite, EVENT a3)
 {
     switch (a3.at2_0)
     {
@@ -585,7 +585,7 @@ void OperateSprite(int nSprite, XSPRITE *pXSprite, EVENT a3)
         }
         break;
     case 431:
-        func_43CF8(pSprite, pXSprite, a3);
+        LifeLeechOperate(pSprite, pXSprite, a3);
         break;
     case 700:
     case 701:
