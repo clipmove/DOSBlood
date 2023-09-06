@@ -150,8 +150,14 @@ void CKillMgr::AddCount(SPRITE *pSprite)
 
 void CKillMgr::AddKill(SPRITE *pSprite)
 {
-    if (VanillaMode() || AllowedType(pSprite)) // check type before adding to enemy count
+    if (VanillaMode() || AllowedType(pSprite)) // check type before adding to enemy kills
         at4++;
+}
+
+void CKillMgr::RemoveKill(SPRITE* pSprite)
+{
+    if (VanillaMode() || !AllowedType(pSprite)) // check type before removing from enemy kills
+        at4--;
 }
 
 void CKillMgr::CountTotalKills(void)

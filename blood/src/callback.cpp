@@ -21,6 +21,7 @@
 #include "callback.h"
 #include "db.h"
 #include "debug4g.h"
+#include "endgame.h"
 #include "error.h"
 #include "eventq.h"
 #include "fx.h"
@@ -270,6 +271,8 @@ static void Respawn(int nSprite) // 9
         if (IsDudeSprite(pSprite))
         {
             int nType = pSprite->type-kDudeBase;
+            if (!VanillaMode()) // remove a kill
+                gKillMgr.RemoveKill(pSprite);
             pSprite->x = baseSprite[nSprite].x;
             pSprite->y = baseSprite[nSprite].y;
             pSprite->z = baseSprite[nSprite].z;

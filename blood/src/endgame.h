@@ -52,6 +52,7 @@ public:
     void AddCount(int);
     void AddCount(SPRITE *pSprite);
     void AddKill(SPRITE *pSprite);
+    void RemoveKill(SPRITE *pSprite);
     void CountTotalKills(void);
 	void Clear(void);
     void Draw(void);
