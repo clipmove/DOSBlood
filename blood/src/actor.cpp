@@ -2207,6 +2207,15 @@ static int nTreeToGibClient = seqRegisterClient(TreeToGibCallback);
 static int nDudeToGibClient1 = seqRegisterClient(DudeToGibCallback1);
 static int nDudeToGibClient2 = seqRegisterClient(DudeToGibCallback2);
 
+struct POSTPONE {
+    short at0;
+    short at2;
+};
+
+int gPostCount = 0;
+
+POSTPONE gPost[kMaxSprites];
+
 BOOL IsItemSprite(SPRITE *pSprite)
 {
     return (pSprite->type >= 100 && pSprite->type < 149) ? TRUE : FALSE;
@@ -2293,11 +2302,16 @@ BOOL actTypeInSector(int nSector, int nType)
     return 0;
 }
 
-void actInit(void)
+void actInit(BOOL bSaveLoad)
 {
     int nSprite;
 
     actAllocateSpares();
+
+    if (!bSaveLoad)
+    {
+        gPostCount = 0;
+    }
 
     for (nSprite = headspritestat[3]; nSprite >= 0; nSprite = nextspritestat[nSprite])
     {
@@ -2387,8 +2401,10 @@ void actInit(void)
     }
     gKillMgr.CountTotalKills();
     for (int i = 0; i < kDudeMax-kDudeBase; i++)
+    {
         for (int j = 0; j < 7; j++)
             dudeInfo[i].at70[j] = mulscale8(DudeDifficulty[gGameOptions.nDifficulty], dudeInfo[i].at54[j]);
+    }
     for (nSprite = headspritestat[6]; nSprite >= 0; nSprite = nextspritestat[nSprite])
     {
         SPRITE *pSprite = &sprite[nSprite];
@@ -6278,15 +6294,6 @@ static void DudeToGibCallback2(int, int nXSprite)
     pXSprite->atd_2 = 0;
 }
 
-struct POSTPONE {
-    short at0;
-    short at2;
-};
-
-int gPostCount = 0;
-
-POSTPONE gPost[kMaxSprites];
-
 void actPostSprite(int nSprite, int nStatus)
 {
     int n;
@@ -6371,7 +6378,7 @@ void ActorLoadSave::Load(void)
     Read(gAffectedXWalls, sizeof(gAffectedXWalls));
     Read(&gPostCount, sizeof(gPostCount));
     Read(gPost, sizeof(gPost));
-    actInit();
+    actInit(TRUE);
 }
 
 void ActorLoadSave::Save(void)

@@ -239,7 +239,7 @@ void actHitcodeToData(int, HITINFO*, int *a3 = 0, SPRITE **a4 = 0, XSPRITE **a5 
 
 void actAirDrag(SPRITE*, int);
 
-void actInit(void);
+void actInit(BOOL bSaveLoad = FALSE);
 
 void actProcessSprites(void);
 void actPostProcess(void);
