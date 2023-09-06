@@ -1782,6 +1782,10 @@ void playerFrag(PLAYER *pKiller, PLAYER *pVictim)
             if (gGameOptions.nGameType > GAMETYPE_0 && nSound >= 0)
                 sndStartSample(nSound, 255, 2);
         }
+        else if (!VanillaMode() && (gGameOptions.nGameType > GAMETYPE_0)) // use unused suicide messages for multiplayer
+        {
+            sprintf(buffer, gSuicide[nMessage].at0, gProfile[nVictim].name);
+        }
     }
     else
     {
