@@ -1113,11 +1113,9 @@ BOOL CGameMenuItemKeyList::Event(CGameMenuEvent &event)
             at20(this);
         Scan();
         break;
+    case 9:
     case 10:
-        if (keystatus[bsc_LCtrl] || keystatus[bsc_RCtrl])
-        {
-            CONTROL_MapKey(at30, 0, 0);
-        }
+        CONTROL_MapKey(at30, 0, 0);
         break;
     default:
         r = CGameMenuItem::Event(event);
