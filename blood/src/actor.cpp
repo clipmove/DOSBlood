@@ -2815,7 +2815,7 @@ void actKillDude(int a1, SPRITE *pSprite, DAMAGE_TYPE a3, int a4)
     {
         int nPlayer = pSprite2->type - kDudePlayer1;
         PLAYER *pPlayer = &gPlayer[nPlayer];
-        if (gGameOptions.nGameType == GAMETYPE_1)
+        if ((gGameOptions.nGameType == GAMETYPE_1) && (VanillaMode() || gKillMgr.AllowedType(pSprite)))
             pPlayer->at2c6++;
     }
 

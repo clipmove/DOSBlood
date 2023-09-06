@@ -492,7 +492,7 @@ void OperateSprite(int nSprite, XSPRITE *pXSprite, EVENT a3)
             if (pSpawn)
             {
                 XSPRITE *pXSpawn = &xsprite[pSpawn->extra];
-                gKillMgr.func_263E0(1);
+                gKillMgr.AddCount(pSpawn);
                 switch (pXSprite->at10_0)
                 {
                 case 240:

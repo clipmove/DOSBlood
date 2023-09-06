@@ -1769,8 +1769,11 @@ void playerFrag(PLAYER *pKiller, PLAYER *pVictim)
     if (nKiller == nVictim)
     {
         pVictim->at2ee = -1;
-        pVictim->at2c6--;
-        pVictim->at2ca[nKiller]--;
+        if (VanillaMode() || (gGameOptions.nGameType != GAMETYPE_1))
+        {
+            pKiller->at2c6--;
+            pKiller->at2ca[nKiller]--;
+        }
         if (gGameOptions.nGameType == GAMETYPE_3)
             int_21EFB0[pVictim->at2ea]--;
         int nMessage = Random(5);
@@ -1789,8 +1792,11 @@ void playerFrag(PLAYER *pKiller, PLAYER *pVictim)
     }
     else
     {
-        pKiller->at2c6++;
-        pKiller->at2ca[nVictim]++;
+        if (VanillaMode() || (gGameOptions.nGameType != GAMETYPE_1))
+        {
+            pKiller->at2c6++;
+            pKiller->at2ca[nVictim]++;
+        }
         if (gGameOptions.nGameType == GAMETYPE_3)
         {
             if (pKiller->at2ea == pVictim->at2ea)

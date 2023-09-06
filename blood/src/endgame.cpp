@@ -123,19 +123,34 @@ CKillMgr::CKillMgr()
     Clear();
 }
 
+BOOL CKillMgr::AllowedType(SPRITE *pSprite)
+{
+    if (!pSprite)
+        return 0;
+    if (pSprite->statnum != 6)
+        return 0;
+    return pSprite->type != 219 && pSprite->type != 220 && pSprite->type != 245 && pSprite->type != 239;
+}
+
 void CKillMgr::SetCount(int nCount)
 {
     at0 = nCount;
 }
 
-void CKillMgr::func_263E0(int nCount)
+void CKillMgr::AddCount(int nCount)
 {
     at0 += nCount;
 }
 
+void CKillMgr::AddCount(SPRITE *pSprite)
+{
+    if (VanillaMode() || AllowedType(pSprite)) // check type before adding to enemy count
+        at0++;
+}
+
 void CKillMgr::AddKill(SPRITE *pSprite)
 {
-    if (pSprite->statnum == 6 && pSprite->type != 219 && pSprite->type != 220 && pSprite->type != 245 && pSprite->type != 239)
+    if (VanillaMode() || AllowedType(pSprite)) // check type before adding to enemy count
         at4++;
 }
 
@@ -147,7 +162,7 @@ void CKillMgr::func_2641C(void)
         SPRITE *pSprite = &sprite[nSprite];
         if (pSprite->type < kDudeBase || pSprite->type >= kDudeMax)
             ThrowError(209)("Non-enemy sprite (%d) in the enemy sprite list.\n", nSprite);
-        if (pSprite->statnum == 6 && pSprite->type != 219 && pSprite->type != 220 && pSprite->type != 245 && pSprite->type != 239)
+        if (AllowedType(pSprite))
             at0++;
     }
 }

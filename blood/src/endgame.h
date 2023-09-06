@@ -47,8 +47,10 @@ class CKillMgr {
 public:
     int at0, at4;
     CKillMgr();
+    BOOL AllowedType(SPRITE *pSprite);
     void SetCount(int);
-    void func_263E0(int);
+    void AddCount(int);
+    void AddCount(SPRITE *pSprite);
     void AddKill(SPRITE *pSprite);
     void func_2641C(void);
 	void Clear(void);

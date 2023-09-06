@@ -189,7 +189,7 @@ static void func_71370(int, int nXSprite)
         {
             pDudeExtraE->at4++;
             pSpawn->owner = nSprite;
-            gKillMgr.func_263E0(1);
+            gKillMgr.AddCount(pSpawn);
         }
     }
 }
