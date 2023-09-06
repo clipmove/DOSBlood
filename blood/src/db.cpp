@@ -370,8 +370,8 @@ ushort dbInsertXSprite(int nSprite)
     {
         ThrowError(756)("Out of free XSprites");
     }
-    memset(&gSpriteHit[nXSprite], 0, sizeof(SPRITEHIT));
     memset(&xsprite[nXSprite], 0, sizeof(XSPRITE));
+    memset(&gSpriteHit[nXSprite], 0, sizeof(SPRITEHIT));
     sprite[nSprite].extra = nXSprite;
     xsprite[nXSprite].reference = nSprite;
     return nXSprite;

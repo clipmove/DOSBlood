@@ -488,7 +488,7 @@ void OperateSprite(int nSprite, XSPRITE *pXSprite, EVENT a3)
     case 18:
         if (gGameOptions.nMonsterSettings && pXSprite->at10_0 >= kDudeBase && pXSprite->at10_0 < kDudeMax)
         {
-            SPRITE *pSpawn = func_36878(pSprite, pXSprite->at10_0, -1, 0);
+            SPRITE *pSpawn = actSpawnDude(pSprite, pXSprite->at10_0, -1, 0);
             if (pSpawn)
             {
                 XSPRITE *pXSpawn = &xsprite[pSpawn->extra];

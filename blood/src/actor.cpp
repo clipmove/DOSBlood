@@ -5568,7 +5568,7 @@ SPRITE *actSpawnSprite(int nSector, int x, int y, int z, int nStat, BOOL a6)
     return pSprite;
 }
 
-SPRITE *func_36878(SPRITE *pSource, short nType, int a3, int a4)
+SPRITE *actSpawnDude(SPRITE *pSource, short nType, int a3, int a4)
 {
     SPRITE *pSprite2 = actSpawnSprite(pSource, 6);
     if (!pSprite2)
@@ -5589,11 +5589,15 @@ SPRITE *func_36878(SPRITE *pSource, short nType, int a3, int a4)
         y = pSource->y+mulscale30r(Sin(angle), a3);
     }
     pSprite2->type = nType;
+    if (!VanillaMode())
+        pSprite2->inittype = nType;
     pSprite2->ang = angle;
     setsprite(pSprite2->index, x, y, z);
     pSprite2->cstat |= 0x1101;
     pSprite2->clipdist = dudeInfo[nDude].ata;
     pXSprite2->health = dudeInfo[nDude].at2<<4;
+    if (!VanillaMode()) // don't allow newly spawned enemies to respawn
+        pXSprite2->at18_0 = 1;
     if (gSysRes.Lookup(dudeInfo[nDude].seqStartID, "SEQ"))
         seqSpawn(dudeInfo[nDude].seqStartID, 3, pSprite2->extra, -1);
     aiInitSprite(pSprite2);
