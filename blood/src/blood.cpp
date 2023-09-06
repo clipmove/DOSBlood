@@ -765,7 +765,11 @@ void LocalKeys(void)
             break;
         case bsc_F8:
             keyFlushStream();
-            gGameMenuMgr.Push(&menuOptions);
+            if (!gGameMenuMgr.m_bActive)
+            {
+                gGameMenuMgr.Push(&menuOptions);
+                menuOptions.m_nFocus = ClipRange(menuOptions.m_nItems-3, 1, menuOptions.m_nItems-1); // select video mode
+            }
             break;
         case bsc_F9:
             keyFlushStream();
