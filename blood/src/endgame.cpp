@@ -160,7 +160,7 @@ void CKillMgr::func_2641C(void)
     for (int nSprite = headspritestat[6]; nSprite >= 0; nSprite = nextspritestat[nSprite])
     {
         SPRITE *pSprite = &sprite[nSprite];
-        if (pSprite->type < kDudeBase || pSprite->type >= kDudeMax)
+        if (!IsDudeSprite(pSprite))
             ThrowError(209)("Non-enemy sprite (%d) in the enemy sprite list.\n", nSprite);
         if (AllowedType(pSprite))
             at0++;
