@@ -30,6 +30,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Prevent whitespace only messages being sent in multiplayer
 * Fix reverb state not resetting on level change/loading game
 * Fix bloated butcher knife attack not hitting player while crouched
+* Limit impulse damage when shooting enemies downward at point-blank
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 
 ### Notes

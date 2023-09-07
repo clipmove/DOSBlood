@@ -6133,9 +6133,12 @@ void actFireVector(SPRITE *pShooter, int a2, int a3, int a4, int a5, int a6, VEC
                 if (t > 0 && pVectorData->at5)
                 {
                     int t2 = divscale(pVectorData->at5, t, 8);
+                    int t3 = mulscale16(a6, t2);
+                    if (!VanillaMode()) // clamp downward impulse damage to stop players from cheesing bosses
+                        t3 = ClipHigh(t3, 32767);
                     xvel[nSprite] += mulscale16(a4, t2);
                     yvel[nSprite] += mulscale16(a5, t2);
-                    zvel[nSprite] += mulscale16(a6, t2);
+                    zvel[nSprite] += t3;
                 }
                 if (pVectorData->at11)
                 {
