@@ -371,7 +371,9 @@ ushort dbInsertXSprite(int nSprite)
         ThrowError(756)("Out of free XSprites");
     }
     memset(&xsprite[nXSprite], 0, sizeof(XSPRITE));
+//#if 0 // uncomment this to intentionally causes demos to desync like retail v1.21 (eg: playing BLOOD002.DEM after finishing BLOOD001.DEM)
     memset(&gSpriteHit[nXSprite], 0, sizeof(SPRITEHIT));
+//#endif
     sprite[nSprite].extra = nXSprite;
     xsprite[nXSprite].reference = nSprite;
     return nXSprite;
