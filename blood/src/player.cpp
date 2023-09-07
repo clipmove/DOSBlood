@@ -686,6 +686,8 @@ void playerStart(int nPlayer)
         pStartZone = &gStartZone[Random(8)];
     else
         pStartZone = &gStartZone[nPlayer];
+    if (!VanillaMode())
+        sfxKillAllSounds(pPlayer->pSprite);
     SPRITE *pSprite = actSpawnSprite(pStartZone->sectnum, pStartZone->x, pStartZone->y, pStartZone->z, 6, 1);
     dassert(pSprite->extra > 0 && pSprite->extra < kMaxXSprites, 1094);
     XSPRITE *pXSprite = &xsprite[pSprite->extra];

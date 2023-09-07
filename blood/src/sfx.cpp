@@ -336,13 +336,15 @@ void sfxKill3DSound(SPRITE *pSprite, int a2, int a3)
     }
 }
 
-void sfxKillAllSounds(void)
+void sfxKillAllSounds(SPRITE* pSprite)
 {
     if (FXDevice == -1)
         return;
     for (int i = nBonkles - 1; i >= 0; i--)
     {
         BONKLE *pBonkle = BonkleCache[i];
+        if (pSprite && pBonkle->at10 != pSprite)
+            continue;
         if (pBonkle->at0 > 0)
         {
             FX_EndLooping(pBonkle->at0);
