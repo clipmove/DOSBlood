@@ -963,7 +963,7 @@ void ProcessFrame(void)
         SPRITE *pSprite = &sprite[0x42];
         if (!pSprite)
             return;
-        fprintf(test, "%i x=%i y=%i z=%i ang=%i zvel=%i aim.dz=%i\n", gFrame, pSprite->x, pSprite->y, pSprite->z, pSprite->ang, zvel[pSprite->index], gPlayer[1].at1be.dz);
+        fprintf(test, "%i x=%i y=%i z=%i ang=%i zvel=%i aim.dz=%i seed=%08X\n", gFrame, pSprite->x, pSprite->y, pSprite->z, pSprite->ang, zvel[pSprite->index], gPlayer[1].at1be.dz, wrandomseed);
     }
 #endif
 }
