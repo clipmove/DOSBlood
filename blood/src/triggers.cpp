@@ -95,7 +95,7 @@ static BOOL SetSpriteState(int nSprite, XSPRITE *pXSprite, int nState)
     pXSprite->at1_7 = nState<<16;
     pXSprite->at1_6 = nState;
     evKill(nSprite, 3);
-    if ((sprite[nSprite].flags & kSpriteFlag4) && (sprite[nSprite].inittype >= kDudeBase && sprite[nSprite].inittype < kDudeMax))
+    if ((sprite[nSprite].flags & kSpriteFlag4) != 0 && sprite[nSprite].inittype >= kDudeBase && sprite[nSprite].inittype < kDudeMax)
     {
         pXSprite->atb_4 = 3;
         evPost(nSprite, 3, gGameOptions.nMonsterRespawnTime, CALLBACK_ID_9);
@@ -880,7 +880,7 @@ static void TranslateSector(int nSector, int a2, int a3, int a4, int a5, int a6,
             y = baseWall[nWall].y;
             if (vbp)
                 RotatePoint(&x, &y, vbp, a4, a5);
-            DragPoint(nWall, x+vc-a4, y+v8-a5);
+            DragPoint(nWall, x+(vc-a4), y+(v8-a5));
         }
     }
     else

@@ -596,18 +596,29 @@ void dbInit(void)
 
 void PropagateMarkerReferences(void)
 {
-    int nSprite;
     int nNextSprite;
     int nOwner;
     int nXSector;
-    for (nSprite = headspritestat[10]; nSprite != -1; nSprite = nNextSprite)
+    for (int nSprite = headspritestat[10]; nSprite != -1; nSprite = nNextSprite)
     {
         nNextSprite = nextspritestat[nSprite];
         switch (sprite[nSprite].type)
         {
-        case 3:
-        case 5:
         case 8:
+        {
+            nOwner = sprite[nSprite].owner;
+            if (nOwner >= 0 && nOwner < numsectors)
+            {
+                nXSector = sector[nOwner].extra;
+                if (nXSector > 0 && nXSector < kMaxXSectors)
+                {
+                    xsector[nXSector].at2c_0 = nSprite;
+                    continue;
+                }
+            }
+            break;
+        }
+        case 3:
         {
             nOwner = sprite[nSprite].owner;
             if (nOwner >= 0 && nOwner < numsectors)
@@ -630,6 +641,20 @@ void PropagateMarkerReferences(void)
                 if (nXSector > 0 && nXSector < kMaxXSectors)
                 {
                     xsector[nXSector].at2e_0 = nSprite;
+                    continue;
+                }
+            }
+            break;
+        }
+        case 5:
+        {
+            nOwner = sprite[nSprite].owner;
+            if (nOwner >= 0 && nOwner < numsectors)
+            {
+                nXSector = sector[nOwner].extra;
+                if (nXSector > 0 && nXSector < kMaxXSectors)
+                {
+                    xsector[nXSector].at2c_0 = nSprite;
                     continue;
                 }
             }
@@ -853,7 +878,7 @@ void dbLoadMap(char *pPath, long *pX, long *pY, long *pZ, short *pAngle, short *
             xsprite[sprite[i].extra].at1_7 = xsprite[sprite[i].extra].at1_6 << 16;
             if (!char_1A76C8)
             {
-                xsprite[sprite[i].extra].atb_7 |= xsprite[sprite[i].extra].atf_5;
+                xsprite[sprite[i].extra].atb_7 = xsprite[sprite[i].extra].atf_5;
             }
         }
         if ((sprite[i].cstat & kSpriteMask) == kSpriteVoxel)
