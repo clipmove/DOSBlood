@@ -28,7 +28,7 @@ void ChangeExtension(char *name, char *ext);
 
 ulong qrand(void);
 
-#define RAND_DBG // uncomment to expose rand() for debugging (qtools/blood must be clean and recompiled)
+//#define RAND_DBG // uncomment to expose rand() for debugging (qtools/blood must be clean and recompiled)
 #ifdef RAND_DBG
 
 #define rand rando

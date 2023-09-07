@@ -2308,7 +2308,7 @@ void actInit(BOOL bSaveLoad)
 
     actAllocateSpares();
 
-    if (!bSaveLoad)
+    if (!VanillaMode() && !bSaveLoad)
     {
         gPostCount = 0;
     }
@@ -5107,9 +5107,10 @@ void actProcessSprites(void)
                         {
                             if (pSprite->type == 431)
                             {
-                                if ((!Chance(0x4000) && nNextSprite >= 0) || !(pSprite2->cstat & CLIPMASK0))
+                                if ((Chance(0x4000) || nNextSprite < 0) && (pSprite2->cstat & CLIPMASK0))
+                                    pXSprite->target = pSprite2->index;
+                                else
                                     continue;
-                                pXSprite->target = pSprite2->index;
                             }
                             if (pSprite->owner == -1)
                                 actPropagateSpriteOwner(pSprite, pSprite2);
@@ -5209,7 +5210,7 @@ void actProcessSprites(void)
                             else
                             {
                                 int nObject = hit & 0x1fff;
-                                if (((hit&0xe000) == 0xc000) || VanillaMode())
+                                if (VanillaMode() || ((hit&0xe000) == 0xc000))
                                 {
                                     dassert(nObject >= 0 && nObject < kMaxSprites, 6000);
                                     SPRITE *pObject = &sprite[nObject];
@@ -5219,8 +5220,16 @@ void actProcessSprites(void)
                             evPost(pSprite->index, 3, 0, CALLBACK_ID_19);
                             break;
                         case 429:
+                        {
+                            if (VanillaMode())
+                            {
+                                int nObject = hit & 0x1fff;
+                                dassert(nObject >= 0 && nObject < kMaxSprites, 6012);
+                                int nOwner = actSpriteOwnerToSpriteId(pSprite);
+                            }
                             actExplodeSprite(pSprite);
                             break;
+                        }
                         }
                     }
                 }
@@ -5537,7 +5546,7 @@ void actProcessSprites(void)
             GibSprite(pSprite, GIBTYPE_17, NULL, NULL);
             actPostSprite(pSprite->index, 1024);
         }
-        if (pTarget->extra > 0 && (unsigned int)xsprite[pTarget->extra].health > 0)
+        if ((!VanillaMode() ? pTarget->extra > 0 : pTarget->extra) && (unsigned int)xsprite[pTarget->extra].health > 0)
         {
             int x = pTarget->x+mulscale30r(Cos(pXSprite->at16_0+pTarget->ang), pTarget->clipdist*2);
             int y = pTarget->y+mulscale30r(Sin(pXSprite->at16_0+pTarget->ang), pTarget->clipdist*2);

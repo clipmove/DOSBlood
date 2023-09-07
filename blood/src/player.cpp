@@ -773,7 +773,7 @@ void playerStart(int nPlayer)
     pPlayer->at376 = 0;
     for (i = 0; i < kMaxPowerUps; i++)
     {
-        if (i == 15 || i == 18 || i == 21 || i == 25) // don't reset jump boots/diving suit/crystal ball/beast vision between levels
+        if (!VanillaMode() && (i == 15 || i == 18 || i == 21 || i == 25)) // don't reset jump boots/diving suit/crystal ball/beast vision between levels
             continue;
         pPlayer->at202[i] = 0;
     }
