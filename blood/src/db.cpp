@@ -864,7 +864,8 @@ void dbLoadMap(char *pPath, long *pX, long *pY, long *pZ, short *pAngle, short *
     {
         ThrowError(1439)("Map File does not match CRC");
     }
-    *pCRC = nCRC;
+    if (pCRC)
+        *pCRC = nCRC;
     gSysRes.Unlock(pNode);
     PropagateMarkerReferences();
     if (char_1A76C8)
