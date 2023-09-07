@@ -452,7 +452,7 @@ void CPlayerMsg::Send(void)
     if (VanillaMode() || !IsWhitespaceOnly(at4))
     {
         netBroadcastMsg(myconnectindex, at4);
-        if (!VanillaMode())
+        if (!VanillaMode() && (gGameOptions.nGameType != GAMETYPE_0))
         {
             char szTemp[128];
             sprintf(szTemp, "%s: %s", gProfile[myconnectindex].name, at4);
