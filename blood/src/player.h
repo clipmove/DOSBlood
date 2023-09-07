@@ -58,6 +58,14 @@ struct AMMOINFO {
     schar at4;
 };
 
+struct POWERUPINFO
+{
+    short at0;
+    char at2;
+    int at3; // max value
+    int at7;
+};
+
 struct PLAYER {
     SPRITE *pSprite;
     XSPRITE *pXSprite;
@@ -174,6 +182,7 @@ extern POSTURE gPosture[][3];
 extern int int_21EFB0[8];
 extern int int_21EFD0[8];
 extern AMMOINFO gAmmoInfo[];
+extern POWERUPINFO gPowerUpInfo[kMaxPowerUps];
 
 BOOL packItemActive(PLAYER *, int);
 int powerupCheck(PLAYER *, int);
