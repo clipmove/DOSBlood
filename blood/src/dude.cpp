@@ -834,7 +834,7 @@ DUDEINFO dudeInfo[kDudeMax-kDudeBase] =
     },
     {
         10240,
-        800,
+        800 % 256, // this originally overflowed - may as well convert it into the post-overflow value
         1500,
         1200,
         128,
