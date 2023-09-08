@@ -1401,6 +1401,12 @@ void aiProcessDudes(void)
 
 void aiInit(void)
 {
+    if (!VanillaMode())
+    {
+        memset(cumulDamage, 0, sizeof(cumulDamage));
+        memset(gDudeSlope, 0, sizeof(gDudeSlope));
+        memset(gDudeExtra, 0, sizeof(gDudeExtra));
+    }
     for (int nSprite = headspritestat[6]; nSprite >= 0; nSprite = nextspritestat[nSprite])
     {
         aiInitSprite(&sprite[nSprite]);
@@ -1416,8 +1422,15 @@ void aiInitSprite(SPRITE *pSprite)
     if (sector[nSector].extra > 0)
         pXSector = &xsector[sector[nSector].extra];
     DUDEEXTRA *pDudeExtra = &gDudeExtra[pSprite->extra];
-    pDudeExtra->at4 = 0;
-    pDudeExtra->at0 = 0;
+    if (!VanillaMode()) // clear struct for non-vanilla mode
+    {
+        memset(pDudeExtra, 0, sizeof(DUDEEXTRA));
+    }
+    else
+    {
+        pDudeExtra->at4 = 0;
+        pDudeExtra->at0 = 0;
+    }
     switch (pSprite->type)
     {
     case 201:
