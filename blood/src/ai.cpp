@@ -1517,6 +1517,19 @@ void aiInitSprite(SPRITE *pSprite)
         aiNewState(pSprite, pXSprite, &cerberusIdle);
         break;
     }
+    case 228:
+    {
+        if (!VanillaMode())
+        {
+            DUDEEXTRA_CERBERUS* pDudeExtraE = &pDudeExtra->at6.cerberus;
+            pDudeExtraE->at4 = 0;
+            pDudeExtraE->at0 = 0;
+            aiNewState(pSprite, pXSprite, &cerberus2Idle);
+            break;
+        }
+        aiNewState(pSprite, pXSprite, &genIdle);
+        break;
+    }
     case 211:
         aiNewState(pSprite, pXSprite, &houndIdle);
         break;
