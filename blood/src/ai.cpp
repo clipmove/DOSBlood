@@ -1666,12 +1666,14 @@ void AILoadSave::Load(void)
 {
     Read(cumulDamage, sizeof(cumulDamage));
     Read(gDudeSlope, sizeof(gDudeSlope));
+    Read(gDudeExtra, sizeof(gDudeExtra));
 }
 
 void AILoadSave::Save(void)
 {
     Write(cumulDamage, sizeof(cumulDamage));
     Write(gDudeSlope, sizeof(gDudeSlope));
+    Write(gDudeExtra, sizeof(gDudeExtra));
 }
 
 static AILoadSave myLoadSave;
