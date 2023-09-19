@@ -2308,7 +2308,7 @@ void actInit(BOOL bSaveLoad)
 
     actAllocateSpares();
 
-    if (!VanillaMode() && !bSaveLoad)
+    if (!bSaveLoad)
     {
         gPostCount = 0;
     }
