@@ -1218,6 +1218,7 @@ const POWERUPDISPLAY gPowerups[nPowerUps] = {
 
 void viewDrawPowerUps(PLAYER* pPlayer)
 {
+    int i, j;
     int nPowerActive[nPowerUps];
     nPowerActive[0] = pPlayer->at202[13]; // invisibility
     nPowerActive[1] = pPlayer->at202[24]; // reflects enemy shots
@@ -1233,23 +1234,47 @@ void viewDrawPowerUps(PLAYER* pPlayer)
     nPowerActive[9] = pPlayer->at202[29]; // grow shroom
     nPowerActive[10] = pPlayer->at202[30]; // shrink shroom
 
+    int nSortPower[nPowerUps+1];
+    unsigned char nSortIndex[nPowerUps+1];
+    unsigned char nSortCount = 0;
+    for (i = 0; i < nPowerUps; i++) // sort powerups
+    {
+        if (!nPowerActive[i])
+            continue;
+        nSortIndex[nSortCount] = i;
+        nSortPower[nSortCount] = nPowerActive[i];
+        nSortCount++;
+    }
+    for (i = 1; i < nSortCount; i++)
+    {
+        for (j = 0; j < nSortCount-i; j++)
+        {
+            if (nSortPower[j] <= nSortPower[j+1])
+                continue;
+            nSortPower[nPowerUps] = nSortPower[j];
+            nSortPower[j] = nSortPower[j+1];
+            nSortPower[j+1] = nSortPower[nPowerUps];
+            nSortIndex[nPowerUps] = nSortIndex[j];
+            nSortIndex[j] = nSortIndex[j+1];
+            nSortIndex[j+1] = nSortIndex[nPowerUps];
+        }
+    }
+
     const int nWarning = 5;
     const int x = 15;
     int y = 50;
-    for (int i = 0; i < nPowerUps; i++)
+    for (i = 0; i < nSortCount; i++)
     {
-        if (nPowerActive[i])
+        const POWERUPDISPLAY *pPowerups = &gPowerups[nSortIndex[i]];
+        const int nTime = nSortPower[i] / 100;
+        if (nTime > nWarning || ((int)totalclock & 32))
         {
-            const int nTime = nPowerActive[i] / 100;
-            if (nTime > nWarning || ((int)totalclock & 32))
-            {
-                DrawStatMaskedSpriteScale(gPowerups[i].nTile, x, y + gPowerups[i].yOffset, 0, 0, 256, gPowerups[i].nScaleRatio);
-            }
-
-            sprintf(buffer, "%02d", nTime);
-            viewDrawText(3, buffer, x+9, y-3, 0, nTime > nWarning ? 0 : 2, 0, 0);
-            y += 15;
+            DrawStatMaskedSpriteScale(pPowerups->nTile, x, y + pPowerups->yOffset, 0, 0, 256, pPowerups->nScaleRatio);
         }
+
+        sprintf(buffer, "%02d", nTime);
+        viewDrawText(3, buffer, x+9, y-3, 0, nTime > nWarning ? 0 : 2, 0, 0);
+        y += 15;
     }
 }
 
