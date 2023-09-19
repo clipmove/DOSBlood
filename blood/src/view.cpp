@@ -24,6 +24,7 @@
 #include "config.h"
 #include "db.h"
 #include "debug4g.h"
+#include "endgame.h"
 #include "error.h"
 #include "gamemenu.h"
 #include "globals.h"
@@ -1192,6 +1193,32 @@ int gPackIcons[6] = {
     2569, 2564, 2566, 2568, 2560, 829
 };
 
+void viewDrawStats(int x, int y)
+{
+    const int nFont = 3;
+
+    int nHeight, nLevelTime = gFrameClock;
+    viewGetFontInfo(nFont, NULL, NULL, &nHeight);
+    sprintf(buffer, "T:%d:%02d.%02d",
+        (nLevelTime/(120*60)),
+        (nLevelTime/120)%60,
+        ((nLevelTime%120)*33)/40
+        );
+    viewDrawText(3, buffer, x, y, 20, 0, 0, true);
+    if ((gGameOptions.nMonsterSettings > 0) && (ClipLow(gKillMgr.at4, gKillMgr.at0) > 0))
+    {
+        y += nHeight+1;
+        sprintf(buffer, "K:%d/%d", gKillMgr.at4, ClipLow(gKillMgr.at4, gKillMgr.at0));
+        viewDrawText(3, buffer, x, y, 20, 0, 0, true);
+    }
+    if (gGameOptions.nGameType <= GAMETYPE_1) // only show secrets counter for single-player/co-op mode
+    {
+        y += nHeight+1;
+        sprintf(buffer, "S:%d/%d", gSecretMgr.at4, VanillaMode() ? gSecretMgr.at0 : ClipLow(gSecretMgr.at4, gSecretMgr.at0)); // if we found more than there are, increase the total - some levels have a bugged counter
+        viewDrawText(3, buffer, x, y, 20, 0, 0, true);
+    }
+}
+
 #define nPowerUps 11
 
 struct POWERUPDISPLAY
@@ -1486,9 +1513,12 @@ static void UpdateStatusBar(int arg)
             TileHGauge(2260, 124, 175, pPlayer->at1ba, 65536);
         }
     }
-    if (gViewSize <= 2 && gShowPowerUps)
+    if (gViewSize <= 2)
     {
-        viewDrawPowerUps(pPlayer);
+        if (gShowPowerUps)
+            viewDrawPowerUps(pPlayer);
+        if (gLevelStats)
+            viewDrawStats(2, gViewSize == 2 ? 115 : 140);
     }
     if (gGameOptions.nGameType >= GAMETYPE_1 || int_28E3D4 == 4)
     {

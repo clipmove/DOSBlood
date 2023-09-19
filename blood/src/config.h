@@ -47,6 +47,7 @@ extern controltype ControllerType;
 extern BOOL gFollowMap;
 extern BOOL gShowWeapon;
 extern BOOL gShowPowerUps;
+extern BOOL gLevelStats;
 extern int32 gMouseAiming;
 extern BOOL gMouseAim;
 extern BOOL gMouseAimingFlipped;

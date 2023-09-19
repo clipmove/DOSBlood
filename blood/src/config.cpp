@@ -79,6 +79,7 @@ BOOL gNoClip;
 BOOL gAimReticle;
 BOOL gShowWeapon;
 BOOL gShowPowerUps = TRUE;
+BOOL gLevelStats;
 BOOL gMouseAim;
 
 BOOL gMessageState = TRUE;
@@ -693,6 +694,7 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetBool( scripthandle, "Options","Doppler",&gDoppler);
    SCRIPT_GetBool( scripthandle, "Options","ShowWeapon",&gShowWeapon);
    SCRIPT_GetBool( scripthandle, "Options","ShowPowerUps",&gShowPowerUps);
+   SCRIPT_GetBool( scripthandle, "Options","LevelStats",&gLevelStats);
    SCRIPT_GetBool( scripthandle, "Options","VanillaMode",&gVanilla);
 
    }
@@ -743,6 +745,7 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutBoolean( scripthandle, "Options","Doppler", gDoppler);
    SCRIPT_PutBoolean( scripthandle, "Options","ShowWeapon", gShowWeapon);
    SCRIPT_PutBoolean( scripthandle, "Options","ShowPowerUps", gShowPowerUps);
+   SCRIPT_PutBoolean( scripthandle, "Options","LevelStats", gLevelStats);
    SCRIPT_PutBoolean( scripthandle, "Options","VanillaMode", gVanilla);
 
    CONFIG_WriteKeys( scripthandle );

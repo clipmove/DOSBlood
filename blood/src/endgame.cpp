@@ -252,7 +252,7 @@ void CSecretMgr::Draw(void)
     sprintf(buffer, "%2d", at4);
     viewDrawText(1, buffer, 160, 70, -128, 0, 0, 1);
     viewDrawText(1, "OF", 190, 70, -128, 0, 0, 1);
-    sprintf(buffer, "%2d", at0);
+    sprintf(buffer, "%2d", VanillaMode() ? at0 : ClipLow(at4, at0));
     viewDrawText(1, buffer, 220, 70, -128, 0, 0, 1);
     if (at8 > 0)
         viewDrawText(1, "YOU FOUND A SUPER SECRET!", 160, 100, -128, 2, 1, 1);
