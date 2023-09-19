@@ -46,6 +46,7 @@ extern int32 gViewSize;
 extern controltype ControllerType;
 extern BOOL gFollowMap;
 extern BOOL gShowWeapon;
+extern BOOL gShowPowerUps;
 extern int32 gMouseAiming;
 extern BOOL gMouseAim;
 extern BOOL gMouseAimingFlipped;

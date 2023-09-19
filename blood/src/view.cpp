@@ -1165,6 +1165,11 @@ void DrawStatMaskedSprite(int nTile, int x, int y, int nShade = 0, int nPalette 
     rotatesprite(x<<16, y<<16, 65536, 0, nTile, nShade, nPalette, nStat | 10, 0, 0, xdim-1, ydim-1);
 }
 
+void DrawStatMaskedSpriteScale(int nTile, int x, int y, int nShade = 0, int nPalette = 0, uint nStat = 0, int nScale = 65536)
+{
+    rotatesprite(x<<16, y<<16, nScale, 0, nTile, nShade, nPalette, nStat | 10, 0, 0, xdim-1, ydim-1);
+}
+
 void DrawStatNumber(char *pFormat, int nNumber, int nTile, int x, int y, int nShade = 0, int nPalette = 0)
 {
     char tempbuf[80];
@@ -1186,6 +1191,67 @@ void TileHGauge(int nTile, int x, int y, int nMult, int nDiv)
 int gPackIcons[6] = {
     2569, 2564, 2566, 2568, 2560, 829
 };
+
+#define nPowerUps 11
+
+struct POWERUPDISPLAY
+{
+    int nTile;
+    int nScaleRatio;
+    int yOffset;
+};
+
+const POWERUPDISPLAY gPowerups[nPowerUps] = {
+    {896, 0.4f * 65536, 0}, // invisibility
+    {2428, 0.4f * 65536, 5}, // reflects enemy shots
+    {825, 0.3f * 65536, 9}, // invulnerability
+    {829, 0.25f * 65536, 5}, // guns akimbo
+    {768, 0.4f * 65536, 9}, // shadow cloak
+
+    {783, 0.3f * 65536, 7}, // feather fall
+    {831, 0.4f * 65536, 4}, // gas mask
+    {853, 0.5f * 65536, 5}, // doppelganger
+    {837, 0.3f * 65536, 9}, // asbestos armor
+    {842, 0.4f * 65536, 4}, // grow shroom
+    {843, 0.4f * 65536, 4}, // shrink shroom
+};
+
+void viewDrawPowerUps(PLAYER* pPlayer)
+{
+    int nPowerActive[nPowerUps];
+    nPowerActive[0] = pPlayer->at202[13]; // invisibility
+    nPowerActive[1] = pPlayer->at202[24]; // reflects enemy shots
+    nPowerActive[2] = pPlayer->at202[14]; // invulnerability
+    nPowerActive[3] = pPlayer->at202[17]; // guns akimbo
+    nPowerActive[4] = pPlayer->at202[26]; // shadow cloak
+
+    // not in official maps
+    nPowerActive[5] = pPlayer->at202[12]; // feather fall
+    nPowerActive[6] = pPlayer->at202[19]; // gas mask
+    nPowerActive[7] = pPlayer->at202[23]; // doppelganger
+    nPowerActive[8] = pPlayer->at202[39]; // asbestos armor
+    nPowerActive[9] = pPlayer->at202[29]; // grow shroom
+    nPowerActive[10] = pPlayer->at202[30]; // shrink shroom
+
+    const int nWarning = 5;
+    const int x = 15;
+    int y = 50;
+    for (int i = 0; i < nPowerUps; i++)
+    {
+        if (nPowerActive[i])
+        {
+            const int nTime = nPowerActive[i] / 100;
+            if (nTime > nWarning || ((int)totalclock & 32))
+            {
+                DrawStatMaskedSpriteScale(gPowerups[i].nTile, x, y + gPowerups[i].yOffset, 0, 0, 256, gPowerups[i].nScaleRatio);
+            }
+
+            sprintf(buffer, "%02d", nTime);
+            viewDrawText(3, buffer, x+9, y-3, 0, nTime > nWarning ? 0 : 2, 0, 0);
+            y += 15;
+        }
+    }
+}
 
 void tenPlayerDebugInfo(char *a1, int pid);
 
@@ -1394,6 +1460,10 @@ static void UpdateStatusBar(int arg)
         {
             TileHGauge(2260, 124, 175, pPlayer->at1ba, 65536);
         }
+    }
+    if (gViewSize <= 2 && gShowPowerUps)
+    {
+        viewDrawPowerUps(pPlayer);
     }
     if (gGameOptions.nGameType >= GAMETYPE_1 || int_28E3D4 == 4)
     {

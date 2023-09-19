@@ -11,6 +11,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 
 ### Features
 * Add key icons to small HUD size
+* NBlood-style power-ups HUD display
 * Improved aim vector response by 33ms
 * Vanilla mode option to restore original enemy bugs
 
