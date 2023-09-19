@@ -451,6 +451,8 @@ void StartLevel(GAMEOPTIONS *gameOptions)
     EndLevel();
     gStartNewGame = 0;
     ready2send = 0;
+    gMusicPrevLoadedEpisode = gGameOptions.nEpisode;
+    gMusicPrevLoadedLevel = gGameOptions.nLevel;
     if (gDemo.RecordStatus() && gGameStarted)
         gDemo.Close();
     netWaitForEveryone(0);

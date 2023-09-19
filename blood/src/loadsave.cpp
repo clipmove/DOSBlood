@@ -28,6 +28,7 @@
 #include "config.h"
 #include "db.h"
 #include "debug4g.h"
+#include "demo.h"
 #include "error.h"
 #include "gameutil.h"
 #include "globals.h"
@@ -48,6 +49,9 @@
 GAMEOPTIONS gSaveGameOptions[10];
 byte *gSaveGamePic[10];
 unsigned int gSavedOffset;
+
+int gMusicPrevLoadedEpisode = -1;
+int gMusicPrevLoadedLevel = -1;
 
 unsigned int int_27AA38 = 0;
 unsigned int int_27AA3C = 0;
@@ -97,6 +101,11 @@ void PreloadCache(void);
 
 void LoadSave::LoadGame(char *pzFile)
 {
+    const char bDemoWasPlayed = gDemo.PlaybackStatus();
+    const char bGameWasStarted = gGameStarted;
+    if (gDemo.PlaybackStatus() || gDemo.RecordStatus())
+        gDemo.Close();
+
     sndKillAllSounds();
     sfxKillAllSounds();
     ambKillAll();
@@ -167,7 +176,11 @@ void LoadSave::LoadGame(char *pzFile)
         Redbook.func_82BB4();
     }
     else
+    {
+        if (!VanillaMode() && !bDemoWasPlayed && bGameWasStarted && (gMusicPrevLoadedEpisode == gGameOptions.nEpisode) && (gMusicPrevLoadedLevel == gGameOptions.nLevel)) // don't restart track on load
+            return;
         sndPlaySong(gGameOptions.zLevelSong, 1);
+    }
 }
 
 void LoadSave::SaveGame(char *pzFile)

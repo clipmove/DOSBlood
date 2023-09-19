@@ -24,6 +24,9 @@ extern GAMEOPTIONS gSaveGameOptions[10];
 extern unsigned int gSavedOffset;
 extern byte *gSaveGamePic[10];
 
+extern int gMusicPrevLoadedEpisode;
+extern int gMusicPrevLoadedLevel;
+
 void UpdateSavedInfo(int);
 
 class LoadSave {
