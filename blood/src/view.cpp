@@ -933,7 +933,11 @@ void viewClearInterpolations(void)
 void viewAddInterpolation(void *data, INTERPOLATE_TYPE type)
 {
     if (nInterpolations == 4096)
-        ThrowError(1328)("Too many interpolations");
+    {
+        if (VanillaMode())
+            ThrowError(1328)("Too many interpolations");
+        return;
+    }
     INTERPOLATE *pInterpolate = &gInterpolation[nInterpolations++];
     pInterpolate->pointer = data;
     pInterpolate->type = type;
