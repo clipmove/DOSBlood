@@ -1305,6 +1305,29 @@ void viewDrawPowerUps(PLAYER* pPlayer)
     }
 }
 
+#if 0 // this currently doesn't work - if someone does get it working, remove this comment
+void viewDrawAimedPlayerName(PLAYER *pPlayer)
+{
+    if ((gGameOptions.nGameType == GAMETYPE_0) || !gShowPlayerNames || (pPlayer->at1ca.dx == 0 && pPlayer->at1ca.dy == 0))
+        return;
+
+    const int nDist = (gGameOptions.nGameType == GAMETYPE_1) ? 640 : 512; // set hitscan distance to 20/16 meters for co-op mode
+    const int hit = HitScan(pPlayer->pSprite, pPlayer->at67, pPlayer->at1ca.dx, pPlayer->at1ca.dy, pPlayer->at1ca.dz, CLIPMASK0, nDist);
+    if (hit == 3)
+    {
+        SPRITE* pSprite = &sprite[gHitInfo.hitsprite];
+        if (IsPlayerSprite(pSprite))
+        {
+            char nPlayer = pSprite->type-kDudePlayer1;
+            if (powerupCheck(&gPlayer[nPlayer], 23) && (gPlayer->at2ea != pPlayer->at2ea)) // if doppleganger powerup is active, set player id as viewer
+                nPlayer = pPlayer->pSprite->type-kDudePlayer1;
+            const int nPalette = (gGameOptions.nGameType == GAMETYPE_3) ? (10 + (gPlayer[nPlayer].at2ea<<1)) : 11;
+            viewDrawText(4, gProfile[nPlayer].name, 160, 125, -128, nPalette, 1, 1);
+        }
+    }
+}
+#endif
+
 void tenPlayerDebugInfo(char *a1, int pid);
 
 void viewDrawPack(PLAYER *pPlayer, int x, int y)
@@ -3209,6 +3232,9 @@ void viewDrawScreen(void)
         sprintf(buffer, "pos=%d,%d,%d", gView->pSprite->x, gView->pSprite->y, gView->pSprite->z);
         printext256(fX-strlen(buffer)*4, fY, 31, -1, buffer, 1);
     }
+#if 0
+    viewDrawAimedPlayerName(gView);
+#endif
     if (gPaused)
     {
         viewDrawText(1, "PAUSED", 160, 10, 0, 0, 1, 0);
