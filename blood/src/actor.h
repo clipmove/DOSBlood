@@ -19,6 +19,7 @@
 
 #include "typedefs.h"
 #include "db.h"
+#include "fx.h"
 #include "gameutil.h"
 #include "misc.h"
 
@@ -106,6 +107,25 @@ struct EXPLOSION
     int at17;
 };
 
+struct VECTORDATA_at1d {
+    FX_ID at0;
+    FX_ID at1;
+    FX_ID at2;
+    int at3;
+};
+
+struct VECTORDATA {
+    DAMAGE_TYPE at0;
+    int at1; // damage
+    int at5;
+    int at9; // range
+    int atd;
+    int at11; // burn
+    int at15; // blood splats
+    int at19; // blood splat chance
+    VECTORDATA_at1d at1d[15];
+};
+
 enum {
     kExplode0 = 0,
     kExplodeMax = 8,
@@ -161,6 +181,7 @@ enum {
 extern AMMOITEMDATA gAmmoItemData[];
 extern WEAPONITEMDATA gWeaponItemData[];
 extern ITEMDATA gItemData[];
+extern VECTORDATA gVectorData[];
 
 extern SPRITEHIT gSpriteHit[kMaxXSprites];
 extern int gDudeDrag;

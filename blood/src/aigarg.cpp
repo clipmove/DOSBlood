@@ -21,6 +21,8 @@
 #include "debug4g.h"
 #include "db.h"
 #include "dude.h"
+#include "globals.h"
+#include "levels.h"
 #include "misc.h"
 #include "player.h"
 #include "seq.h"
@@ -73,12 +75,38 @@ AISTATE gargoyleDodgeDown = { 0, -1, 120, NULL, MoveDodgeDown, NULL, &gargoyleFC
 AISTATE gargoyleFDodgeDownRight = { 0, -1, 90, NULL, MoveDodgeDown, NULL, &gargoyleFChase };
 AISTATE gargoyleFDodgeDownLeft = { 0, -1, 90, NULL, MoveDodgeDown, NULL, &gargoyleFChase };
 
+inline void SlashFSeqCallbackFixed(SPRITE *pSprite, XSPRITE *pXSprite, SPRITE *pTarget)
+{
+    int tx = pXSprite->at20_0-pSprite->x;
+    int ty = pXSprite->at24_0-pSprite->y;
+    int nAngle = getangle(tx, ty);
+    int dx = Cos(nAngle)>>16;
+    int dy = Sin(nAngle)>>16;
+    int dz = pTarget->z-pSprite->z;
+    const int bakVecDist = gVectorData[kVectorSlash].at9;
+    if (pSprite->type == 207) // only increase slash distance by 150% for Cheogh
+        gVectorData[kVectorSlash].at9 += gVectorData[kVectorSlash].at9>>1;
+    actFireVector(pSprite, 0, 0, dx, dy, dz, kVectorSlash);
+    int r1 = Random(50);
+    int r2 = Random(50);
+    actFireVector(pSprite, 0, 0, dx+r2, dy-r1, dz, kVectorSlash);
+    r1 = Random(50);
+    r2 = Random(50);
+    actFireVector(pSprite, 0, 0, dx-r2, dy+r1, dz, kVectorSlash);
+    gVectorData[kVectorSlash].at9 = bakVecDist;
+}
+
 static void SlashFSeqCallback(int, int nXSprite)
 {
     XSPRITE *pXSprite = &xsprite[nXSprite];
     int nSprite = pXSprite->reference;
     SPRITE *pSprite = &sprite[nSprite];
     SPRITE *pTarget = &sprite[pXSprite->target];
+    if ((gGameOptions.nDifficulty >= 2) && !VanillaMode()) // use fixed calculation and increase vector distance
+    {
+        SlashFSeqCallbackFixed(pSprite, pXSprite, pTarget);
+        return;
+    }
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     DUDEINFO *pDudeInfoT = &dudeInfo[pTarget->type - kDudeBase];
     int height = (pSprite->yrepeat*pDudeInfo->atb)<<2;
@@ -149,7 +177,11 @@ static void BlastSSeqCallback(int, int nXSprite)
         int top, bottom;
         GetSpriteExtents(pSprite2, &top, &bottom);
         if (bottom<tz-tsr || top>tz+tsr)
+        {
+            if ((gGameOptions.nDifficulty >= 2) && IsDudeSprite(pSprite2) && !VanillaMode()) // use fixed calculation for missile projectile
+                aim.dz = divscale(pSprite2->z-pSprite->z, ClipHigh(nDist, 0x1800), 10);
             continue;
+        }
         int nDist2 = Dist3d(tx-x2,ty-y2,tz-z2);
         if (nDist2 >= nClosest)
             continue;
@@ -317,6 +349,16 @@ static void MoveDodgeDown(SPRITE *pSprite, XSPRITE *pXSprite)
     zvel[nSprite] = 0x44444;
 }
 
+inline int thinkChaseGetTargetHeight(SPRITE *pSprite, DUDEINFO *pDudeInfo, SPRITE *pTarget)
+{
+    if ((gGameOptions.nDifficulty < 2) || VanillaMode())
+        return 0;
+    DUDEINFO *pDudeInfoT = &dudeInfo[pTarget->type - kDudeBase];
+    int height = (pSprite->yrepeat*pDudeInfo->atb)<<2;
+    int height2 = (pTarget->yrepeat*pDudeInfoT->atb)<<2;
+    return height-height2;
+}
+
 static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
 {
     if (pXSprite->target == -1)
@@ -362,7 +404,8 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                 case 206:
                     if (nDist < 0x1800 && nDist > 0xc00 && klabs(nDeltaAngle) < 85)
                     {
-                        int hit = HitScan(pSprite, pSprite->z, dx, dy, 0, CLIPMASK1, 0);
+                        int dz = thinkChaseGetTargetHeight(pSprite, pDudeInfo, pTarget);
+                        int hit = HitScan(pSprite, pSprite->z, dx, dy, dz, CLIPMASK1, 0);
                         switch (hit)
                         {
                         case -1:
@@ -387,7 +430,8 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                     }
                     else if (nDist < 0x400 && klabs(nDeltaAngle) < 85)
                     {
-                        int hit = HitScan(pSprite, pSprite->z, dx, dy, 0, CLIPMASK1, 0);
+                        int dz = thinkChaseGetTargetHeight(pSprite, pDudeInfo, pTarget);
+                        int hit = HitScan(pSprite, pSprite->z, dx, dy, dz, CLIPMASK1, 0);
                         switch (hit)
                         {
                         case -1:
@@ -421,7 +465,8 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                 case 207:
                     if (nDist < 0x1800 && nDist > 0xc00 && klabs(nDeltaAngle) < 85)
                     {
-                        int hit = HitScan(pSprite, pSprite->z, dx, dy, 0, CLIPMASK1, 0);
+                        int dz = thinkChaseGetTargetHeight(pSprite, pDudeInfo, pTarget);
+                        int hit = HitScan(pSprite, pSprite->z, dx, dy, dz, CLIPMASK1, 0);
                         switch (hit)
                         {
                         case -1:
@@ -446,7 +491,8 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                     }
                     else if (nDist < 0x400 && klabs(nDeltaAngle) < 85)
                     {
-                        int hit = HitScan(pSprite, pSprite->z, dx, dy, 0, CLIPMASK1, 0);
+                        int dz = thinkChaseGetTargetHeight(pSprite, pDudeInfo, pTarget);
+                        int hit = HitScan(pSprite, pSprite->z, dx, dy, dz, CLIPMASK1, 0);
                         switch (hit)
                         {
                         case -1:
