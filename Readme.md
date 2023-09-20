@@ -23,6 +23,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix infinite burning enemies bug
 * Fix tiny Calebs using the wrong sprite
 * Fix prone tesla Cultists infinitely firing
+* Fix Beast state when leaving water sector
 * Fix inventory items resetting between levels
 * Allow cheat phrases to be said in multiplayer
 * Fix choking hands to run at a constant framerate

@@ -4467,6 +4467,12 @@ static void MoveDude(SPRITE *pSprite)
                 case 218:
                     actKillDude(pSprite->index, pSprite, kDamageFall, 1000<<4);
                     break;
+                case 251:
+                    if (VanillaMode())
+                        break;
+                    aiNewState(pSprite, pXSprite, &beastGoto);
+                    pSprite->flags |= 6;
+                    break;
                 }
             }
             break;
@@ -4537,6 +4543,14 @@ static void MoveDude(SPRITE *pSprite)
                 case 220:
                 case 239:
                     actKillDude(pSprite->index, pSprite, kDamageFall, 1000<<4);
+                    break;
+                case 251:
+                    if (VanillaMode())
+                        break;
+                    pXSprite->at2c_0 = 0;
+                    sfxPlay3DSound(pSprite, 720);
+                    aiNewState(pSprite, pXSprite, &beastSwimGoto);
+                    pSprite->flags &= ~6;
                     break;
                 }
             }
