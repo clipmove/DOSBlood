@@ -954,19 +954,24 @@ void viewAddInterpolation(void *data, INTERPOLATE_TYPE type)
 
 void CalcInterpolations(void)
 {
-    int i;
+    int i, value;
     INTERPOLATE *pInterpolate = gInterpolation;
     for (i = 0; i < nInterpolations; i++, pInterpolate++)
     {
+        value = pInterpolate->value;
         switch (pInterpolate->type)
         {
         case INTERPOLATE_TYPE_INT:
             pInterpolate->value2 = *((int*)pInterpolate->pointer);
-            *((int*)pInterpolate->pointer) = interpolate16(pInterpolate->value, *((int*)pInterpolate->pointer), gInterpolate);
+            if (pInterpolate->value2 == value)
+                continue;
+            *((int*)pInterpolate->pointer) = interpolate16(value, pInterpolate->value2, gInterpolate);
             break;
         case INTERPOLATE_TYPE_SHORT:
             pInterpolate->value2 = *((short*)pInterpolate->pointer);
-            *((short*)pInterpolate->pointer) = interpolate16(pInterpolate->value, *((short*)pInterpolate->pointer), gInterpolate);
+            if (pInterpolate->value2 == value)
+                continue;
+            *((short*)pInterpolate->pointer) = interpolate16(value, pInterpolate->value2, gInterpolate);
             break;
         }
     }
