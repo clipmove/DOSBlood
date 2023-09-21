@@ -1314,6 +1314,19 @@ void viewDrawPowerUps(PLAYER* pPlayer)
     }
 }
 
+void viewDrawMapTitle(void)
+{
+    if (CGameMenuMgr::m_bActive)
+        return;
+
+    int const kFadeStartTic = (int)(1.25f * 120.f);
+    int const kFadeEndTic = (int)(1.5f * 120.f);
+    if (gFrameClock > kFadeEndTic)
+        return;
+
+    viewDrawText(1, levelGetTitle(), 160, 50, gFrameClock > kFadeStartTic ? 26 : -128, 0, 1, 1);
+}
+
 #if 0 // this currently doesn't work - if someone does get it working, remove this comment
 void viewDrawAimedPlayerName(PLAYER *pPlayer)
 {
@@ -3241,6 +3254,7 @@ void viewDrawScreen(void)
         sprintf(buffer, "pos=%d,%d,%d", gView->pSprite->x, gView->pSprite->y, gView->pSprite->z);
         printext256(fX-strlen(buffer)*4, fY, 31, -1, buffer, 1);
     }
+    viewDrawMapTitle();
 #if 0
     viewDrawAimedPlayerName(gView);
 #endif
