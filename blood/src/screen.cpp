@@ -16,6 +16,7 @@
  */
 #include <string.h>
 #include "typedefs.h"
+#include "ahook.h"
 #include "build.h"
 #include "debug4g.h"
 #include "error.h"
@@ -252,10 +253,21 @@ void scrSetDac(void)
     DacInvalid = 0;
 }
 
+inline void initahook(void)
+{
+    static char bHooksApplied = 0;
+    if (bHooksApplied)
+        return;
+    bHooksApplied = 1;
+
+    mmxoverlay();
+}
+
 void scrInit(void)
 {
     tioPrint("Initializing engine");
     initengine();
+    initahook();
     curPalette = 0;
     curGamma = 0;
     tioPrint("Loading gamma correction table");
