@@ -10,6 +10,7 @@ Download can be found on [https://github.com/clipmove/DOSBlood/releases](https:/
 Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 
 ### Features
+* Field of view slider
 * Show map title on level start
 * Add key icons to small HUD size
 * Improved aim vector response by 33ms

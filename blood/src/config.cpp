@@ -88,6 +88,7 @@ int32 gMessageCount = 4;
 int32 gMessageTime = 5;
 int32 gViewSize = 1;
 int32 gDetail = 4;
+int32 gFov = 60;
 int32 gDifficulty = 2;
 int32 gSkill = 2;
 BOOL gDoppler = TRUE;
@@ -675,6 +676,7 @@ void CONFIG_ReadSetup( void )
       }
    
    SCRIPT_GetNumber( scripthandle, "Options","Detail",&gDetail);
+   SCRIPT_GetNumber( scripthandle, "Options","Fov",&gFov);
    SCRIPT_GetBool( scripthandle, "Options","MouseAim",&gMouseAim);
    SCRIPT_GetBool( scripthandle, "Options","AutoRun",&gAutoRun);
    SCRIPT_GetBool( scripthandle, "Options","Interpolation",&gViewInterpolate);
@@ -726,6 +728,7 @@ void CONFIG_WriteSetup( void )
 
    SCRIPT_PutNumber( scripthandle, "Controls","TurnSpeed", gTurnSpeed,false,false);
    SCRIPT_PutNumber( scripthandle, "Options","Detail", gDetail,false,false);
+   SCRIPT_PutNumber( scripthandle, "Options","Fov", gFov,false,false);
    SCRIPT_PutBoolean( scripthandle, "Options","MouseAim", gMouseAim);
    SCRIPT_PutBoolean( scripthandle, "Options","AutoRun", gAutoRun);
    SCRIPT_PutBoolean( scripthandle, "Options","Interpolation", gViewInterpolate);

@@ -61,6 +61,7 @@ extern int32 gMessageFont;
 extern int32 gMessageCount;
 extern int32 gMessageTime;
 extern int32 gDetail;
+extern int32 gFov;
 extern int32 gSkill;
 extern BOOL gViewInterpolate;
 extern BOOL gShowWeapon;

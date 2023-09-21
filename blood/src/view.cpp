@@ -53,6 +53,7 @@
 
 int gViewMode = 3;
 int gZoom = 1024;
+int gFovAspect = 65536;
 
 BOOL gPrediction = TRUE;
 
@@ -1713,6 +1714,15 @@ void viewResizeView(int size)
     viewUpdatePages();
 }
 
+void viewUpdateFov(void)
+{
+    static int gFovOld = 60;
+    if (gFovOld == gFov)
+        return;
+    gFovAspect = divscale16(gFov, 60);
+    setaspect(gFovAspect, yxaspect);
+}
+
 void UpdateFrame(void)
 {
     int x0, y0, x1, y1;
@@ -2820,6 +2830,7 @@ void viewDrawScreen(void)
     int arg = 0;
     int delta = ClipLow(gGameClock - lastUpdate, 0);
     lastUpdate = gGameClock;
+    viewUpdateFov();
     if (!gPaused && (!CGameMenuMgr::m_bActive || gGameOptions.nGameType != GAMETYPE_0))
     {
         gInterpolate = divscale16(gGameClock-gNetFifoClock+4, 4);
@@ -2955,7 +2966,7 @@ void viewDrawScreen(void)
                 nAng = 512-nAng;
             }
             int nScale = dmulscale32(Cos(nAng), 256000, Sin(nAng), 160000);
-            setaspect(nScale, yxaspect);
+            setaspect(gFovAspect, yxaspect);
         }
         else
         {
@@ -3195,7 +3206,7 @@ void viewDrawScreen(void)
             setaspect(65536, 54613);
             rotatesprite(280<<16, 35<<16, 53248, 512, 4077, v10, v14, 6, gViewX0, gViewY0, gViewX1, gViewY1);
             rotatesprite(280<<16, 35<<16, 53248, 0, 1683, v10, 0, 35, gViewX0, gViewY0, gViewX1, gViewY1);
-            setaspect(65536, divscale16(ydim*320, xdim*200));
+            setaspect(gFovAspect, divscale16(ydim*320, xdim*200));
         }
         if (powerupCheck(gView, 14) > 0)
         {

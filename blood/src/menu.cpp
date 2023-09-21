@@ -42,6 +42,7 @@ void SaveGameProcess(CGameMenuItemChain *);
 void SetDifficultyAndStart(CGameMenuItemChain *);
 void SetDetail(CGameMenuItemSlider *);
 void SetGamma(CGameMenuItemSlider *);
+void SetFov(CGameMenuItemSlider *);
 void SetMusicVol(CGameMenuItemSlider *);
 void SetSoundVol(CGameMenuItemSlider *);
 void SetCDVol(CGameMenuItemSlider *);
@@ -131,6 +132,7 @@ char *zDiffStrings[] =
 char zUserMapName[13];
 char *zEpisodeNames[6];
 char *zLevelNames[6][16];
+char zFov[] = "FOV (XXX):";
 
 CGameMenu menuMain;
 CGameMenu menuMainWithSave;
@@ -194,19 +196,20 @@ CGameMenuItemTitle itemOptionsTitle("OPTIONS", 1, 160, 20, 2038);
 CGameMenuItemChain itemOption1("CONTROLS...", 3, 0, 35, 320, 1, &menuControls, -1, NULL, 0);
 CGameMenuItemSlider sliderDetail("DETAIL:", 3, 66, 45, 180, gDetail, 0, 4, 1, SetDetail, -1, -1);
 CGameMenuItemSlider sliderGamma("GAMMA:", 3, 66, 55, 180, gGamma, 0, 15, 2, SetGamma, -1, -1);
-CGameMenuItemSlider sliderMusic("MUSIC:", 3, 66, 65, 180, MusicVolume, 0, 256, 48, SetMusicVol, -1, -1);
-CGameMenuItemSlider sliderSound("SOUND:", 3, 66, 75, 180, FXVolume, 0, 256, 48, SetSoundVol, -1, -1);
-CGameMenuItemSlider sliderCDAudio("CD AUDIO:", 3, 66, 85, 180, CDVolume, 0, 256, 48, SetCDVol, -1, -1);
-CGameMenuItemZBool boolDoppler("3D AUDIO:", 3, 66, 95, 180, gDoppler, SetDoppler, NULL, NULL);
-CGameMenuItemZBool boolCrosshair("CROSSHAIR:", 3, 66, 104, 180, gAimReticle, SetCrosshair, NULL, NULL);
-CGameMenuItemZBool boolShowWeapons("SHOW WEAPONS:", 3, 66, 113, 180, gShowWeapon, SetShowWeapons, NULL, NULL);
-CGameMenuItemZBool boolShowPowerUps("SHOW POWERUPS:", 3, 66, 122, 180, gShowPowerUps, SetShowPowerUps, NULL, NULL);
-CGameMenuItemZBool boolLevelStats("LEVEL STATS:", 3, 66, 131, 180, gLevelStats, SetLevelStats, NULL, NULL);
-CGameMenuItemZBool boolSlopeTilting("SLOPE TILTING:", 3, 66, 140, 180, gSlopeTilting, SetSlopeTilting, NULL, NULL);
-CGameMenuItemZBool boolViewBobbing("VIEW BOBBING:", 3, 66, 149, 180, gViewVBobbing, SetViewBobbing, NULL, NULL);
-CGameMenuItemZBool boolViewSwaying("VIEW SWAYING:", 3, 66, 158, 180, gViewHBobbing, SetViewSwaying, NULL, NULL);
-CGameMenuItemZBool boolVanillaMode("VANILLA MODE:", 3, 66, 167, 180, gViewHBobbing, SetVanillaMode, NULL, NULL);
-CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 176, 320, 1);
+CGameMenuItemSlider sliderFov(zFov, 3, 66, 65, 180, gFov, 40, 120, 1, SetFov, -1, -1);
+CGameMenuItemSlider sliderMusic("MUSIC:", 3, 66, 75, 180, MusicVolume, 0, 256, 48, SetMusicVol, -1, -1);
+CGameMenuItemSlider sliderSound("SOUND:", 3, 66, 85, 180, FXVolume, 0, 256, 48, SetSoundVol, -1, -1);
+CGameMenuItemSlider sliderCDAudio("CD AUDIO:", 3, 66, 95, 180, CDVolume, 0, 256, 48, SetCDVol, -1, -1);
+CGameMenuItemZBool boolDoppler("3D AUDIO:", 3, 66, 105, 180, gDoppler, SetDoppler, NULL, NULL);
+CGameMenuItemZBool boolCrosshair("CROSSHAIR:", 3, 66, 113, 180, gAimReticle, SetCrosshair, NULL, NULL);
+CGameMenuItemZBool boolShowWeapons("SHOW WEAPONS:", 3, 66, 121, 180, gShowWeapon, SetShowWeapons, NULL, NULL);
+CGameMenuItemZBool boolShowPowerUps("SHOW POWERUPS:", 3, 66, 129, 180, gShowPowerUps, SetShowPowerUps, NULL, NULL);
+CGameMenuItemZBool boolLevelStats("LEVEL STATS:", 3, 66, 137, 180, gLevelStats, SetLevelStats, NULL, NULL);
+CGameMenuItemZBool boolSlopeTilting("SLOPE TILTING:", 3, 66, 145, 180, gSlopeTilting, SetSlopeTilting, NULL, NULL);
+CGameMenuItemZBool boolViewBobbing("VIEW BOBBING:", 3, 66, 153, 180, gViewVBobbing, SetViewBobbing, NULL, NULL);
+CGameMenuItemZBool boolViewSwaying("VIEW SWAYING:", 3, 66, 161, 180, gViewHBobbing, SetViewSwaying, NULL, NULL);
+CGameMenuItemZBool boolVanillaMode("VANILLA MODE:", 3, 66, 169, 180, gViewHBobbing, SetVanillaMode, NULL, NULL);
+CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 177, 320, 1);
 CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 185, 320, 1, &menuParentalLock, -1, NULL, 0);
 
 CGameMenuItemTitle itemControlsTitle("CONTROLS", 1, 160, 20, 2038);
@@ -347,6 +350,7 @@ void SetupOptionsMenu(void)
 {
     sliderDetail.at24 = ClipRange(gDetail, sliderDetail.at28, sliderDetail.at2c);
     sliderGamma.at24 = ClipRange(gGamma, sliderGamma.at28, sliderGamma.at2c);
+    sliderFov.at24 = ClipRange(gFov, sliderFov.at28, sliderFov.at2c);
     sliderMusic.at24 = ClipRange(MusicVolume, sliderMusic.at28, sliderMusic.at2c);
     sliderSound.at24 = ClipRange(FXVolume, sliderSound.at28, sliderSound.at2c);
     sliderCDAudio.at24 = ClipRange(Redbook.GetVolume(), sliderCDAudio.at28, sliderCDAudio.at2c);
@@ -364,6 +368,7 @@ void SetupOptionsMenu(void)
     menuOptions.Add(&itemOption1, 1);
     menuOptions.Add(&sliderDetail, 0);
     menuOptions.Add(&sliderGamma, 0);
+    menuOptions.Add(&sliderFov, 0);
     menuOptions.Add(&sliderMusic, 0);
     menuOptions.Add(&sliderSound, 0);
     menuOptions.Add(&sliderCDAudio, 0);
@@ -379,6 +384,8 @@ void SetupOptionsMenu(void)
     menuOptions.Add(&itemVideoMode, 0);
     menuOptions.Add(&itemChainParentalLock, 0);
     menuOptions.Add(&itemBloodQAV, 0);
+
+    SetFov(NULL);
 }
 
 void SetupDifficultyMenu(void)
@@ -792,6 +799,13 @@ void SetGamma(CGameMenuItemSlider *pItem)
 {
     gGamma = pItem->at24;
     scrSetGamma(gGamma);
+}
+
+void SetFov(CGameMenuItemSlider *pItem)
+{
+    if (pItem)
+        gFov = pItem->at24;
+    sprintf(zFov, "FOV (%d):", gFov);
 }
 
 void SetMusicVol(CGameMenuItemSlider *pItem)
