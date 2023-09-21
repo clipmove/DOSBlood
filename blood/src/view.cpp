@@ -1422,7 +1422,7 @@ static void UpdateStatusBar(int arg)
     if (gViewSize == 1)
     {
         DrawStatSprite(2201, 34, 187, 16, nPalette);
-        if (pXSprite->health >= 16 || (gGameClock&16) || pXSprite->health == 0)
+        if (pXSprite->health >= (!VanillaMode() ? 16<<4 : 16) || (gGameClock&16) || pXSprite->health == 0)
         {
             DrawStatNumber("%3d", pXSprite->health>>4, 2190, 8, 183);
         }
@@ -1477,7 +1477,7 @@ static void UpdateStatusBar(int arg)
         viewDrawPack(pPlayer, 160, 200-tilesizy[2200]);
         DrawStatMaskedSprite(2200, 160, 172, 16, nPalette);
         DrawPackItemInStatusBar(pPlayer, 265, 186, 260, 172);
-        if (pXSprite->health >= 16 || (gGameClock&16) || pXSprite->health == 0)
+        if (pXSprite->health >= (!VanillaMode() ? 16<<4 : 16) || (gGameClock&16) || pXSprite->health == 0)
         {
             DrawStatNumber("%3d", pXSprite->health>>4, 2190, 86, 183);
         }

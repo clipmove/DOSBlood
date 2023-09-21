@@ -15,6 +15,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Improved aim vector response by 33ms
 * Vanilla mode option to restore original enemy bugs
 * NBlood-style power-ups and level stats HUD display
+* Restore broken blinking state for health point counter
 
 ### Fixes
 * Fix game difficulty inverting on loading save
