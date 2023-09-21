@@ -16,6 +16,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Vanilla mode option to restore original enemy bugs
 * NBlood-style power-ups and level stats HUD display
 * Restore broken blinking state for health point counter
+* Don't restart midi track when loading save for current level
 
 ### Fixes
 * Fix game difficulty inverting on loading save
