@@ -602,6 +602,8 @@ void StartLevel(GAMEOPTIONS *gameOptions)
     viewResizeView(gViewSize);
     if (gGameOptions.nGameType == GAMETYPE_3)
         gGameMessageMgr.SetCoordinates(gViewX0S+1,gViewY0S+15);
+    if (!VanillaMode())
+        viewClearInterpolations();
     netWaitForEveryone(0);
     gGameClock = 0;
     gPaused = 0;

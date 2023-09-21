@@ -20,6 +20,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix game difficulty inverting on loading save
 * Fix E4M8 cutscene playing on E4M1 start
 * Initializes gSpriteHit on XSprite creation
+* Clear interpolation queue on new level
 * Fix Cerberus spinning on lava
 * Fix infinite burning enemies bug
 * Fix tiny Calebs using the wrong sprite
