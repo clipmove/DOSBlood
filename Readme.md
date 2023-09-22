@@ -48,10 +48,10 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * This is only for retail English version 1.21 (One Unit Whole Blood).
 * For network, all other players must be using the same DOSBlood build else it will desync!
 
-<details><summary><h3 dir="auto">Build instructions</h3></summary>
+### Build instructions
 Watcom 10.6 and TASM 3.2 are required to build
 
-1) Build helix32 and qtools (e.g. `cd helix32` and then `wmake`)
-2) Build blood (e.g. `cd blood` and then `wmake`)</details>
+1) Build helix32, qtools and build (e.g. `cd helix32` and then `wmake`)
+2) Build blood (e.g. `cd blood` and then `wmake`)
 
 Special thanks to nukeykt, NY00123, Hendricks266 and sirlemonhead

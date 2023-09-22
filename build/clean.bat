@@ -1,0 +1,10 @@
+@echo off
+del .\re\*.obj
+del .\re\*.lib
+del .\re\*.err
+del .\re\*.bak
+del .\orig\*.bak
+del .\orig\*.lib
+del mmulti.obj
+del engine.lib
+del .\*.bak

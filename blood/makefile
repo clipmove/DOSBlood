@@ -6,7 +6,6 @@ CPPFLAGS = /5r /d1 /s /orti /oe=3 /i=..\qtools\include;..\helix32;..\audiolib;..
 TENFLAGS = /4r /d1 /s /orti /oe=3 /i=..\qtools\include;..\audiolib;..\mact;..\ten\incl
 CFLAGS = /5r /d2 /orti
 AFLAGS = -ml
-WFLAGS = /d1
 
 .h: $(SRC_DIR)
 .cpp: $(SRC_DIR)
@@ -92,7 +91,7 @@ choke.obj
 all : blood.exe .symbolic
 	@%null
 
-blood.exe: $(OBJS) tenblood.obj ahook.obj
+blood.exe: $(OBJS) tenblood.obj
 	%make blood.lnk
 	wlink @blood.lnk
 
@@ -105,7 +104,6 @@ blood.lnk: makefile
 	%append $^@ name blood
 	%append $^@ library ..\qtools\qtools.lib
 	%append $^@ library ..\helix32\helix.lib
-	%append $^@ file $(OBJ_DIR)\ahook.obj
 	%append $^@ library ..\build\engine.lib
 	%append $^@ library ..\mact\mact386.lib
 	%append $^@ library ..\audiolib\audio_wf.lib
@@ -127,9 +125,6 @@ blood.lnk: makefile
 
 .asm.obj:
     tasm $(AFLAGS) $[*.asm $(OBJ_DIR)\$^&
-
-ahook.obj: $(SRC_DIR)\ahook.asm
-    wasm $(WFLAGS) $(SRC_DIR)\ahook.asm /fo=$(OBJ_DIR)\ahook.obj
 
 tenblood.obj: $(SRC_DIR)\tenblood.cpp
     wpp386 $(TENFLAGS) $(SRC_DIR)\tenblood /fo=$(OBJ_DIR)\tenblood.obj
