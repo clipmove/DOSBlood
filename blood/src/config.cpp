@@ -70,6 +70,7 @@ BOOL gViewVBobbing = TRUE;
 BOOL gFollowMap = TRUE;
 BOOL gAutoAim = TRUE;
 BOOL gAutoRun = TRUE;
+BOOL gCenterHoriz = FALSE;
 BOOL gSlopeTilting = TRUE;
 BOOL gOverlayMap;
 BOOL gRotateMap;
@@ -686,6 +687,7 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetBool( scripthandle, "Options","OverlayMap",&gOverlayMap);
    SCRIPT_GetBool( scripthandle, "Options","RotateMap",&gRotateMap);
    SCRIPT_GetBool( scripthandle, "Options","AimReticle",&gAimReticle);
+   SCRIPT_GetBool( scripthandle, "Options","CenterHoriz",&gCenterHoriz);
    SCRIPT_GetBool( scripthandle, "Options","SlopeTilting",&gSlopeTilting);
    SCRIPT_GetBool( scripthandle, "Options","MessageState",&gMessageState);
    SCRIPT_GetNumber( scripthandle, "Options","MessageCount",&gMessageCount);
@@ -738,6 +740,7 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutBoolean( scripthandle, "Options","OverlayMap", gOverlayMap);
    SCRIPT_PutBoolean( scripthandle, "Options","RotateMap", gRotateMap);
    SCRIPT_PutBoolean( scripthandle, "Options","AimReticle", gAimReticle);
+   SCRIPT_PutBoolean( scripthandle, "Options","CenterHoriz", gCenterHoriz);
    SCRIPT_PutBoolean( scripthandle, "Options","SlopeTilting", gSlopeTilting);
    SCRIPT_PutBoolean( scripthandle, "Options","MessageState", gMessageState);
    SCRIPT_PutNumber( scripthandle, "Options","MessageCount", gMessageCount,false,false);

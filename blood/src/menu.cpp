@@ -51,6 +51,7 @@ void SetCrosshair(CGameMenuItemZBool *);
 void SetShowWeapons(CGameMenuItemZBool *);
 void SetShowPowerUps(CGameMenuItemZBool *);
 void SetLevelStats(CGameMenuItemZBool *);
+void SetCenterHorizon(CGameMenuItemZBool *);
 void SetSlopeTilting(CGameMenuItemZBool *);
 void SetViewBobbing(CGameMenuItemZBool *);
 void SetViewSwaying(CGameMenuItemZBool *);
@@ -201,16 +202,17 @@ CGameMenuItemSlider sliderMusic("MUSIC:", 3, 66, 75, 180, MusicVolume, 0, 256, 4
 CGameMenuItemSlider sliderSound("SOUND:", 3, 66, 85, 180, FXVolume, 0, 256, 48, SetSoundVol, -1, -1);
 CGameMenuItemSlider sliderCDAudio("CD AUDIO:", 3, 66, 95, 180, CDVolume, 0, 256, 48, SetCDVol, -1, -1);
 CGameMenuItemZBool boolDoppler("3D AUDIO:", 3, 66, 105, 180, gDoppler, SetDoppler, NULL, NULL);
-CGameMenuItemZBool boolCrosshair("CROSSHAIR:", 3, 66, 113, 180, gAimReticle, SetCrosshair, NULL, NULL);
-CGameMenuItemZBool boolShowWeapons("SHOW WEAPONS:", 3, 66, 121, 180, gShowWeapon, SetShowWeapons, NULL, NULL);
-CGameMenuItemZBool boolShowPowerUps("SHOW POWERUPS:", 3, 66, 129, 180, gShowPowerUps, SetShowPowerUps, NULL, NULL);
-CGameMenuItemZBool boolLevelStats("LEVEL STATS:", 3, 66, 137, 180, gLevelStats, SetLevelStats, NULL, NULL);
-CGameMenuItemZBool boolSlopeTilting("SLOPE TILTING:", 3, 66, 145, 180, gSlopeTilting, SetSlopeTilting, NULL, NULL);
-CGameMenuItemZBool boolViewBobbing("VIEW BOBBING:", 3, 66, 153, 180, gViewVBobbing, SetViewBobbing, NULL, NULL);
+CGameMenuItemZBool boolCrosshair("CROSSHAIR:", 3, 66, 112, 180, gAimReticle, SetCrosshair, NULL, NULL);
+CGameMenuItemZBool boolShowWeapons("SHOW WEAPONS:", 3, 66, 119, 180, gShowWeapon, SetShowWeapons, NULL, NULL);
+CGameMenuItemZBool boolShowPowerUps("SHOW POWERUPS:", 3, 66, 126, 180, gShowPowerUps, SetShowPowerUps, NULL, NULL);
+CGameMenuItemZBool boolLevelStats("LEVEL STATS:", 3, 66, 133, 180, gLevelStats, SetLevelStats, NULL, NULL);
+CGameMenuItemZBool boolCenterHorizon("CENTER HORIZON LINE:", 3, 66, 140, 180, gCenterHoriz, SetCenterHorizon, NULL, NULL);
+CGameMenuItemZBool boolSlopeTilting("SLOPE TILTING:", 3, 66, 147, 180, gSlopeTilting, SetSlopeTilting, NULL, NULL);
+CGameMenuItemZBool boolViewBobbing("VIEW BOBBING:", 3, 66, 154, 180, gViewVBobbing, SetViewBobbing, NULL, NULL);
 CGameMenuItemZBool boolViewSwaying("VIEW SWAYING:", 3, 66, 161, 180, gViewHBobbing, SetViewSwaying, NULL, NULL);
-CGameMenuItemZBool boolVanillaMode("VANILLA MODE:", 3, 66, 169, 180, gViewHBobbing, SetVanillaMode, NULL, NULL);
-CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 177, 320, 1);
-CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 185, 320, 1, &menuParentalLock, -1, NULL, 0);
+CGameMenuItemZBool boolVanillaMode("VANILLA MODE:", 3, 66, 168, 180, gViewHBobbing, SetVanillaMode, NULL, NULL);
+CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 178, 320, 1);
+CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 187, 320, 1, &menuParentalLock, -1, NULL, 0);
 
 CGameMenuItemTitle itemControlsTitle("CONTROLS", 1, 160, 20, 2038);
 CGameMenuItemSlider sliderMouseSpeed("Mouse Sensitivity:", 1, 10, 70, 300, gMouseSensitivity, 0, 0x20000, 0x1000, SetMouseSensitivity, -1,-1);
@@ -359,6 +361,7 @@ void SetupOptionsMenu(void)
     boolShowWeapons.at20 = gShowWeapon;
     boolShowPowerUps.at20 = gShowPowerUps;
     boolLevelStats.at20 = gLevelStats;
+    boolCenterHorizon.at20 = gCenterHoriz;
     boolSlopeTilting.at20 = gSlopeTilting;
     boolViewBobbing.at20 = gViewVBobbing;
     boolViewSwaying.at20 = gViewHBobbing;
@@ -377,6 +380,7 @@ void SetupOptionsMenu(void)
     menuOptions.Add(&boolShowWeapons, 0);
     menuOptions.Add(&boolShowPowerUps, 0);
     menuOptions.Add(&boolLevelStats, 0);
+    menuOptions.Add(&boolCenterHorizon, 0);
     menuOptions.Add(&boolSlopeTilting, 0);
     menuOptions.Add(&boolViewBobbing, 0);
     menuOptions.Add(&boolViewSwaying, 0);
@@ -768,6 +772,11 @@ void SetShowPowerUps(CGameMenuItemZBool *pItem)
 void SetLevelStats(CGameMenuItemZBool *pItem)
 {
     gLevelStats = pItem->at20;
+}
+
+void SetCenterHorizon(CGameMenuItemZBool *pItem)
+{
+    gCenterHoriz = pItem->at20;
 }
 
 void SetSlopeTilting(CGameMenuItemZBool *pItem)

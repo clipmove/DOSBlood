@@ -67,6 +67,7 @@ extern BOOL gViewInterpolate;
 extern BOOL gShowWeapon;
 extern BOOL gViewHBobbing;
 extern BOOL gViewVBobbing;
+extern BOOL gCenterHoriz;
 extern BOOL gSlopeTilting;
 extern BOOL gOverlayMap;
 extern char gzAdultPassword[12];

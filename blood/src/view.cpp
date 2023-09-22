@@ -2828,6 +2828,7 @@ void viewDrawScreen(void)
 {
     static int lastUpdate;
     int arg = 0;
+    const int defaultHoriz = gCenterHoriz ? 100 : 90;
     int delta = ClipLow(gGameClock - lastUpdate, 0);
     lastUpdate = gGameClock;
     viewUpdateFov();
@@ -3035,8 +3036,8 @@ void viewDrawScreen(void)
                     vd0 = vc8+(8<<4);
                 }
                 v54 = ClipRange(v54, -200, 200);
-                DrawMirrors(vd8, vd4, vd0, v50, 90 + v54);
-                drawrooms(vd8, vd4, vd0, v50, 90 + v54, vcc);
+                DrawMirrors(vd8, vd4, vd0, v50, defaultHoriz + v54);
+                drawrooms(vd8, vd4, vd0, v50, defaultHoriz + v54, vcc);
                 memcpy(otherMirrorGotpic, gotpic+510, 2);
                 memcpy(gotpic+510, bakMirrorGotpic, 2);
                 viewProcessSprites(vd8, vd4, vd0);
@@ -3098,7 +3099,7 @@ void viewDrawScreen(void)
             cZ = vfc+(8<<4);
         }
         va0 = ClipRange(va0, -200, 200);
-        DrawMirrors(cX, cY, cZ, cA, 90 + va0 + deliriumPitch);
+        DrawMirrors(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitch);
         ushort bakCstat = gView->pSprite->cstat;
         if (gViewPos == VIEWPOS_0)
         {
@@ -3108,7 +3109,7 @@ void viewDrawScreen(void)
         {
             gView->pSprite->cstat |= 514;
         }
-        drawrooms(cX, cY, cZ, cA, 90 + va0 + deliriumPitch, nSectnum);
+        drawrooms(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitch, nSectnum);
         viewProcessSprites(cX, cY, cZ);
         func_5571C(TRUE);
         drawmasks();
@@ -3144,7 +3145,7 @@ void viewDrawScreen(void)
         if (gWeather.GetCount() > 0 || v8)
         {
             short vsi = gWeather.GetCount();
-            gWeather.Draw(cX, cY, cZ, cA, 90 + va0 + deliriumPitch, vsi);
+            gWeather.Draw(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitch, vsi);
             if (v8)
             {
                 gWeather.SetCount(vsi+delta*8);
@@ -3159,7 +3160,7 @@ void viewDrawScreen(void)
             if (gAimReticle)
             {
                 cX = 160;
-                cY = 90;
+                cY = defaultHoriz;
                 rotatesprite(cX<<16, cY<<16, 65536, 0, 2319, 0, 0, 2, gViewX0, gViewY0, gViewX1, gViewY1);
             }
             cX = 160+(v4c>>8);
