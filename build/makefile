@@ -1,10 +1,17 @@
+#Comment to use original A.ASM and disable pentium overlays
+!define USE_PENTIUM_ASM
+
 SRC_DIR=.\re
 OBJ_DIR=$(SRC_DIR)
 
+!ifdef USE_PENTIUM_ASM
 #CFLAGSFAST is untested - use at your own risk
-#CFLAGSFAST = /omaxtnri /ol+ /oe=32 /5r /zq /zc -DLIBVER_BUILDREV=19961006 -D__USE_MMX__
-#CFLAGSORIG = /4r /s /or -DLIBVER_BUILDREV=19961006
-CFLAGS = /5r /s /orti -DLIBVER_BUILDREV=19961006 -D__PENTIUM_ASM__
+#CFLAGSFAST = /omaxtnri /ol+ /oe=32 /5r /zq /zc /D__PENTIUM_ASM__
+CFLAGS = /5r /s /orti /D__PENTIUM_ASM__
+!else
+#Original flags
+CFLAGS = /4r /s /or
+!endif
 
 .h: $(SRC_DIR)
 .c: $(SRC_DIR)
@@ -16,17 +23,25 @@ a.obj &
 engine.obj &
 cache1d.obj
 
-all : engine.lib .symbolic
+all : engine.lib mmulti.obj .symbolic
 	@%null
 
-engine.lib: $(OBJS) mmulti.obj
-	wlib engine.lib -+$(OBJ_DIR)\a.obj -+$(OBJ_DIR)\engine.obj -+$(OBJ_DIR)\cache1d.obj
+engine.lib: $(OBJS)
+	wlib -n engine.lib -+$(OBJ_DIR)\a.obj -+$(OBJ_DIR)\engine.obj -+$(OBJ_DIR)\cache1d.obj
 
-.asm.obj:
-    wasm $[* /fo=$(OBJ_DIR)\$^&
+!ifdef USE_PENTIUM_ASM
+a.obj: $(SRC_DIR)\ammx.asm
+    wasm $(SRC_DIR)\ammx.asm /fo=$(OBJ_DIR)\a.obj
+!else
+a.obj: $(SRC_DIR)\a.asm
+    masm /DLIBVER_BUILDREV=19960501 $(SRC_DIR)\a.asm $(OBJ_DIR)\a.obj;
+!endif
 
-.c.obj:
-    wcc386 $(CFLAGS) $[* /fo=$(OBJ_DIR)\$^&
+engine.obj: $(SRC_DIR)\engine.c
+    wcc386 $(CFLAGS) $(SRC_DIR)\engine.c /DLIBVER_BUILDREV=19961006 /fo=$(OBJ_DIR)\engine.obj
+
+cache1d.obj: $(SRC_DIR)\cache1d.c
+    wcc386 $(CFLAGS) $(SRC_DIR)\cache1d.c /DLIBVER_BUILDREV=19961013 /fo=$(OBJ_DIR)\cache1d.obj
 
 mmulti.obj: $(SRC_DIR)\mmulti.c
-    wcc386 $(CFLAGS) $(SRC_DIR)\mmulti.c /fo=mmulti.obj
+    wcc386 $(CFLAGS) $(SRC_DIR)\mmulti.c /DLIBVER_BUILDREV=19961213 /fo=mmulti.obj
