@@ -11,6 +11,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 
 ### Features
 * Field of view slider
+* Center horizon line option
 * Show map title on level start
 * Add key icons to small HUD size
 * Improved aim vector response by 33ms
