@@ -1,7 +1,7 @@
 # DOSBlood
-DOSBlood is a fork of the [Blood reconstruction by nukeykt](https://github.com/nukeykt/Blood-RE)
+DOSBlood is a (inactive) fork of the [Blood reconstruction by nukeykt](https://github.com/nukeykt/Blood-RE)
 
-DOSBlood's goal is to provide quality-of-life features while retaining demo compatibility
+DOSBlood's provides quality-of-life features while retaining Blood 1.21 demo compatibility
 
 ### Downloads
 Download can be found on [https://github.com/clipmove/DOSBlood/releases](https://github.com/clipmove/DOSBlood/releases)
@@ -46,13 +46,15 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 ### Notes
 * You must already have an installed copy of Blood.
 * Remember to keep a backup of your original executable!
-* This is only for retail English version 1.21 (One Unit Whole Blood).
+* This is only for retail English version 1.21 (One Unit Whole Blood)
 * For network, all other players must be using the same DOSBlood build else it will desync!
 
 ### Build instructions
-Watcom 10.6 and TASM 3.2 are required to build
+Watcom 10.6, MASM 5.10 and TASM 3.2 are required to build
 
 1) Build helix32, qtools and build (e.g. `cd helix32` and then `wmake`)
 2) Build blood (e.g. `cd blood` and then `wmake`)
+   
+Note: The Build Engine (by Ken Silverman) code has been effortlessly recreated by the [gamesrc-ver-recreation project](https://bitbucket.org/gamesrc-ver-recreation/build/src/master/), and compiles close enough that DOSBlood can playback 11 hours of demo files without desyncronizing. If you prefer to use the original objects file, run `clean.bat` and then `origlib.bat` in the build directory
 
 Special thanks to nukeykt, NY00123, Hendricks266 and sirlemonhead
