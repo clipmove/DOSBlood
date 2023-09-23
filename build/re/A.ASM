@@ -2372,7 +2372,7 @@ pentium:
 ;|                    PENTIUM II Overlays                       |
 ;+--------------------------------------------------------------+
 pentiumii:
-		;Hline overlay (MMX doens't help)
+		;Hline overlay (MMX doesn't help)
 	mov byte ptr [sethlinesizes_], 0xe9
 	mov dword ptr [sethlinesizes_+1], (offset prosethlinesizes_)-(offset sethlinesizes_)-5
 	mov byte ptr [setpalookupaddress_], 0xe9
@@ -2399,7 +2399,7 @@ pentiummmx:
 ;|                    PENTIUM PRO Overlays                      |
 ;+--------------------------------------------------------------+
 pentiumpro:
-		;Hline overlay (MMX doens't help)
+		;Hline overlay (MMX doesn't help)
 	mov byte ptr [sethlinesizes_], 0xe9
 	mov dword ptr [sethlinesizes_+1], (offset prosethlinesizes_)-(offset sethlinesizes_)-5
 	mov byte ptr [setpalookupaddress_], 0xe9

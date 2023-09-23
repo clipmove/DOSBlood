@@ -2,8 +2,8 @@ SRC_DIR=.\re
 OBJ_DIR=$(SRC_DIR)
 
 #CFLAGSFAST is untested - use at your own risk
-#CFLAGSFAST = /omaxtnri /ol+ /oe=32 /5r /zq /zc -DLIBVER_BUILDREV=19961012 -D__USE_MMX__
-CFLAGS = /5r /s /orti -DLIBVER_BUILDREV=19961012 -D__USE_MMX__
+#CFLAGSFAST = /omaxtnri /ol+ /oe=32 /5r /zq /zc -DLIBVER_BUILDREV=19961012 -D__PENTIUM_ASM__
+CFLAGS = /5r /s /orti -DLIBVER_BUILDREV=19961012 -D__PENTIUM_ASM__
 
 .h: $(SRC_DIR)
 .c: $(SRC_DIR)

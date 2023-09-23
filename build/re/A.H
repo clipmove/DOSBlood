@@ -10,7 +10,7 @@ extern long setbytesperline(long);
 #pragma aux setbytesperline parm [eax];
 #endif
 
-#if defined(__USE_MMX__)
+#if defined(__PENTIUM_ASM__)
 extern long mmxoverlay();
 #pragma aux mmxoverlay modify [eax ebx ecx edx];
 #endif

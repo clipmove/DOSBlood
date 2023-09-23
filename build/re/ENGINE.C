@@ -324,8 +324,8 @@ static long mirrorsx1, mirrorsy1, mirrorsx2, mirrorsy2;
 #endif
 long totalclocklock;
 
-#if (LIBVER_BUILDREV >= 19971004L) // VERSIONS RESTORATION - See BUILD2.TXT, 10/4/97 (MMX support)
-#define __USE_MMX__
+#if (LIBVER_BUILDREV >= 19971004L) // VERSIONS RESTORATION - See BUILD2.TXT, 10/4/97 (MMX/Pentium support)
+#define __PENTIUM_ASM__
 #endif
 
 #include "a.h"
@@ -3567,7 +3567,7 @@ transmaskvline2 (long x)
 }
 
 #endif /* LIBVER_BUILDREV */
-#if defined(__USE_MMX__)
+#if defined(__PENTIUM_ASM__)
 long dommxoverlay = 1;
 #endif
 #if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - Using exact signature and more from 1995 revision; See also BUILD2.TXT, 9/25/96 (changed sigs)
@@ -3583,7 +3583,7 @@ initengine()
 	xdim = daxdim;
 	ydim = daydim;
 #endif
-#if defined(__USE_MMX__)
+#if defined(__PENTIUM_ASM__)
 	if (dommxoverlay) mmxoverlay();
 
 #endif
