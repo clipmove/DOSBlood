@@ -45,7 +45,7 @@
 //   bit 4: 1 = x-flip                                               "F"
 //   bit 5: 1 = y-flip                                               "F"
 //   bit 6: 1 = Align texture to first wall of sector                "R"
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 //   bits 7-15: reserved
 #else
 //   bits 7-8:                                                       "T"
@@ -140,7 +140,7 @@ EXTERN char vidoption;
 EXTERN long xdim, ydim, ylookup[MAXYDIM+1], numpages;
 EXTERN long yxaspect, viewingrange;
 
-#if (LIBVER_BUILDREV >= 19961012L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (getvalidvesamodes)
+#if (LIBVER_BUILDREV >= 19961006L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (getvalidvesamodes)
 EXTERN long validmodecnt;
 EXTERN short validmode[256];
 EXTERN long validmodexdim[256], validmodeydim[256];

@@ -43,7 +43,7 @@ volatile char oa1, o3c2, ortca, ortcb, overtbits, laststereoint;
 
 	//MUST CALL MALLOC THIS WAY TO FORCE CALLS TO KMALLOC!
 void *kmalloc(size_t size) { return(malloc(size)); }
-#if (LIBVER_BUILDREV >= 19961012L) // VERSIONS RESTORATION - Symbol was possibly not present (done for global variables ordering recreation)
+#if (LIBVER_BUILDREV >= 19961006L) // VERSIONS RESTORATION - Symbol was possibly not present (done for global variables ordering recreation)
 void *kkmalloc(size_t size);
 #endif
 #pragma aux kkmalloc =\
@@ -52,7 +52,7 @@ void *kkmalloc(size_t size);
 
 	//MUST CALL FREE THIS WAY TO FORCE CALLS TO KFREE!
 void kfree(void *buffer) { free(buffer); }
-#if (LIBVER_BUILDREV >= 19961012L) // VERSIONS RESTORATION - Symbol was possibly not present (done for global variables ordering recreation)
+#if (LIBVER_BUILDREV >= 19961006L) // VERSIONS RESTORATION - Symbol was possibly not present (done for global variables ordering recreation)
 
 void kkfree(void *buffer);
 #endif
@@ -75,7 +75,7 @@ void kloadvoxel(long voxindex);
 #define MAXYSIZ 128
 #define MAXZSIZ 200
 #define MAXVOXELS 512
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 #define MAXVOXMIPS 3
 #else
 #define MAXVOXMIPS 5
@@ -91,7 +91,7 @@ long voxoff[MAXVOXELS][MAXVOXMIPS], voxlock[MAXVOXELS][MAXVOXMIPS];
 static long ggxinc[MAXXSIZ], ggyinc[MAXXSIZ];
 static long lowrecip[1024];
 static unsigned long distrecip[4096];
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 static long ggxinc[MAXXSIZ], ggyinc[MAXXSIZ];
 static long lowrecip[1024], nytooclose;
 static unsigned short distrecip[16384];
@@ -195,7 +195,7 @@ static long smostwall[MAXWALLSB], smostwallcnt = -1L;
 
 static short maskwall[MAXWALLSB], maskwallcnt;
 static long spritesx[MAXSPRITESONSCREEN];
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 static long spritesy[MAXSPRITESONSCREEN];
 #else
 static long spritesy[MAXSPRITESONSCREEN+1];
@@ -3095,14 +3095,14 @@ loadpalette()
 	}
 }
 
-#if (LIBVER_BUILDREV >= 19961012L)
+#if (LIBVER_BUILDREV >= 19961006L)
 static char screenalloctype = 255;
 setgamemode(char davidoption, long daxdim, long daydim)
 #else // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (changed sigs)
 setgamemode()
 #endif
 {
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 	long i, j;
 
 	if (qsetmode == 200)
@@ -3205,13 +3205,13 @@ setgamemode()
 #else // LIBVER_BUILDREV (19960427L)
 #if (LIBVER_BUILDREV >= 19970602L)
 	ostereomode = stereomode; if (stereomode) setstereo(0L);
-#elif (LIBVER_BUILDREV >= 19961012L)
+#elif (LIBVER_BUILDREV >= 19961006L)
 	ostereomode = stereomode;
 	if (stereomode) uninitstereo();
 #endif
 
 	activepage = visualpage = 0;
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - Using hints from 1995 engine revision of initengine and setgamemode; See also BUILD2.TXT, 9/25/96 (removed modes)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - Using hints from 1995 engine revision of initengine and setgamemode; See also BUILD2.TXT, 9/25/96 (removed modes)
 	if (vidoption == 0) return(-1);
 	if (vidoption == 1)
 	{
@@ -3261,7 +3261,7 @@ setgamemode()
 		setvmode(0x13);
 		bytesperline = xdim;
 	}
-#else // LIBVER_BUILDREV (19961012L)
+#else // LIBVER_BUILDREV (19961006L)
 	switch(vidoption)
 	{
 		case 1: i = xdim*ydim; break;
@@ -3306,7 +3306,7 @@ setgamemode()
 
 		//Force drawrooms to call dosetaspect & recalculate stuff
 	oxyaspect = oxdimen = oviewingrange = -1;
-#endif // LIBVER_BUILDREV (19961012L)
+#endif // LIBVER_BUILDREV (19961006L)
 #endif // LIBVER_BUILDREV (19960427L)
 
 	setvlinebpl(bytesperline);
@@ -3322,7 +3322,7 @@ setgamemode()
 	if (vidoption == 1) numpages = min(maxpages,8);
 #if (LIBVER_BUILDREV < 19960427L)
 	if (vidoption >= 3) numpages = 4;
-#elif (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (removed modes)
+#elif (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (removed modes)
 	if ((vidoption >= 3) && (vidoption <= 5)) numpages = 4;
 #endif
 
@@ -3334,7 +3334,7 @@ setgamemode()
 
 #if (LIBVER_BUILDREV >= 19970602L)
 	if (ostereomode) setstereo(ostereomode);
-#elif (LIBVER_BUILDREV >= 19961012L)
+#elif (LIBVER_BUILDREV >= 19961006L)
 	if (ostereomode) initstereo();
 #endif
 
@@ -3570,7 +3570,7 @@ transmaskvline2 (long x)
 #if defined(__PENTIUM_ASM__)
 long dommxoverlay = 1;
 #endif
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - Using exact signature and more from 1995 revision; See also BUILD2.TXT, 9/25/96 (changed sigs)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - Using exact signature and more from 1995 revision; See also BUILD2.TXT, 9/25/96 (changed sigs)
 initengine(char davidoption, long daxdim, long daydim)
 #else
 initengine()
@@ -3578,7 +3578,7 @@ initengine()
 {
 	long i, j;
 
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 	vidoption = davidoption;
 	xdim = daxdim;
 	ydim = daydim;
@@ -3647,7 +3647,7 @@ initengine()
 	clearbuf((long)(&show2dwall[0]),(long)((MAXWALLS+3)>>5),0L);
 	automapping = 0;
 
-#if (LIBVER_BUILDREV >= 19961012L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (getvalidvesamodes)
+#if (LIBVER_BUILDREV >= 19961006L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (getvalidvesamodes)
 	validmodecnt = 0;
 
 #endif
@@ -3667,7 +3667,7 @@ initengine()
 	chainnumpages = 0;
 	chainstat = 0;
 #endif
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (Modified signature + removed modes)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (Modified signature + removed modes)
 	switch(vidoption)
 	{
 #if (LIBVER_BUILDREV < 19960427L)
@@ -3786,7 +3786,7 @@ initengine()
 	}
 	horizycent = ((ydim*4)>>1);  //HACK for switching to this mode
 #endif // LIBVER_BUILDREV >= 19960427L
-#endif // LIBVER_BUILDREV < 19961012L
+#endif // LIBVER_BUILDREV < 19961006L
 	loadpalette();
 }
 
@@ -3809,7 +3809,7 @@ uninitengine()
 	if (pic != NULL) { kkfree(pic); pic = NULL; }
 	if (screen != NULL)
 	{
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 		kkfree(screen);
 #else
 		if (screenalloctype == 0) kkfree((void *)screen);
@@ -3817,7 +3817,7 @@ uninitengine()
 #endif
 		screen = NULL;
 	}
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 	if (horizlookup != NULL) { kkfree(horizlookup); horizlookup = NULL; }
 	if (horizlookup2 != NULL) { kkfree(horizlookup2); horizlookup2 = NULL; }
 #endif
@@ -3972,7 +3972,7 @@ nextpage()
 				case 2:
 					copybuf(frameplace,0xa0000,64000>>2);
 					break;
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - From 1995 revision of nextpage; See also BUILD2.TXT, 9/25/96 (removed modes)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - From 1995 revision of nextpage; See also BUILD2.TXT, 9/25/96 (removed modes)
 				case 3:
 					visualpage = activepage;
 					activepage = ((activepage+1)&3);
@@ -4212,7 +4212,7 @@ qloadkvx(long voxindex, char *filename)
 {
 #if (LIBVER_BUILDREV < 19960427L)
 	long i, fil;
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 	long i, fil, dasiz, lengcnt;
 #else
 	long i, fil, dasiz, lengcnt, lengtot;
@@ -4228,7 +4228,7 @@ qloadkvx(long voxindex, char *filename)
 
 #if (LIBVER_BUILDREV >= 19960427L)
 	lengcnt = 0;
-#if (LIBVER_BUILDREV >= 19961012L)
+#if (LIBVER_BUILDREV >= 19961006L)
 	lengtot = kfilelength(fil);
 #endif
 #endif
@@ -4258,7 +4258,7 @@ qloadkvx(long voxindex, char *filename)
 		kread(fil,ptr,dasiz);
 
 		lengcnt += dasiz+4;
-#if (LIBVER_BUILDREV >= 19961012L)
+#if (LIBVER_BUILDREV >= 19961006L)
 		if (lengcnt >= lengtot-768) break;
 #endif
 #endif // 19960427L
@@ -4694,7 +4694,7 @@ drawmasks()
 	long j;
 	long xp;
 	long gap;
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 	long i, j, k, l, gap, xs, ys, xp, yp;
 #else
 	long i, j, k, l, gap, xs, ys, zs, xp, yp, zp, z1, z2, yoff, yspan;
@@ -4752,7 +4752,7 @@ drawmasks()
 		for(i=0;i<spritesortcnt-gap;i++)
 			for(l=i;l>=0;l-=gap)
 			{
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 				j = spritesy[l] - spritesy[l+gap];
 				if (j < 0) break;
 #if (LIBVER_BUILDREV < 19960427L)
@@ -4812,7 +4812,7 @@ drawmasks()
 #endif
 			}
 
-#if (LIBVER_BUILDREV >= 19961012L)
+#if (LIBVER_BUILDREV >= 19961006L)
 	if (spritesortcnt > 0)
 		spritesy[spritesortcnt] = (spritesy[spritesortcnt-1]^1);
 
@@ -5888,7 +5888,7 @@ drawsprite (long snum)
 		if ((tilenum<0) || (tilenum>=2)) tilenum = 0;
 #elif (LIBVER_BUILDREV < 19960427L)
 		if (voxsiz[tilenum][0] == 0) return;
-#elif (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - Had just 3 mipmaps
+#elif (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - Had just 3 mipmaps
 		if (!voxoff[tilenum][0] || !voxoff[tilenum][1] || !voxoff[tilenum][2])
 		{
 			kloadvoxel(tilenum);
@@ -5905,7 +5905,7 @@ drawsprite (long snum)
 
 		longptr = (long *)voxoff[tilenum][0];
 		if (!(cstat&128)) tspr->z -= mulscale6(longptr[5],(long)tspr->yrepeat);
-#if (LIBVER_BUILDREV >= 19961012L)
+#if (LIBVER_BUILDREV >= 19961006L)
 		yoff = (long)((signed char)((picanm[sprite[tspr->owner].picnum]>>16)&255))+((long)tspr->yoffset);
 		tspr->z -= ((yoff*tspr->yrepeat)<<2);
 #endif
@@ -5996,7 +5996,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 	j = (long)(getpalookup((long)mulscale21(globvis,i),(long)dashade)<<8);
 	setupdrawslab(ylookup[1],FP_OFF(palookup[dapal])+j);
 #endif
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - Had just 3 mipmaps
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - Had just 3 mipmaps
 	if (i < 0x100000)
 		i = 0;
 	else if (i < 0x200000)
@@ -6025,7 +6025,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 	daxscale = scale(daxscale,mulscale16(xdimenscale,viewingrangerecip),320<<8);
 	dayscale = scale(dayscale,mulscale16(xdimenscale,viewingrangerecip),320<<8);
 	davoxptr = (char *)voxoff[daindex][i];
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 	daxscale = scale(daxscale,mulscale16(xdimenscale,viewingrangerecip),xdimen<<8);
 	dayscale = scale(dayscale,mulscale16(xdimenscale,viewingrangerecip),xdimen<<8);
 	davoxptr = (char *)voxoff[daindex][i];
@@ -6063,7 +6063,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 	cosang = mulscale16(cosang,dayscalerecip);
 	sinang = mulscale16(sinang,dayscalerecip);
 
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 	gxstart = 4*(y*cosang - x*sinang);
 	gystart = 4*(x*cosang + y*sinang);
 	gxinc = dmulscale8(sprsinang,cosang,sprcosang,-sinang);
@@ -6088,7 +6088,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 #elif (LIBVER_BUILDREV < 19960820L)
 	syoff = mulscale5(globalposz-dasprz,dayscalerecip);
 	syoff = scale(syoff,mulscale16(xdimenscale,viewingrangerecip),xdimen<<8) + (dazpivot<<11);
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 	syoff = divscale29(globalposz-dasprz,odayscale) + (dazpivot<<15);
 #else
 	if ((klabs(globalposz-dasprz)>>10) >= klabs(odayscale)) return;
@@ -6150,7 +6150,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 		oand16 = oand+16;
 		oand32 = oand+32;
 
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 		if (yi > 0) { dagxinc = gxinc; dagyinc = gyinc; }
 				 else { dagxinc = -gxinc; dagyinc = -gyinc; }
 #else
@@ -6159,7 +6159,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 #endif
 
 			//Fix for non 90 degree viewing ranges
-#if (LIBVER_BUILDREV >= 19961012L)
+#if (LIBVER_BUILDREV >= 19961006L)
 		nxoff = mulscale16(x2-x1,viewingrangerecip);
 		x1 = mulscale16(x1,viewingrangerecip);
 #endif
@@ -6172,7 +6172,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 			slabxoffs = (long)&davoxptr[longptr[x]];
 			shortptr = (short *)&davoxptr[((x*(daysiz+1))<<1)+xyvoxoffs];
 
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 			nx = ggxstart+ggxinc[x];
 #else
 			nx = mulscale16(ggxstart+ggxinc[x],viewingrangerecip)+x1;
@@ -6180,7 +6180,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 			ny = ggystart+ggyinc[x];
 			for(y=ys;y!=ye;y+=yi,nx+=dagyinc,ny-=dagxinc)
 			{
-#if (LIBVER_BUILDREV >= 19961012L)
+#if (LIBVER_BUILDREV >= 19961006L)
 				if ((ny <= nytooclose) || (ny >= nytoofar)) continue;
 #endif
 				voxptr = (char *)(shortptr[y]+slabxoffs);
@@ -6192,7 +6192,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 				lx = (mulscale32(nx+x1,distrecip[(ny+y1)>>18])+xdimen)>>1;
 				if (lx < 0) lx = 0;
 				rx = (mulscale32(nx+x2,distrecip[(ny+y2)>>18])+xdimen)>>1;
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 				if (ny <= nytooclose) continue;
 				lx = mulscale32(nx+x1,distrecip[(ny+y1)>>16]<<3)+halfxdimen;
 				if (lx < 0) lx = 0;
@@ -6209,7 +6209,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 #if (LIBVER_BUILDREV < 19960820L)
 				l1 = distrecip[(ny-yoff)>>18];
 				l2 = distrecip[(ny+yoff)>>18];
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 				l1 = distrecip[(ny-yoff)>>16];
 				l2 = distrecip[(ny+yoff)>>16];
 #else
@@ -6220,7 +6220,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 				{
 #if (LIBVER_BUILDREV < 19960820L)
 					j = (voxptr[0]<<19)-syoff;
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 					j = (voxptr[0]<<23)-syoff;
 #else
 					j = (voxptr[0]<<15)-syoff;
@@ -6229,7 +6229,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 					{
 #if (LIBVER_BUILDREV < 19960820L)
 						k = j+(voxptr[1]<<19);
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 						k = j+(voxptr[1]<<23);
 #else
 						k = j+(voxptr[1]<<15);
@@ -6252,7 +6252,7 @@ drawvox(long dasprx, long daspry, long dasprz, long dasprang,
 						z1 = mulscale32(l2,j) + globalhoriz;        //Above slab
 #if (LIBVER_BUILDREV < 19960820L)
 						z2 = mulscale32(l1,j+(voxptr[1]<<19)) + globalhoriz;
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 						z2 = mulscale32(l1,j+(voxptr[1]<<23)) + globalhoriz;
 #else
 						z2 = mulscale32(l1,j+(voxptr[1]<<15)) + globalhoriz;
@@ -7252,7 +7252,7 @@ lastwall(short point)
 	clipnum++;                                            \
 }                                                        \
 
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/6/96 (new var)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/6/96 (new var)
 #define clipmoveboxtracenum 3
 #else
 long clipmoveboxtracenum = 3;
@@ -8848,7 +8848,7 @@ dosetaspect()
 //#ifdef SUPERBUILD
 #if (LIBVER_BUILDREV < 19960820L)
 		for(i=1;i<4096;i++) distrecip[i] = divscale14(xdimen,i);
-#elif (LIBVER_BUILDREV < 19961012L)
+#elif (LIBVER_BUILDREV < 19961006L)
 		j = xdimen*16384;
 		for(i=7;i<16384;i+=4)
 		{
@@ -10712,7 +10712,7 @@ clearallviews(long dacol)
 		case 2:
 			clearbuf(frameplace,(xdim*ydim)>>2,0L);
 			break;
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - From 1995 rev; See also BUILD2.TXT, 9/25/96 (removed modes)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - From 1995 rev; See also BUILD2.TXT, 9/25/96 (removed modes)
 		case 3:
 			for(i=0;i<4;i++)
 				{ koutp(0x3cd,i); clearbuf(0xa0000,16000L,0L); }
@@ -12287,7 +12287,7 @@ uninstallbistereohandlers()
 #endif /* LIBVER_BUILDREV */
 }
 
-#if (LIBVER_BUILDREV >= 19961012L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/6/96 (moved functions)
+#if (LIBVER_BUILDREV >= 19961006L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/6/96 (moved functions)
 loopnumofsector(short sectnum, short wallnum)
 {
 	long i, numloops, startwall, endwall;
@@ -12360,6 +12360,6 @@ setfirstwall(short sectnum, short newfirstwall)
 	for(i=startwall;i<endwall;i++)
 		if (wall[i].nextwall >= 0) wall[wall[i].nextwall].nextwall = i;
 }
-#endif // LIBVER_BUILDREV >= 19961012L
+#endif // LIBVER_BUILDREV >= 19961006L
 #endif // LIBVER_BUILDREV >= 19960427L
 

@@ -62,7 +62,7 @@ long VESABuf_len = 1024, VESABuf_sel = 0, VESABuf_rseg;
 #else
 long VESABuf_sel = 0, VESABuf_rseg;
 #endif
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 #define modelist modeList // VERSIONS RESTORATION (HACK) - Original name from misc. debugging symbols
 #endif
 short modelist[256];
@@ -356,7 +356,7 @@ GetPtrToLFB(long physAddr)
 	if (r.x.cflag) { printf("DPMI_setSelectorLimit() failed!\n"); exit(0); }
 }
 
-#if (LIBVER_BUILDREV >= 19961012L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (getvalidvesamodes)
+#if (LIBVER_BUILDREV >= 19961006L) // VERSIONS RESTORATION - See BUILD2.TXT, 9/25/96 (getvalidvesamodes)
 getvalidvesamodes()
 {
 	long i, j, k;
@@ -423,7 +423,7 @@ getvalidvesamodes()
 setvesa(long x, long y)
 {
 	div_t dived;
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - getvalidvesamodes (9/25/96)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - getvalidvesamodes (9/25/96)
 	long i, j;
 #else
 	long i, j, k;
@@ -433,7 +433,7 @@ setvesa(long x, long y)
 	RMREGS regs;
 	RMSREGS sregs;
 
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - getvalidvesamodes (9/25/96)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - getvalidvesamodes (9/25/96)
 	if (!vesachecked)
 	{
 		vesachecked = 1;
@@ -462,13 +462,13 @@ setvesa(long x, long y)
 #endif
 
 	xres = x; yres = y;
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - getvalidvesamodes (9/25/96)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - getvalidvesamodes (9/25/96)
 	for(p=modelist;*p!=-1;p++)
 #else
 	for(k=0;k<validmodecnt;k++)
 #endif
 	{
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - getvalidvesamodes (9/25/96)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - getvalidvesamodes (9/25/96)
 		if (!VBE_getModeInfo(*p, &modeInfo)) continue;
 #else
 		regs.x.ax = 0x4f01; regs.x.cx = validmode[k];
@@ -487,7 +487,7 @@ setvesa(long x, long y)
 		maxpages = min(modeInfo.NumberOfImagePages+1,64);
 
 		regs.x.ax = 0x4f02;
-#if (LIBVER_BUILDREV < 19961012L) // VERSIONS RESTORATION - getvalidvesamodes (9/25/96)
+#if (LIBVER_BUILDREV < 19961006L) // VERSIONS RESTORATION - getvalidvesamodes (9/25/96)
 		regs.x.bx = (*p) | ((modeInfo.ModeAttributes&128)<<7);
 #else
 		regs.x.bx = validmode[k] | ((modeInfo.ModeAttributes&128)<<7);
@@ -833,7 +833,7 @@ VBE_setPalette(long start, long num, char *dapal)
 {
 	RMREGS regs;
 	long i, j, k;
-#if (LIBVER_BUILDREV >= 19961012L)
+#if (LIBVER_BUILDREV >= 19961006L)
 	char palquick[768];
 #endif
 
@@ -857,7 +857,7 @@ VBE_setPalette(long start, long num, char *dapal)
 	if ((vgacompatible) || (vgaInfo.VESAVersion < 0x200) || (vidoption != 1))
 	{
 		// VERSIONS RESTORATION - Using earlier VES2.H code as a base
-#if (LIBVER_BUILDREV < 19961012L)
+#if (LIBVER_BUILDREV < 19961006L)
 		//setpalettequick(start,num,palquick);
 		koutp(0x3c8,start);
 		for(i=(num>>1);i>0;i--)
