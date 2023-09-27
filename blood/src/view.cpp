@@ -1719,6 +1719,7 @@ void viewUpdateFov(void)
     static int gFovOld = 60;
     if (gFovOld == gFov)
         return;
+    gFovOld = gFov;
     gFovAspect = divscale16(gFov, 60);
     setaspect(gFovAspect, yxaspect);
 }
