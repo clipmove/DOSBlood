@@ -109,7 +109,7 @@ inline void viewBackupSpriteLoc(int nSprite, SPRITE *pSprite)
 
 void func_1EC78(int, char *, char *, char *);
 void viewResizeView(int);
-void viewUpdateFov(void);
+void viewUpdateFov(BOOL bCheck = 0);
 void viewToggle(int);
 void viewSetMessage(char *);
 void viewDrawText(int, char *, int, int, int, int, int position = 0, BOOL shadow = 0);

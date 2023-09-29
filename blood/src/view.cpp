@@ -1689,6 +1689,7 @@ void viewResizeView(int size)
         gViewY1S = divscale16(gViewY1, yscale);
         setview(gViewX0, gViewY0, gViewX1, gViewY1);
         gGameMessageMgr.SetCoordinates(gViewX0S+1, gViewY0S+1);
+        viewUpdateFov();
         return;
     }
     gViewX0 = 0;
@@ -1712,13 +1713,17 @@ void viewResizeView(int size)
     setview(gViewX0, gViewY0, gViewX1, gViewY1);
     gGameMessageMgr.SetCoordinates(gViewX0S + 1, gViewY0S + 1);
     viewUpdatePages();
+    viewUpdateFov();
 }
 
-void viewUpdateFov(void)
+void viewUpdateFov(BOOL bCheck)
 {
     static int gFovOld = 60;
-    if (gFovOld == gFov)
-        return;
+    if (bCheck)
+    {
+        if (gFovOld == gFov)
+            return;
+    }
     gFovOld = gFov;
     gFovAspect = divscale16(gFov, 60);
     setaspect(gFovAspect, yxaspect);
@@ -2832,7 +2837,7 @@ void viewDrawScreen(void)
     const int defaultHoriz = gCenterHoriz ? 100 : 90;
     int delta = ClipLow(gGameClock - lastUpdate, 0);
     lastUpdate = gGameClock;
-    viewUpdateFov();
+    viewUpdateFov(TRUE);
     if (!gPaused && (!CGameMenuMgr::m_bActive || gGameOptions.nGameType != GAMETYPE_0))
     {
         gInterpolate = divscale16(gGameClock-gNetFifoClock+4, 4);
@@ -3044,6 +3049,7 @@ void viewDrawScreen(void)
                 viewProcessSprites(vd8, vd4, vd0);
                 drawmasks();
                 setviewback();
+                viewUpdateFov();
             }
             else
             {
@@ -3122,6 +3128,7 @@ void viewDrawScreen(void)
         {
             dassert(waloff[ TILTBUFFER ] != NULL, 3874);
             setviewback();
+            viewUpdateFov();
             byte vrc = 70;
             if (vc)
             {
