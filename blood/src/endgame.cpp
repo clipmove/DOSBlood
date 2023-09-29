@@ -150,7 +150,7 @@ void CKillMgr::AddCount(SPRITE *pSprite)
 
 void CKillMgr::AddKill(SPRITE *pSprite)
 {
-    if (VanillaMode() || AllowedType(pSprite)) // check type before adding to enemy kills
+    if (AllowedType(pSprite)) // check type before adding to enemy kills
         at4++;
 }
 
@@ -168,7 +168,8 @@ void CKillMgr::CountTotalKills(void)
         SPRITE *pSprite = &sprite[nSprite];
         if (!IsDudeSprite(pSprite))
             ThrowError(209)("Non-enemy sprite (%d) in the enemy sprite list.\n", nSprite);
-        AddCount(pSprite);
+        if (AllowedType(pSprite))
+            AddCount(1);
     }
 }
 
