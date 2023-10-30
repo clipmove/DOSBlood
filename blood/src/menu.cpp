@@ -268,6 +268,7 @@ CGameMenuItemZCycle itemNetStart4("DIFFICULTY", 1, 20, 80, 280, 0, 0, zDiffStrin
 CGameMenuItemZCycle itemNetStart5("MONSTERS", 1, 20, 95, 280, 0, 0, zMonsterStrings, 3, 0);
 CGameMenuItemZCycle itemNetStart6("WEAPONS", 1, 20, 110, 280, 0, 0, zWeaponStrings, 4, 0);
 CGameMenuItemZCycle itemNetStart7("ITEMS", 1, 20, 125, 280, 0, 0, zItemStrings, 3, 0);
+CGameMenuItemZBool itemNetStart8("NETCODE SUPPORT", 1, 20, 140, 280, 0, NULL, "BLOOD 1.21", "DOSBLOOD");
 CGameMenuItemZEdit itemNetStart9("USER MAP:", 1, 20, 155, 280, zUserMapName, 13, 0, NULL, 0);
 CGameMenuItemChain itemNetStart10("START GAME", 1, 20, 170, 280, 0, 0, -1, StartNetGame, 0);
 
@@ -535,6 +536,7 @@ void SetupNetStartMenu(void)
     menuNetStart.Add(&itemNetStart5, 0);
     menuNetStart.Add(&itemNetStart6, 0);
     menuNetStart.Add(&itemNetStart7, 0);
+    menuNetStart.Add(&itemNetStart8, 0);
     menuNetStart.Add(&itemNetStart9, 0);
     menuNetStart.Add(&itemNetStart10, 0);
     itemNetStart1.SetTextIndex(1);
@@ -542,6 +544,7 @@ void SetupNetStartMenu(void)
     itemNetStart5.SetTextIndex(0);
     itemNetStart6.SetTextIndex(1);
     itemNetStart7.SetTextIndex(1);
+    itemNetStart8.at20 = gVanillaNet;
     menuNetStart.Add(&itemBloodQAV, 0);
 }
 
@@ -1045,6 +1048,7 @@ void StartNetGame(CGameMenuItemChain *pItem)
     gPacketStartGame.itemSettings = itemNetStart7.at24;
     gPacketStartGame.respawnSettings = 0;
     gPacketStartGame.unk = 0;
+    gVanillaNet = itemNetStart8.at20;
     gPacketStartGame.userMapName[0] = 0;
     strncpy(gPacketStartGame.userMapName, zUserMapName, 13);
     gPacketStartGame.userMapName[12] = 0;

@@ -69,6 +69,7 @@ extern int gPlayerReady[kMaxPlayers];
 extern BOOL ready2send;
 
 void netBroadcastNewGame(void);
+void netBroadcastVersion(void);
 void netWaitForEveryone(BOOL);
 void netBroadcastMsg(int, char*);
 void netPlayerQuit(int);

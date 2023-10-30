@@ -59,6 +59,7 @@ BOOL gAdultContent = 1;
 
 BOOL gVanilla = FALSE;
 BOOL gVanillaMode = 0;
+BOOL gVanillaNet = 1;
 
 void ClockStrobe(void)
 {
@@ -86,5 +87,5 @@ char *GetVersionString(void)
 
 void VanillaModeUpdate(void)
 {
-    gVanillaMode = (gVanilla && numplayers <= 1) || gDemo.PlaybackStatus() || gDemo.RecordStatus();
+    gVanillaMode = (gVanilla && numplayers <= 1) || (gVanillaNet && numplayers >= 2) || gDemo.PlaybackStatus() || gDemo.RecordStatus();
 }

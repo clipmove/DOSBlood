@@ -85,6 +85,7 @@ extern BOOL gAdultContent;
 
 extern BOOL gVanilla;
 extern BOOL gVanillaMode;
+extern BOOL gVanillaNet;
 
 char *GetVersionString(void);
 void ClockStrobe(void);

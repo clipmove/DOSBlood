@@ -1389,6 +1389,7 @@ void main(void)
         Banner8250();
     func_2906C();
     netBroadcastPlayerInfo(myconnectindex);
+    netBroadcastVersion();
     tioPrint("Waiting for network players!");
     netWaitForEveryone(0);
     if (CONTROL_JoystickEnabled)

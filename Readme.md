@@ -16,6 +16,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Add key icons to small HUD size
 * Improved aim vector response by 33ms
 * Vanilla mode option to restore original enemy bugs
+* Supports multiplayer with Blood version 1.21 clients
 * NBlood-style power-ups and level stats HUD display
 * Restore broken blinking state for health point counter
 * Don't restart midi track when loading save for current level
@@ -47,7 +48,6 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * You must already have an installed copy of Blood.
 * Remember to keep a backup of your original executable!
 * This is only for retail English version 1.21 (One Unit Whole Blood)
-* For network, all other players must be using the same DOSBlood build else it will desync!
 
 ### Build instructions
 Watcom 10.6, MASM 5.10 and TASM 3.2 are required to build

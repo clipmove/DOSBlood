@@ -315,7 +315,11 @@ void func_158B4(PLAYER *pPlayer)
 static void fakeProcessInput(PLAYER *pPlayer, INPUT *pInput)
 {
     POSTURE *pPosture = &gPosture[pPlayer->at5f][predict.at48];
+#if 0 // syncFlags.run is not passed to input packet on ProcessFrame(), so don't apply this logic here
     predict.at70 = VanillaMode() ? pInput->syncFlags.run : 0;
+#else
+    predict.at70 = 0;
+#endif
     predict.at71 = pInput->buttonFlags.jump;
     switch (predict.at48)
     {

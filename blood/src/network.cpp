@@ -92,7 +92,7 @@ byte char_28E3D8[4000];
 short short_28F378;
 int int_28F37C;
 
-const BLOODVERSION short_1328AC = { 20, 2 };
+const BLOODVERSION short_1328AC[2] = {{ 20, 2 }, { 21, 2 }}; // Blood v1.21/DOSBlood
 
 BOOL bNoResend = 1;
 int gSyncRate = 1;
@@ -471,9 +471,18 @@ void netGetPackets(void)
         case 252:
             pPacket += 4;
             memcpy(&gPacketStartGame, pPacket, sizeof(PKT_STARTGAME));
-            if (gPacketStartGame.version != short_1328AC.w)
-                ThrowError(678)("\nThese versions of Blood cannot play together.\n");
+            if (gPacketStartGame.version != short_1328AC[1].w)
+            {
+                if (gPacketStartGame.version != short_1328AC[0].w)
+                    ThrowError(678)("\nThese versions of Blood cannot play together.\n");
+                gVanillaNet = 1; // we've connected to v1.21 host, force vanilla mode for rest of session
+            }
+            else
+                gVanillaNet = 0; // we've connected to DOSBlood host, do not run in vanilla mode
             gStartNewGame = 1;
+            break;
+        case 253:
+            gVanillaNet = 0;
             break;
         case 255:
             keystatus[1] = 1;
@@ -513,11 +522,20 @@ void netBroadcastNewGame(void)
 {
     if (numplayers < 2)
         return;
-    gPacketStartGame.version = short_1328AC.w;
+    gPacketStartGame.version = short_1328AC[!gVanillaNet ? 1 : 0].w;
     char *pPacket = packet;
     PutPacketByte(pPacket, 252);
     PutPacketDWord(pPacket, myconnectindex);
     PutPacketBuffer(pPacket, &gPacketStartGame, sizeof(PKT_STARTGAME));
+    netSendPacketAll(packet, pPacket-packet);
+}
+
+void netBroadcastVersion(void)
+{
+    if (numplayers < 2)
+        return;
+    char *pPacket = packet;
+    PutPacketByte(pPacket, 253);
     netSendPacketAll(packet, pPacket-packet);
 }
 
@@ -973,6 +991,7 @@ void netPlayerQuit(int nPlayer)
 #if 0
 void func_7AC28(char*) {}
 void netBroadcastNewGame(void) {}
+void netBroadcastVersion(void) {}
 void netWaitForEveryone(BOOL) {}
 void netBroadcastMsg(int, char*) {}
 #endif
