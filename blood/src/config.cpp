@@ -79,7 +79,6 @@ BOOL gFullMap;
 BOOL gNoClip;
 BOOL gAimReticle;
 BOOL gShowWeapon;
-BOOL gShowPowerUps = TRUE;
 BOOL gLevelStats;
 BOOL gMouseAim;
 
@@ -90,6 +89,7 @@ int32 gMessageTime = 5;
 int32 gViewSize = 1;
 int32 gDetail = 4;
 int32 gFov = 60;
+int32 gShowPowerUps = 2;
 int32 gDifficulty = 2;
 int32 gSkill = 2;
 BOOL gDoppler = TRUE;
@@ -697,7 +697,7 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetString( scripthandle, "Options","AdultPassword",&gzAdultPassword[0]);
    SCRIPT_GetBool( scripthandle, "Options","Doppler",&gDoppler);
    SCRIPT_GetBool( scripthandle, "Options","ShowWeapon",&gShowWeapon);
-   SCRIPT_GetBool( scripthandle, "Options","ShowPowerUps",&gShowPowerUps);
+   SCRIPT_GetNumber( scripthandle, "Options","ShowPowerUps",&gShowPowerUps);
    SCRIPT_GetBool( scripthandle, "Options","LevelStats",&gLevelStats);
    SCRIPT_GetBool( scripthandle, "Options","VanillaMode",&gVanilla);
 
@@ -750,7 +750,7 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutString( scripthandle, "Options","AdultPassword",gzAdultPassword);
    SCRIPT_PutBoolean( scripthandle, "Options","Doppler", gDoppler);
    SCRIPT_PutBoolean( scripthandle, "Options","ShowWeapon", gShowWeapon);
-   SCRIPT_PutBoolean( scripthandle, "Options","ShowPowerUps", gShowPowerUps);
+   SCRIPT_PutNumber( scripthandle, "Options","ShowPowerUps", gShowPowerUps,false,false);
    SCRIPT_PutBoolean( scripthandle, "Options","LevelStats", gLevelStats);
    SCRIPT_PutBoolean( scripthandle, "Options","VanillaMode", gVanilla);
 

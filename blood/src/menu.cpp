@@ -49,7 +49,7 @@ void SetCDVol(CGameMenuItemSlider *);
 void SetDoppler(CGameMenuItemZBool *);
 void SetCrosshair(CGameMenuItemZBool *);
 void SetShowWeapons(CGameMenuItemZBool *);
-void SetShowPowerUps(CGameMenuItemZBool *);
+void SetShowPowerUps(CGameMenuItemZCycle *);
 void SetLevelStats(CGameMenuItemZBool *);
 void SetCenterHorizon(CGameMenuItemZBool *);
 void SetSlopeTilting(CGameMenuItemZBool *);
@@ -130,6 +130,13 @@ char *zDiffStrings[] =
     "EXTRA CRISPY",
 };
 
+char *zShowPowerUpsStrings[] =
+{
+    "OFF",
+    "ON (LEFT)",
+    "ON (RIGHT)",
+};
+
 char zUserMapName[13];
 char *zEpisodeNames[6];
 char *zLevelNames[6][16];
@@ -204,7 +211,7 @@ CGameMenuItemSlider sliderCDAudio("CD AUDIO:", 3, 66, 95, 180, CDVolume, 0, 256,
 CGameMenuItemZBool boolDoppler("3D AUDIO:", 3, 66, 105, 180, gDoppler, SetDoppler, NULL, NULL);
 CGameMenuItemZBool boolCrosshair("CROSSHAIR:", 3, 66, 112, 180, gAimReticle, SetCrosshair, NULL, NULL);
 CGameMenuItemZBool boolShowWeapons("SHOW WEAPONS:", 3, 66, 119, 180, gShowWeapon, SetShowWeapons, NULL, NULL);
-CGameMenuItemZBool boolShowPowerUps("SHOW POWERUPS:", 3, 66, 126, 180, gShowPowerUps, SetShowPowerUps, NULL, NULL);
+CGameMenuItemZCycle cycleShowPowerUps("SHOW POWERUPS:", 3, 66, 126, 180, 0, SetShowPowerUps, zShowPowerUpsStrings, 3, 0);
 CGameMenuItemZBool boolLevelStats("LEVEL STATS:", 3, 66, 133, 180, gLevelStats, SetLevelStats, NULL, NULL);
 CGameMenuItemZBool boolCenterHorizon("CENTER HORIZON LINE:", 3, 66, 140, 180, gCenterHoriz, SetCenterHorizon, NULL, NULL);
 CGameMenuItemZBool boolSlopeTilting("SLOPE TILTING:", 3, 66, 147, 180, gSlopeTilting, SetSlopeTilting, NULL, NULL);
@@ -360,7 +367,7 @@ void SetupOptionsMenu(void)
     boolDoppler.at20 = gDoppler;
     boolCrosshair.at20 = gAimReticle;
     boolShowWeapons.at20 = gShowWeapon;
-    boolShowPowerUps.at20 = gShowPowerUps;
+    cycleShowPowerUps.at24 = ClipRange(gShowPowerUps, 0, cycleShowPowerUps.at2c);
     boolLevelStats.at20 = gLevelStats;
     boolCenterHorizon.at20 = gCenterHoriz;
     boolSlopeTilting.at20 = gSlopeTilting;
@@ -379,7 +386,7 @@ void SetupOptionsMenu(void)
     menuOptions.Add(&boolDoppler, 0);
     menuOptions.Add(&boolCrosshair, 0);
     menuOptions.Add(&boolShowWeapons, 0);
-    menuOptions.Add(&boolShowPowerUps, 0);
+    menuOptions.Add(&cycleShowPowerUps, 0);
     menuOptions.Add(&boolLevelStats, 0);
     menuOptions.Add(&boolCenterHorizon, 0);
     menuOptions.Add(&boolSlopeTilting, 0);
@@ -767,9 +774,9 @@ void SetShowWeapons(CGameMenuItemZBool *pItem)
     gShowWeapon = pItem->at20;
 }
 
-void SetShowPowerUps(CGameMenuItemZBool *pItem)
+void SetShowPowerUps(CGameMenuItemZCycle *pItem)
 {
-    gShowPowerUps = pItem->at20;
+    gShowPowerUps = ClipRange(pItem->at24, 0, pItem->at2c);
 }
 
 void SetLevelStats(CGameMenuItemZBool *pItem)

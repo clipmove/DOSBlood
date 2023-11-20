@@ -1302,7 +1302,6 @@ void viewDrawPowerUps(PLAYER* pPlayer)
     }
 
     const int nWarning = 5;
-    const int x = 15;
     int y = 50;
     for (i = 0; i < nSortCount; i++)
     {
@@ -1310,12 +1309,23 @@ void viewDrawPowerUps(PLAYER* pPlayer)
         const int nTime = nSortPower[i] / 100;
         if (nTime > nWarning || ((int)totalclock & 32))
         {
-            DrawStatMaskedSpriteScale(pPowerups->nTile, x, y + pPowerups->yOffset, 0, 0, 256, pPowerups->nScaleRatio);
+            if (gShowPowerUps == 2)
+                DrawStatMaskedSpriteScale(pPowerups->nTile, 283, y + pPowerups->yOffset, 0, 0, 512, mulscale16(1.75f * 65536, pPowerups->nScaleRatio));
+            else
+                DrawStatMaskedSpriteScale(pPowerups->nTile, 15, y + pPowerups->yOffset, 0, 0, 256, pPowerups->nScaleRatio);
         }
 
         sprintf(buffer, "%02d", nTime);
-        viewDrawText(3, buffer, x+9, y-3, 0, nTime > nWarning ? 0 : 2, 0, 0);
-        y += 15;
+        if (gShowPowerUps == 2)
+        {
+            viewDrawText(3, buffer, 309, y-6, 0, nTime > nWarning ? 0 : 2, 2, 0);
+            y += 35;
+        }
+        else
+        {
+            viewDrawText(3, buffer, 24, y-3, 0, nTime > nWarning ? 0 : 2, 0, 0);
+            y += 15;
+        }
     }
 }
 
