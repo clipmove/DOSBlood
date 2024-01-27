@@ -462,7 +462,12 @@ void CONFIG_SetupMouse( int32 scripthandle )
    SCRIPT_GetNumber( scripthandle, "Controls","MouseAimingFlipped",&var);
    gMouseAimingFlipped = var;
    if (ControllerType == controltype_keyboardandexternal) // always flip for bmouse
-      gMouseAimingFlipped = !gMouseAimingFlipped;
+      {
+      memset(temp,0,sizeof(temp));
+      SCRIPT_GetString(scripthandle, "Controls", "ExternalFilename",temp);
+      if (!strcmpi(temp, "BMOUSE.EXE"))
+        gMouseAimingFlipped = !gMouseAimingFlipped;
+      }
    }
 
 /*
