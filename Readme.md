@@ -37,6 +37,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix choking hands to run at a constant framerate
 * Fix pod enemy projectiles using walls as enemy index
 * Fix demos desyncing if launched with -noaim argument
+* Replaced sector based damage logic for player explosions
 * Prevent whitespace only messages being sent in multiplayer
 * Fix reverb state not resetting on level change/loading game
 * Fix bloated butcher knife attack not hitting player while crouched

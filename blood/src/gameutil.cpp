@@ -937,8 +937,34 @@ int GetClosestSectors(int nSector, int x, int y, int nDist, short *pSectors, byt
     return m;
 }
 
-int GetClosestSpriteSectors(int nSector, int x, int y, int nDist, short *pSectors, byte *pSectBit, short *a8)
+static void GetClosestPointOnWall(int x, int y, WALL *pWall, int *nx, int *ny)
 {
+	int i, j, dx, dy;
+
+	dx = wall[pWall->point2].x-pWall->x;
+	dy = wall[pWall->point2].y-pWall->y;
+	i = dx*(x-pWall->x) + dy*(y-pWall->y);
+	if (i <= 0) { *nx = pWall->x; *ny = pWall->y; return; }
+	j = dx*dx+dy*dy;
+	if (i >= j) { *nx = pWall->x+dx; *ny = pWall->y+dy; return; }
+	i = divscale30(i,j);
+	*nx = pWall->x + mulscale30(dx,i);
+	*ny = pWall->y + mulscale30(dy,i);
+}
+
+int getwalldist(int in_x, int in_y, WALL *pWall)
+{
+    int close_x, close_y;
+    GetClosestPointOnWall(in_x, in_y, pWall, &close_x, &close_y);
+    return klabs(close_x - in_x) + klabs(close_y - in_y);
+}
+
+int GetClosestSpriteSectors(int nSector, int x, int y, int nDist, short *pSectors, byte *pSectBit, short *a8, BOOL bAccurateCheck)
+{
+    // by default this function fails with sectors that linked with wide spans, or there was more than one link to the same sector. for example...
+    // E6M1: throwing TNT on the stone footpath while standing on the brown road will fail due to the start/end points of the span being too far away. it'll only do damage at one end of the road
+    // E1M2: throwing TNT at the double doors while standing on the train platform
+    // by setting bAccurateCheck to true these issues will be resolved
     byte sectbits[(kMaxSectors+7)>>3];
     dassert(pSectors != NULL, 1359);
     int n = 0;
@@ -948,6 +974,7 @@ int GetClosestSpriteSectors(int nSector, int x, int y, int nDist, short *pSector
     SetBitString(sectbits, nSector);
     int i = 0;
     int k = 0;
+    const int nDist4 = nDist<<4;
     if (pSectBit)
     {
         memset(pSectBit, 0, (kMaxSectors+7)>>3);
@@ -967,8 +994,25 @@ int GetClosestSpriteSectors(int nSector, int x, int y, int nDist, short *pSector
                 continue;
             if (!TestBitString(sectbits, nNextSector))
             {
-                SetBitString(sectbits, nNextSector);
-                if (CheckProximityWall(wall[j].point2, x, y, nDist))
+                BOOL bWithinRange;
+                BOOL bSetSectBit = TRUE;
+                if (!bAccurateCheck) // original method
+                {
+                    bWithinRange = CheckProximityWall(wall[j].point2, x, y, nDist);
+                }
+                else // accurate method
+                {
+                    for (int k = (j+1); k < nEndWall; k++) // scan through the rest of the sector's walls
+                    {
+                        if (wall[k].nextsector == nNextSector) // if the next walls still reference the sector, then don't flag the sector as checked (yet)
+                        {
+                            bSetSectBit = FALSE;
+                            break;
+                        }
+                    }
+                    bWithinRange = getwalldist(x, y, pWall) <= nDist4;
+                }
+                if (bWithinRange)
                 {
                     if (pSectBit)
                         SetBitString(pSectBit, nNextSector);
@@ -984,6 +1028,8 @@ int GetClosestSpriteSectors(int nSector, int x, int y, int nDist, short *pSector
                         }
                     }
                 }
+                if (bSetSectBit)
+                    SetBitString(sectbits, nNextSector);
             }
         }
     }

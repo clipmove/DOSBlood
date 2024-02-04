@@ -2270,6 +2270,25 @@ int actOwnerIdToSpriteId(int nOwner)
     return nSprite;
 }
 
+BOOL actSpriteOwnerIsPlayer(SPRITE *pSprite)
+{
+    dassert(pSprite != NULL, 2275);
+    if (pSprite->owner < 0)
+        return FALSE;
+    return (pSprite->owner & 0x1000);
+}
+
+BOOL actSpriteOwnerIsDude(SPRITE *pSprite)
+{
+    dassert(pSprite != NULL, 2283);
+    int nOwner = pSprite->owner;
+    if (nOwner < 0)
+        return FALSE;
+    if (nOwner & 0x1000)
+        return TRUE;
+    return (sprite[nOwner].type >= kDudeBase) && (sprite[nOwner].type < kDudeMax);
+}
+
 void actAllocateSpares(void)
 {
 }
@@ -2489,7 +2508,8 @@ void func_2A620(int nSprite, int x, int y, int z, int nSector, int nDist, int a7
     nOwner = actSpriteIdToOwnerId(nSprite);
     gAffectedSectors[0] = -1;
     gAffectedXWalls[0] = -1;
-    GetClosestSpriteSectors(nSector, x, y, nDist, gAffectedSectors, va0, gAffectedXWalls);
+    BOOL bAccurateCheck = (nOwner != -1) && !VanillaMode() && actSpriteOwnerIsDude(&sprite[nOwner]); // use new sector checking logic
+    GetClosestSpriteSectors(nSector, x, y, nDist, gAffectedSectors, va0, gAffectedXWalls, bAccurateCheck);
     nDist <<= 4;
     if (a10 & 2)
     {
@@ -5261,7 +5281,13 @@ void actProcessSprites(void)
         int nSector = pSprite->sectnum;
         gAffectedSectors[0] = -1;
         gAffectedXWalls[0] = -1;
-        GetClosestSpriteSectors(nSector, x, y, pExplodeInfo->at3, gAffectedSectors, v24c, gAffectedXWalls);
+
+        // GetClosestSpriteSectors() has issues checking some sectors due to optimizations
+        // the new flag bAccurateCheck for GetClosestSpriteSectors() does rectify these issues, but this may cause unintended side effects for level scripted explosions
+        // so only allow this new checking method for dude spawned explosions
+        BOOL bAccurateCheck = actSpriteOwnerIsDude(pSprite) && !VanillaMode(); // use new sector checking logic
+        GetClosestSpriteSectors(nSector, x, y, pExplodeInfo->at3, gAffectedSectors, v24c, gAffectedXWalls, bAccurateCheck);
+
         for (int i = 0; i < kMaxXWalls; i++)
         {
             int nWall = gAffectedXWalls[i];
