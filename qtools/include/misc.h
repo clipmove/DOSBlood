@@ -301,6 +301,15 @@ int divscale24(int, int);
 parm nomemory [eax] [ebx] \
 modify nomemory exact [eax edx]
 
+int divscale30(int, int);
+#pragma aux divscale30 = \
+"mov edx,eax" \
+"sar edx,2" \
+"shl eax,30" \
+"idiv ebx" \
+parm nomemory [eax] [ebx] \
+modify nomemory exact [eax edx]
+
 int divscale(int, int, int);
 #pragma aux divscale = \
 "mov edx,eax" \
