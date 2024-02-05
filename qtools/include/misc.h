@@ -231,6 +231,20 @@ parm nomemory [eax] \
 value [edx] \
 modify nomemory exact [eax edx]
 
+int mulscale2(int, int);
+#pragma aux mulscale2 = \
+"imul edx" \
+"shrd eax,edx,2" \
+parm nomemory [eax] [edx] \
+modify nomemory exact [eax edx]
+
+int mulscale3(int, int);
+#pragma aux mulscale3 = \
+"imul edx" \
+"shrd eax,edx,3" \
+parm nomemory [eax] [edx] \
+modify nomemory exact [eax edx]
+
 int mulscale8(int, int);
 #pragma aux mulscale8 = \
 "imul edx" \
@@ -238,10 +252,24 @@ int mulscale8(int, int);
 parm nomemory [eax] [edx] \
 modify nomemory exact [eax edx]
 
+int mulscale10(int, int);
+#pragma aux mulscale10 = \
+"imul edx" \
+"shrd eax,edx,10" \
+parm nomemory [eax] [edx] \
+modify nomemory exact [eax edx]
+
 int mulscale14(int, int);
 #pragma aux mulscale14 = \
 "imul edx" \
 "shrd eax,edx,14" \
+parm nomemory [eax] [edx] \
+modify nomemory exact [eax edx]
+
+int mulscale15(int, int);
+#pragma aux mulscale15 = \
+"imul edx" \
+"shrd eax,edx,15" \
 parm nomemory [eax] [edx] \
 modify nomemory exact [eax edx]
 
@@ -283,6 +311,33 @@ int interpolate16(int, int, int);
 parm nomemory [ebx] [ecx] [eax] \
 modify nomemory exact [eax ebx ecx edx esi]
 
+int divscale8(int, int);
+#pragma aux divscale8 = \
+"mov edx,eax" \
+"sar edx,24" \
+"shl eax,8" \
+"idiv ebx" \
+parm nomemory [eax] [ebx] \
+modify nomemory exact [eax edx]
+
+int divscale10(int, int);
+#pragma aux divscale10 = \
+"mov edx,eax" \
+"sar edx,22" \
+"shl eax,10" \
+"idiv ebx" \
+parm nomemory [eax] [ebx] \
+modify nomemory exact [eax edx]
+
+int divscale12(int, int);
+#pragma aux divscale12 = \
+"mov edx,eax" \
+"sar edx,20" \
+"shl eax,12" \
+"idiv ebx" \
+parm nomemory [eax] [ebx] \
+modify nomemory exact [eax edx]
+
 int divscale16(int, int);
 #pragma aux divscale16 = \
 "mov edx,eax" \
@@ -297,6 +352,15 @@ int divscale24(int, int);
 "mov edx,eax" \
 "sar edx,8" \
 "shl eax,24" \
+"idiv ebx" \
+parm nomemory [eax] [ebx] \
+modify nomemory exact [eax edx]
+
+int divscale30(int, int);
+#pragma aux divscale30 = \
+"mov edx,eax" \
+"sar edx,2" \
+"shl eax,30" \
 "idiv ebx" \
 parm nomemory [eax] [ebx] \
 modify nomemory exact [eax edx]
@@ -379,6 +443,18 @@ parm nomemory [eax] [ebx] [esi] [edi] [ecx] \
 modify nomemory exact [eax ebx edx esi]
 
 
+int dmulscale4(int, int, int, int);
+#pragma aux dmulscale4 = \
+"imul ebx" \
+"xchg eax,esi" \
+"mov ebx,edx" \
+"imul edi" \
+"add eax,esi" \
+"adc edx,ebx" \
+"shrd eax,edx,4" \
+parm nomemory [eax] [ebx] [esi] [edi] \
+modify nomemory exact [eax ebx edx esi]
+
 int dmulscale16(int, int, int, int);
 #pragma aux dmulscale16 = \
 "imul ebx" \
@@ -447,12 +523,12 @@ void debugTrap(void);
 
 inline int QRandom(int n)
 {
-    return mulscale(qrand(), n, 15);
+    return mulscale15(qrand(), n);
 }
 
 inline int QRandom2(int n)
 {
-    return mulscale(qrand(), n, 14) - n;
+    return mulscale14(qrand(), n) - n;
 }
 
 inline BOOL Chance(int a1)
@@ -462,17 +538,17 @@ inline BOOL Chance(int a1)
 
 inline uint Random(int a1)
 {
-    return mulscale(rand(), a1, 15);
+    return mulscale15(rand(), a1);
 }
 
 inline int Random2(int a1)
 {
-    return mulscale(rand(), a1, 14)-a1;
+    return mulscale14(rand(), a1)-a1;
 }
 
 inline int Random3(int a1)
 {
-    return mulscale(rand()+rand(), a1, 15) - a1;
+    return mulscale15(rand()+rand(), a1) - a1;
 }
 
 #endif // !_MISC_H_

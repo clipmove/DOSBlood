@@ -263,7 +263,7 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
             {
                 aiSetTarget(pXSprite, pXSprite->target);
                 int nXSprite = sprite[pXSprite->reference].extra;
-                gDudeSlope[nXSprite] = divscale(pTarget->z-pSprite->z, nDist, 10);
+                gDudeSlope[nXSprite] = divscale10(pTarget->z-pSprite->z, nDist);
                 if (nDist < 0x1400 && nDist > 0xa00 && klabs(nDeltaAngle) < 85 && (pTarget->flags&kSpriteFlag1)
                     && IsPlayerSprite(pTarget) && Chance(0x8000))
                 {

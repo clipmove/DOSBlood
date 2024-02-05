@@ -335,15 +335,15 @@ static void UpdateAimVector(PLAYER * pPlayer)
                 continue;
             if (pWeaponTrack->at10)
             {
-                int t = divscale(nDist,pWeaponTrack->at10, 12);
+                int t = divscale12(nDist,pWeaponTrack->at10);
                 x2 += (xvel[nSprite]*t)>>12;
                 y2 += (yvel[nSprite]*t)>>12;
                 z2 += (zvel[nSprite]*t)>>8;
             }
             int lx = x + mulscale30(Cos(pPSprite->ang), nDist);
             int ly = y + mulscale30(Sin(pPSprite->ang), nDist);
-            int lz = z + mulscale(pPlayer->at83, nDist, 10);
-            int zRange = mulscale(9460, nDist, 10);
+            int lz = z + mulscale10(pPlayer->at83, nDist);
+            int zRange = mulscale10(9460, nDist);
             int top, bottom;
             GetSpriteExtents(pSprite, &top, &bottom);
             if (bottom<lz-zRange || top>lz+zRange)
@@ -366,7 +366,7 @@ static void UpdateAimVector(PLAYER * pPlayer)
                 nClosest = nDist2;
                 aim.dx = Cos(angle)>>16;
                 aim.dy = Sin(angle)>>16;
-                aim.dz = divscale(dzCenter, nDist, 10);
+                aim.dz = divscale10(dzCenter, nDist);
                 nTarget = nSprite;
             }
         }
@@ -388,8 +388,8 @@ static void UpdateAimVector(PLAYER * pPlayer)
                     continue;
                 int lx = x + mulscale30(Cos(pPSprite->ang), nDist);
                 int ly = y + mulscale30(Sin(pPSprite->ang), nDist);
-                int lz = z + mulscale(pPlayer->at83, nDist, 10);
-                int zRange = mulscale(9460, nDist, 10);
+                int lz = z + mulscale10(pPlayer->at83, nDist);
+                int zRange = mulscale10(9460, nDist);
                 int top, bottom;
                 GetSpriteExtents(pSprite, &top, &bottom);
                 if (bottom<lz-zRange || top>lz+zRange)
@@ -410,7 +410,7 @@ static void UpdateAimVector(PLAYER * pPlayer)
                     nClosest = nDist2;
                     aim.dx = Cos(angle)>>16;
                     aim.dy = Sin(angle)>>16;
-                    aim.dz = divscale(dz, nDist, 10);
+                    aim.dz = divscale10(dz, nDist);
                     nTarget = nSprite;
                 }
             }

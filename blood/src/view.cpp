@@ -785,8 +785,8 @@ static void fakeMoveDude(SPRITE *pSprite)
             int nSprite = var48 & 0x1fff;
             if ((sprite[nSprite].cstat&kSpriteMask) == kSpriteFace)
             {
-                predict.at5c += mulscale(4,predict.at50-sprite[nSprite].x,2);
-                predict.at60 += mulscale(4,predict.at54-sprite[nSprite].y,2);
+                predict.at5c += mulscale2(4,predict.at50-sprite[nSprite].x);
+                predict.at60 += mulscale2(4,predict.at54-sprite[nSprite].y);
                 return;
             }
         }
@@ -1671,9 +1671,9 @@ void viewInit(void)
 
     for (int i = 0; i < 16; i++)
     {
-        int_172CE0[i][0] = mulscale(rand(), 2048, 15);
-        int_172CE0[i][2] = mulscale(rand(), 2048, 15);
-        int_172CE0[i][1] = mulscale(rand(), 2048, 15);
+        int_172CE0[i][0] = mulscale15(rand(), 2048);
+        int_172CE0[i][2] = mulscale15(rand(), 2048);
+        int_172CE0[i][1] = mulscale15(rand(), 2048);
     }
     gViewMap.func_25C38(0, 0, gZoom, 0, gFollowMap);
 }
@@ -2650,7 +2650,7 @@ static void CalcOtherPosition(SPRITE *pSprite, long *pX, long *pY, long *pZ, int
     short nHSector, nHWall, nHSprite;
     vX = mulscale30(-Cos(nAng), 1280);
     vY = mulscale30(-Sin(nAng), 1280);
-    vZ = mulscale(zm, 1280, 3);
+    vZ = mulscale3(zm, 1280);
     vZ -= (16<<8);
     short bakCstat = pSprite->cstat;
     pSprite->cstat &= ~256;
@@ -2687,7 +2687,7 @@ static void CalcPosition(SPRITE *pSprite, long *pX, long *pY, long *pZ, int *vse
     short nHSector, nHWall, nHSprite;
     vX = mulscale30(-Cos(nAng), 1280);
     vY = mulscale30(-Sin(nAng), 1280);
-    vZ = mulscale(zm, 1280, 3);
+    vZ = mulscale3(zm, 1280);
     vZ -= (16<<8);
     short bakCstat = pSprite->cstat;
     pSprite->cstat &= ~256;

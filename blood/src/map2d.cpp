@@ -267,8 +267,8 @@ int drawoverheadmap(long cposx, long cposy, long czoom, short cang)
           ox = spr->x-cposx; oy = spr->y-cposy;
                   daang = (spr->ang-cang)&2047;
                   if (p == gView->at57) { ox = 0; oy = 0; daang = 0; }
-                  x1 = mulscale(ox,xvect,16) - mulscale(oy,yvect,16);
-                  y1 = mulscale(oy,xvect2,16) + mulscale(ox,yvect2,16);
+                  x1 = mulscale16(ox,xvect) - mulscale16(oy,yvect);
+                  y1 = mulscale16(oy,xvect2) + mulscale16(ox,yvect2);
 
           if(p == gView->at57 || gGameOptions.nGameType == GAMETYPE_1 )
           {
@@ -279,7 +279,7 @@ int drawoverheadmap(long cposx, long cposy, long czoom, short cang)
                 GetSpriteExtents(spr, &nTop, &nBottom);
 
                 j = klabs(floorZ-nBottom)>>8;
-                j = mulscale(czoom*(spr->yrepeat+j),yxaspect,16);
+                j = mulscale16(czoom*(spr->yrepeat+j),yxaspect);
 
                 if(j < 8000) j = 8000;
                 else if(j > 65536) j = 65536;
