@@ -554,7 +554,7 @@ void StartLevel(GAMEOPTIONS *gameOptions)
             if (numplayers == 1)
             {
                 gProfile[i].skill = gSkill;
-                gProfile[i].at0 = gAutoAim;
+                gProfile[i].at0 = gDemo.RecordStatus() ? 1 : gAutoAim; // demos always assume autoaim
             }
             playerInit(i,0);
         }
