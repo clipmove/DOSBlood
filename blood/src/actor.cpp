@@ -2385,7 +2385,7 @@ void actInit(BOOL bSaveLoad)
     for (int i = 0; i < kDudeMax-kDudeBase; i++)
     {
         for (int j = 0; j < 7; j++)
-            dudeInfo[i].at70[j] = mulscale8(DudeDifficulty[gGameOptions.nDifficulty], dudeInfo[i].at54[j]);
+            dudeInfo[i].at70[j] = mulscale8(DudeDifficulty[gGameOptions.nDifficultyHealth], dudeInfo[i].at54[j]);
     }
     for (nSprite = headspritestat[6]; nSprite >= 0; nSprite = nextspritestat[nSprite])
     {

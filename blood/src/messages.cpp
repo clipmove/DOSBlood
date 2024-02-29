@@ -302,6 +302,9 @@ void LevelWarpAndRecord(int nEpisode, int nLevel)
     strcpy(buffer, levelGetFilename(nEpisode, nLevel));
     ChangeExtension(buffer, ".DEM");
     gDemo.Create(buffer);
+    gGameOptions.nDifficultyQuantity = gGameOptions.nDifficulty;
+    gGameOptions.nDifficultyHealth = gGameOptions.nDifficulty;
+    gSkill = gGameOptions.nDifficulty;
     StartLevel(&gGameOptions);
     viewResizeView(gViewSize);
 }

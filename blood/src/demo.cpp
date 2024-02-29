@@ -276,6 +276,8 @@ _DEMOPLAYBACK:
                 memcpy(connectpoint2, atf.connectPoints, sizeof(atf.connectPoints));
                 memcpy(&gGameOptions, &atf.gameOptions, sizeof(GAMEOPTIONS));
                 gGameOptions.uGameFlags &= ~1; // don't let demo attempt to load player health from gHealthTemp
+                gGameOptions.nDifficultyQuantity = gGameOptions.nDifficulty;
+                gGameOptions.nDifficultyHealth = gGameOptions.nDifficulty;
                 gSkill = gGameOptions.nDifficulty;
                 for (i = 0; i < 8; i++)
                     playerInit(i, 0);

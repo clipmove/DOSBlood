@@ -65,11 +65,6 @@ enum RESPAWNSETTINGS
     RESPAWNSETTINGS_0 = 0,
 };
 
-enum TEAMSETTINGS
-{
-    TEAMSETTINGS_0 = 0,
-};
-
 #define kMaxFileKeyLen 16
 #define kMaxMessages 32
 
@@ -97,7 +92,8 @@ struct GAMEOPTIONS
     WEAPONSETTINGS  nWeaponSettings;
     ITEMSETTINGS    nItemSettings;
     RESPAWNSETTINGS nRespawnSettings;
-    TEAMSETTINGS    nTeamSettings;  // team and cooperative
+    DIFFICULTY      nDifficultyQuantity : 4;
+    DIFFICULTY      nDifficultyHealth : 4;
 
     int             nMonsterRespawnTime;
     int             nWeaponRespawnTime;

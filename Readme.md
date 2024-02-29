@@ -14,6 +14,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Center horizon line option
 * Show map title on level start
 * Add key icons to small HUD size
+* BloodGDX style difficulty options
 * Improved aim vector response by 33ms
 * Vanilla mode option to restore original enemy bugs
 * Supports multiplayer with Blood version 1.21 clients
