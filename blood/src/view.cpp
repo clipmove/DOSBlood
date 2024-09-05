@@ -1577,7 +1577,7 @@ static void UpdateStatusBar(int arg)
     {
         if (gShowPowerUps)
             viewDrawPowerUps(pPlayer);
-        if (gLevelStats)
+        if ((gLevelStats == 1) || (gLevelStats == 2 && gViewMode == 4))
             viewDrawStats(2, gViewSize == 2 ? 115 : 140);
     }
     if (gGameOptions.nGameType >= GAMETYPE_1 || int_28E3D4 == 4)
