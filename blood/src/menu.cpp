@@ -134,8 +134,8 @@ char *zDiffStrings[] =
 char *zShowPowerUpsStrings[] =
 {
     "OFF",
-    "ON (LEFT)",
-    "ON (RIGHT)",
+    "LEFT",
+    "RIGHT",
 };
 
 char *zLevelStatsStrings[] =
