@@ -241,7 +241,7 @@ void sfxPlay3DSound(SPRITE *pSprite, int soundId, int a3, int a4)
                 return;
             pBonkle = BonkleCache[nBonkles++];
         }
-        pBonkle->at10 = pSprite;
+        pBonkle->at10 = !(a4&8) ? pSprite : NULL;
         pBonkle->at14 = a3;
     }
     else

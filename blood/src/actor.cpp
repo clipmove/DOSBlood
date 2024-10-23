@@ -2941,9 +2941,10 @@ void actKillDude(int a1, SPRITE *pSprite, DAMAGE_TYPE a3, int a4)
     case 202:
     case 247:
     case 248:
-        if (!VanillaMode()) // mute all cultist alerts sfx on death
-            sfxKill3DSound(pSprite, kMaxSprites+pSprite->index, -1); // cultist alert sfx use kMaxSprites+sprite index as channel
-        sfxPlay3DSound(pSprite, 1018+Random(2));
+        if (!VanillaMode()) // trigger cultist death scream sfx over cultist alerts sfx channel
+            sfxPlay3DSound(pSprite, 1018+Random(2), kMaxSprites+pSprite->index, 1|8); // cultist alert sfx use kMaxSprites+sprite index as channel
+        else
+            sfxPlay3DSound(pSprite, 1018+Random(2));
         seqSpawn(dudeInfo[nType].seqStartID+nSeq, 3, nXSprite, nSeq == 3 ? nDudeToGibClient2 : nDudeToGibClient1);
         break;
     case 240:
