@@ -322,6 +322,22 @@ int powerupCheck(PLAYER *pPlayer, int nPowerUp)
     return pPlayer->at202[nPowerUp];
 }
 
+static BOOL powerupAkimboWeapons(int nWeapon)
+{
+    switch (nWeapon)
+    {
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 8:
+        return 1;
+    default:
+        break;
+    }
+    return 0;
+}
+
 BOOL powerupActivate(PLAYER *pPlayer, int nPowerUp)
 {
     if (powerupCheck(pPlayer, nPowerUp) > 0 && gPowerUpInfo[nPowerUp].at2)
@@ -359,6 +375,8 @@ BOOL powerupActivate(PLAYER *pPlayer, int nPowerUp)
         pPlayer->ata1[1]++;
         break;
     case 117: // guns akimbo
+        if (!VanillaMode() && !powerupAkimboWeapons(pPlayer->atbd)) // if weapon doesn't have a akimbo state, don't raise weapon
+            break;
         pPlayer->atc.newWeapon = pPlayer->atbd;
         WeaponRaise(pPlayer);
         break;
@@ -400,6 +418,8 @@ void powerupDeactivate(PLAYER *pPlayer, int nPowerUp)
         pPlayer->ata1[1]--;
         break;
     case 117: // guns akimbo
+        if (!VanillaMode() && !powerupAkimboWeapons(pPlayer->atbd)) // if weapon doesn't have a akimbo state, don't raise weapon
+            break;
         pPlayer->atc.newWeapon = pPlayer->atbd;
         WeaponRaise(pPlayer);
         break;
