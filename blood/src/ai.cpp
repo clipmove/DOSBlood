@@ -352,6 +352,7 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
     case 248:
     case 249:
     {
+        const int nChannel = !VanillaMode() ? kMaxSprites+pSprite->index : -1; // use kMaxSprites+sprite index as channel, so cultist alerts can be muted on death/hurt state
         DUDEEXTRA_CULTIST *pDudeExtraE = &gDudeExtra[pSprite->extra].at6.cultist;
         pDudeExtraE->at8 = 1;
         pDudeExtraE->at0 = 0;
@@ -364,9 +365,9 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
                 if (Chance(0x8000))
                 {
                     if (pSprite->type == 201)
-                        aiPlay3DSound(pSprite, 4008+Random(5), AI_SFX_PRIORITY_1, -1);
+                        aiPlay3DSound(pSprite, 4008+Random(5), AI_SFX_PRIORITY_1, nChannel);
                     else
-                        aiPlay3DSound(pSprite, 1008+Random(5), AI_SFX_PRIORITY_1, -1);
+                        aiPlay3DSound(pSprite, 1008+Random(5), AI_SFX_PRIORITY_1, nChannel);
                 }
                 break;
             case 1:
@@ -380,9 +381,9 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
             if (Chance(0x8000))
             {
                 if (pSprite->type == 201)
-                    aiPlay3DSound(pSprite, 4003+Random(4), AI_SFX_PRIORITY_1, -1);
+                    aiPlay3DSound(pSprite, 4003+Random(4), AI_SFX_PRIORITY_1, nChannel);
                 else
-                    aiPlay3DSound(pSprite, 1003+Random(4), AI_SFX_PRIORITY_1, -1);
+                    aiPlay3DSound(pSprite, 1003+Random(4), AI_SFX_PRIORITY_1, nChannel);
             }
             switch (pXSprite->at17_6)
             {
@@ -402,6 +403,7 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
     }
     case 230:
     {
+        const int nChannel = !VanillaMode() ? kMaxSprites+pSprite->index : -1; // use kMaxSprites+sprite index as channel, so cultist alerts can be muted on death/hurt state
         DUDEEXTRA_CULTIST *pDudeExtraE = &gDudeExtra[pSprite->extra].at6.cultist;
         pDudeExtraE->at8 = 1;
         pDudeExtraE->at0 = 0;
@@ -413,7 +415,7 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
             case 0:
                 aiNewState(pSprite, pXSprite, &cultistSearch);
                 if (Chance(0x8000))
-                    aiPlay3DSound(pSprite, 4008+Random(5), AI_SFX_PRIORITY_1, -1);
+                    aiPlay3DSound(pSprite, 4008+Random(5), AI_SFX_PRIORITY_1, nChannel);
                 break;
             case 1:
             case 2:
@@ -424,7 +426,7 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
         else
         {
             if (Chance(0x8000))
-                aiPlay3DSound(pSprite, 4008+Random(5), AI_SFX_PRIORITY_1, -1);
+                aiPlay3DSound(pSprite, 4008+Random(5), AI_SFX_PRIORITY_1, nChannel);
             switch (pXSprite->at17_6)
             {
             case 0:
@@ -440,6 +442,7 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
     }
     case 246:
     {
+        const int nChannel = !VanillaMode() ? kMaxSprites+pSprite->index : -1; // use kMaxSprites+sprite index as channel, so cultist alerts can be muted on death/hurt state
         DUDEEXTRA_CULTIST *pDudeExtraE = &gDudeExtra[pSprite->extra].at6.cultist;
         pDudeExtraE->at8 = 1;
         pDudeExtraE->at0 = 0;
@@ -451,7 +454,7 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
             case 0:
                 aiNewState(pSprite, pXSprite, &cultistSearch);
                 if (Chance(0x8000))
-                    aiPlay3DSound(pSprite, 1008+Random(5), AI_SFX_PRIORITY_1, -1);
+                    aiPlay3DSound(pSprite, 1008+Random(5), AI_SFX_PRIORITY_1, nChannel);
                 break;
             case 1:
             case 2:
@@ -462,7 +465,7 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
         else
         {
             if (Chance(0x8000))
-                aiPlay3DSound(pSprite, 1003+Random(4), AI_SFX_PRIORITY_1, -1);
+                aiPlay3DSound(pSprite, 1003+Random(4), AI_SFX_PRIORITY_1, nChannel);
             switch (pXSprite->at17_6)
             {
             case 0:
