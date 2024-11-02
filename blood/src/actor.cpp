@@ -6106,20 +6106,26 @@ void actFireVector(SPRITE *pShooter, int a2, int a3, int a4, int a5, int a6, VEC
             }
             if (pSprite->statnum == 4)
             {
-                int t = thingInfo[pSprite->type-kThingBase].at2;
-                if (t > 0 && pVectorData->at5)
+                // shooting TNT makes it explode, so type changes to range of 0-8
+                // however statnum changes to 2 (explosion) later in actPostSprite()...
+                // this is why this type range check is required here
+                if (VanillaMode() || (pSprite->type >= kThingBase && pSprite->type < kThingMax))
                 {
-                    int t2 = divscale8(pVectorData->at5, t);
-                    xvel[nSprite] += mulscale16(a4, t2);
-                    yvel[nSprite] += mulscale16(a5, t2);
-                    zvel[nSprite] += mulscale16(a6, t2);
-                }
-                if (pVectorData->at11)
-                {
-                    XSPRITE *pXSprite = &xsprite[nXSprite];
-                    if (actGetBurnTime(pXSprite) == 0)
-                        evPost(nSprite, 3, 0, CALLBACK_ID_0);
-                    actBurnSprite(actSpriteIdToOwnerId(nShooter), pXSprite, pVectorData->at11);
+                    int t = thingInfo[pSprite->type-kThingBase].at2;
+                    if (t > 0 && pVectorData->at5)
+                    {
+                        int t2 = divscale8(pVectorData->at5, t);
+                        xvel[nSprite] += mulscale16(a4, t2);
+                        yvel[nSprite] += mulscale16(a5, t2);
+                        zvel[nSprite] += mulscale16(a6, t2);
+                    }
+                    if (pVectorData->at11)
+                    {
+                        XSPRITE *pXSprite = &xsprite[nXSprite];
+                        if (actGetBurnTime(pXSprite) == 0)
+                            evPost(nSprite, 3, 0, CALLBACK_ID_0);
+                        actBurnSprite(actSpriteIdToOwnerId(nShooter), pXSprite, pVectorData->at11);
+                    }
                 }
             }
             if (pSprite->statnum == 6)
