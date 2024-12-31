@@ -29,6 +29,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Initializes gSpriteHit on XSprite creation
 * Clear interpolation queue on new level
 * Fix Cerberus spinning on lava
+* Ignore floor pal zero for sectors
 * Fix infinite burning enemies bug
 * Fix tiny Calebs using the wrong sprite
 * Fix prone tesla Cultists infinitely firing

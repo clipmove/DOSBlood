@@ -2133,6 +2133,9 @@ SPRITE *viewAddEffect(int nTSprite, VIEW_EFFECT nViewEffect)
     return NULL;
 }
 
+// keep original sprite's palette when floors are using default palette (fixes tommy gun cultists in E3M2)
+#define viewApplyFloorPal(pTSprite, pSector) if (!(pSector->floorpal == 0 && !VanillaMode())) pTSprite->pal = pSector->floorpal;
+
 void viewProcessSprites(int cX, int cY, int cZ)
 {
     int nTSprite, nOctant;
@@ -2346,7 +2349,7 @@ void viewProcessSprites(int cX, int cY, int cZ)
                 default:
                     if (pXSector && pXSector->at18_0)
                     {
-                        pTSprite->pal = pSector->floorpal;
+                        viewApplyFloorPal(pTSprite, pSector);
                     }
                     break;
                 }
@@ -2385,7 +2388,7 @@ void viewProcessSprites(int cX, int cY, int cZ)
                         pTSprite->shade = -128;
                     if (pXSector && pXSector->at18_0)
                     {
-                        pTSprite->pal = pSector->floorpal;
+                        viewApplyFloorPal(pTSprite, pSector);
                     }
                     break;
                 }
@@ -2450,7 +2453,7 @@ void viewProcessSprites(int cX, int cY, int cZ)
                 }
                 if (pXSector && pXSector->at18_0)
                 {
-                    pTSprite->pal = pSector->floorpal;
+                    viewApplyFloorPal(pTSprite, pSector);
                 }
                 if (powerupCheck(gView, 25) > 0)
                 {
@@ -2558,17 +2561,12 @@ void viewProcessSprites(int cX, int cY, int cZ)
             {
                 if (pXSector && pXSector->at18_0)
                 {
-                    pTSprite->pal = pSector->floorpal;
+                    viewApplyFloorPal(pTSprite, pSector);
                 }
-                if (pTSprite->flags&kSpriteFlag0)
+                if (pTSprite->type < 400 || pTSprite->type >= 433 || !gSpriteHit[nXSprite].florhit)
                 {
-                    if (getflorzofslope(pTSprite->sectnum, pTSprite->x, pTSprite->y) >= cZ)
+                    if ((pTSprite->flags&kSpriteFlag0) && getflorzofslope(pTSprite->sectnum, pTSprite->x, pTSprite->y) >= cZ)
                     {
-                        if (pTSprite->type >= 400 && pTSprite->type < 433)
-                        {
-                            if (gSpriteHit[nXSprite].florhit)
-                                break;
-                        }
                         viewAddEffect(nTSprite, VIEW_EFFECT_0);
                     }
                 }
