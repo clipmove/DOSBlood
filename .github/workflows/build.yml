@@ -46,7 +46,7 @@ jobs:
           cp -a "BUILDLIC.TXT" ./upload/
           cp -a "Readme.md" ./upload/
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dosblood
           path: upload/
