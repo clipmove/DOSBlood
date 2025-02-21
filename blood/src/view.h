@@ -41,6 +41,7 @@ extern int gViewY1S;
 extern int gViewIndex;
 
 extern int gShowFrameRate;
+extern int gShowLevelLimits;
 
 extern long gScreenTilt;
 extern int deliriumTilt;

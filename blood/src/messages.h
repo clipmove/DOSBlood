@@ -112,6 +112,7 @@ public:
         kCheat35,
         kCheat36,
         kCheat37,
+        kCheat38,
         kCheatMax
     };
     static unsigned long kCheatFlagsNone;

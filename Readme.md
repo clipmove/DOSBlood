@@ -19,6 +19,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Vanilla mode option to restore original enemy bugs
 * Supports multiplayer with Blood version 1.21 clients
 * NBlood-style power-ups and level stats HUD display
+* New 'LIMITS' cheat code to display wall/sprites usage
 * Restore broken blinking state for health point counter
 * Don't restart midi track when loading save for current level
 * Use Pentium II/PRO (if found) optimizations for a.asm functions (12% speed improvement)

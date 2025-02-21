@@ -84,6 +84,7 @@ byte bakMirrorGotpic[2];
 static int pcBackground;
 
 int gShowFrameRate;
+int gShowLevelLimits;
 
 long gScreenTilt;
 
@@ -3287,6 +3288,61 @@ void viewDrawScreen(void)
         printext256(fX-12, fY, 31, -1, buffer, 1);
         fY += 8;
         sprintf(buffer, "pos=%d,%d,%d", gView->pSprite->x, gView->pSprite->y, gView->pSprite->z);
+        printext256(fX-strlen(buffer)*4, fY, 31, -1, buffer, 1);
+    }
+    if (gShowLevelLimits)
+    {
+        int fX = gViewMode == 3 ? gViewX1 : xdim;
+        int fY = gViewMode == 3 ? gViewY0 : 0;
+        static int nSpriteMax = 0, nXSpriteMax = 0, nXSectorMax = 0, nXWallMax = 0;
+        static long nLevelTime = gFrameClock;
+        if (nLevelTime != gFrameClock)
+        {
+            int i;
+            nSpriteMax = nXSpriteMax = 0;
+            for (i = 0; i < kMaxSprites; i++)
+            {
+                if (sprite[i].statnum < kMaxStatus)
+                {
+                    nSpriteMax++;
+                    const int nXSprite = sprite[i].extra;
+                    if (nXSprite > 0 && nXSprite < kMaxXSprites)
+                        nXSpriteMax++;
+                }
+            }
+            nXSectorMax = 0;
+            for (i = 0; i < numsectors; i++)
+            {
+                const int nXSector = sector[i].extra;
+                if (nXSector > 0 && nXSector < kMaxXSectors)
+                    nXSectorMax++;
+            }
+            nXWallMax = 0;
+            for (i = 0; i < numwalls; i++)
+            {
+                const int nXWall = wall[i].extra;
+                if (nXWall > 0 && nXWall < kMaxXWalls)
+                    nXWallMax++;
+            }
+        }
+        if (gShowFrameRate)
+            fY += 16;
+        sprintf(buffer, "sprites=%04d/%04d", nSpriteMax, kMaxSprites);
+        printext256(fX-strlen(buffer)*4, fY, nSpriteMax > (kMaxSprites-512-256-192) ? 152 : 31, -1, buffer, 1);
+        fY += 8;
+        sprintf(buffer, "xsprites=%04d/%04d", nXSpriteMax, kMaxXSprites);
+        printext256(fX-strlen(buffer)*4, fY, nXSpriteMax > (kMaxXSprites-256) ? 152 : 31, -1, buffer, 1);
+        fY += 8;
+        sprintf(buffer, "sectors=%04d/%04d", numsectors, kMaxSectors);
+        printext256(fX-strlen(buffer)*4, fY, 31, -1, buffer, 1);
+        fY += 8;
+        sprintf(buffer, "xsectors=%04d/%04d", nXSectorMax, kMaxXSectors);
+        printext256(fX-strlen(buffer)*4, fY, 31, -1, buffer, 1);
+        fY += 8;
+        sprintf(buffer, "walls=%04d/%04d", numwalls, kMaxWalls);
+        printext256(fX-strlen(buffer)*4, fY, 31, -1, buffer, 1);
+        fY += 8;
+        sprintf(buffer, "xwalls=%04d/%04d", nXWallMax, kMaxXWalls);
         printext256(fX-strlen(buffer)*4, fY, 31, -1, buffer, 1);
     }
     viewDrawMapTitle();

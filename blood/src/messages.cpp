@@ -597,6 +597,7 @@ CCheatMgr::CHEATINFO CCheatMgr::s_CheatInfo[] = {
     {"SBUF", kCheat27, 0 }, // RATE (Display frame rate (doesn't count as a cheat))
     {"HPPOJFT", kCheat16, 0 }, // GOONIES (Enable full map. Displays the message "YOU HAVE THE MAP".)
     {"TQJFMCFSH", kCheat36, 1 }, // SPIELBERG (Disables all cheats. If number values corresponding to a level and episode number are entered after the cheat word (i.e. "spielberg 1 3" for Phantom Express), you will be spawned to said level and the game will begin recording a demo from your actions.)
+    {"MJNJUT", kCheat38, 0 }, // LIMITS (Display sprite/sector/wall usage (doesn't count as a cheat))
 };
 
 unsigned long kCheatFlagsNone;
@@ -611,7 +612,7 @@ BOOL CCheatMgr::Check(char *pzString)
     strupr(buffer);
     for (i = 0; i < strlen(pzString); i++)
         buffer[i]++;
-    for (i = 0; i < 36UL; i++)
+    for (i = 0; i < 37UL; i++)
     {
         int nCheatLen = strlen(s_CheatInfo[i].pzString);
         if (s_CheatInfo[i].flags & 1)
@@ -658,6 +659,11 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
         gShowFrameRate = !gShowFrameRate;
         if (gShowFrameRate)
             CalcFrameRate();
+        return;
+    }
+    if (nCheatCode == kCheat38)
+    {
+        gShowLevelLimits = !gShowLevelLimits;
         return;
     }
     if (gGameOptions.nGameType != GAMETYPE_0)
