@@ -2236,8 +2236,11 @@ void viewProcessSprites(int cX, int cY, int cZ)
             case 7:
                 if (gDetail >= 4 &&(pTSprite->flags&kSpriteFlag4) == 0)
                 {
+                    const short nVoxel = voxelIndex[pTSprite->picnum];
+                    if ((nVoxel == -1) && !VanillaMode()) // some sprites are flagged as voxels yet don't have a definition in VOXEL.DAT, ignore for these cases
+                        break;
                     pTSprite->cstat |= 48;
-                    pTSprite->picnum = voxelIndex[pTSprite->picnum];
+                    pTSprite->picnum = nVoxel;
                     if (picanm[nTile].at3_4 == 7)
                     {
                         pTSprite->ang = (gGameClock<<3)&2047;

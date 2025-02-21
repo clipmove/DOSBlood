@@ -42,6 +42,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix demos desyncing if launched with -noaim argument
 * Prevent whitespace only messages being sent in multiplayer
 * Fix reverb state not resetting on level change/loading game
+* Check if voxel exists before attempting to draw tile as voxel
 * Fix bloated butcher knife attack not hitting player while crouched
 * Limit impulse damage when shooting enemies downward at point-blank
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
