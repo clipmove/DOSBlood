@@ -39,6 +39,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix inventory items resetting between levels
 * Allow cheat phrases to be said in multiplayer
 * Fix choking hands to run at a constant framerate
+* Fix projectiles glitching when autoaim is disabled
 * Fix pod enemy projectiles using walls as enemy index
 * Fix demos desyncing if launched with -noaim argument
 * Prevent whitespace only messages being sent in multiplayer

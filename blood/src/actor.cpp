@@ -5586,6 +5586,8 @@ SPRITE *actSpawnSprite(int nSector, int x, int y, int z, int nStat, BOOL a6)
         int nXSprite = dbInsertXSprite(nSprite);
         gSpriteHit[nXSprite].florhit = 0;
         gSpriteHit[nXSprite].ceilhit = 0;
+        if (!VanillaMode())
+            xsprite[nXSprite].target = -1;
     }
     return pSprite;
 }
@@ -5648,6 +5650,8 @@ SPRITE * actSpawnSprite(SPRITE *pSource, int nStat)
     int nXSprite = dbInsertXSprite(nSprite);
     gSpriteHit[nXSprite].florhit = 0;
     gSpriteHit[nXSprite].ceilhit = 0;
+    if (!VanillaMode())
+        xsprite[nXSprite].target = -1;
     return pSprite;
 }
 
