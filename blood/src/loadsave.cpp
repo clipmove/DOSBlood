@@ -179,6 +179,8 @@ void LoadSave::LoadGame(char *pzFile)
     {
         if (!VanillaMode() && !bDemoWasPlayed && bGameWasStarted && (gMusicPrevLoadedEpisode == gGameOptions.nEpisode) && (gMusicPrevLoadedLevel == gGameOptions.nLevel)) // don't restart track on load
             return;
+        gMusicPrevLoadedEpisode = gGameOptions.nEpisode;
+        gMusicPrevLoadedLevel = gGameOptions.nLevel;
         sndPlaySong(gGameOptions.zLevelSong, 1);
     }
 }
