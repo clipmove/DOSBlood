@@ -77,6 +77,7 @@ BOOL gRotateMap;
 BOOL gInfiniteAmmo;
 BOOL gFullMap;
 BOOL gNoClip;
+BOOL gFlyMode;
 BOOL gAimReticle;
 BOOL gShowWeapon;
 BOOL gMouseAim;

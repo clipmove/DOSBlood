@@ -54,6 +54,7 @@ extern int32 gTurnSpeed;
 extern BOOL gAimReticle;
 extern BOOL gbAdultContent;
 extern BOOL gNoClip;
+extern BOOL gFlyMode;
 extern BOOL gMessageState;
 extern int32 gMessageFont;
 extern int32 gMessageCount;

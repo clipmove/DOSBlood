@@ -322,60 +322,54 @@ static void fakeProcessInput(PLAYER *pPlayer, INPUT *pInput)
     predict.at70 = 0;
 #endif
     predict.at71 = pInput->buttonFlags.jump;
-    switch (predict.at48)
+    if (predict.at48 == 1 || gFlyMode)
     {
-        case 1:
+        int vel = 0;
+        int sinVal = Sin(predict.at30);
+        int cosVal = Cos(predict.at30);
+        if (pInput->forward)
         {
-            int vel = 0;
-            int sinVal = Sin(predict.at30);
-            int cosVal = Cos(predict.at30);
-            if (pInput->forward)
-            {
-                if (pInput->forward > 0)
-                    vel = pInput->forward * pPosture->at0;
-                else
-                    vel = pInput->forward * pPosture->at8;
-                predict.at5c += mulscale30(vel, cosVal);
-                predict.at60 += mulscale30(vel, sinVal);
-            }
-            if (pInput->strafe)
-            {
-                vel = pInput->strafe * pPosture->at4;
-                predict.at5c += mulscale30(vel, sinVal);
-                predict.at60 -= mulscale30(vel, cosVal);
-            }
-            break;
+            if (pInput->forward > 0)
+                vel = pInput->forward * pPosture->at0;
+            else
+                vel = pInput->forward * pPosture->at8;
+            predict.at5c += mulscale30(vel, cosVal);
+            predict.at60 += mulscale30(vel, sinVal);
         }
-        default:
-            if (predict.at6a < 256)
-            {
-                int drag = 0x10000;
-                int vel = 0;
-                if (predict.at6a > 0)
-                    drag -= divscale16(predict.at6a, 256);
-                int sinVal = Sin(predict.at30);
-                int cosVal = Cos(predict.at30);
-                if (pInput->forward)
-                {
-                    if (pInput->forward > 0)
-                        vel = pInput->forward * pPosture->at0;
-                    else
-                        vel = pInput->forward * pPosture->at8;
-                    if (predict.at6a)
-                        vel = mulscale16(vel, drag);
-                    predict.at5c += mulscale30(vel, cosVal);
-                    predict.at60 += mulscale30(vel, sinVal);
-                }
-                if (pInput->strafe)
-                {
-                    vel = pInput->strafe * pPosture->at4;
-                    if (predict.at6a)
-                        vel = mulscale16(vel, drag);
-                    predict.at5c += mulscale30(vel, sinVal);
-                    predict.at60 -= mulscale30(vel, cosVal);
-                }
-            }
-            break;
+        if (pInput->strafe)
+        {
+            vel = pInput->strafe * pPosture->at4;
+            predict.at5c += mulscale30(vel, sinVal);
+            predict.at60 -= mulscale30(vel, cosVal);
+        }
+    }
+    else if (predict.at6a < 256)
+    {
+        int drag = 0x10000;
+        int vel = 0;
+        if (predict.at6a > 0)
+            drag -= divscale16(predict.at6a, 256);
+        int sinVal = Sin(predict.at30);
+        int cosVal = Cos(predict.at30);
+        if (pInput->forward)
+        {
+            if (pInput->forward > 0)
+                vel = pInput->forward * pPosture->at0;
+            else
+                vel = pInput->forward * pPosture->at8;
+            if (predict.at6a)
+                vel = mulscale16(vel, drag);
+            predict.at5c += mulscale30(vel, cosVal);
+            predict.at60 += mulscale30(vel, sinVal);
+        }
+        if (pInput->strafe)
+        {
+            vel = pInput->strafe * pPosture->at4;
+            if (predict.at6a)
+                vel = mulscale16(vel, drag);
+            predict.at5c += mulscale30(vel, sinVal);
+            predict.at60 -= mulscale30(vel, cosVal);
+        }
     }
     if (pInput->turn != 0)
         predict.at30 = (short)((predict.at30 + ((pInput->turn * 4) >> 4)) & 2047);
@@ -403,6 +397,8 @@ static void fakeProcessInput(PLAYER *pPlayer, INPUT *pInput)
                 predict.at48 = 0;
             break;
         default:
+            if (gFlyMode)
+                break;
             if (!predict.at6f && predict.at71 && predict.at6a == 0)
             {
                 if (packItemActive(pPlayer, 4))

@@ -4214,6 +4214,16 @@ static void MoveDude(SPRITE *pSprite)
     int clipdist = pSprite->clipdist<<2;
     int nSector = pSprite->sectnum;
     dassert(nSector >= 0 && nSector < kMaxSectors, 4598);
+    if (pPlayer && gFlyMode)
+    {
+        static int nSpeed = 0;
+        INPUT *pInput = &pPlayer->atc;
+        nSpeed = !pInput->buttonFlags.crouch && !pInput->buttonFlags.jump ? 0 : ClipHigh(nSpeed+(pInput->buttonFlags.crouch ? 0x1553>>1 : 0x1553), 0x5b05);
+        if (pInput->buttonFlags.jump)
+            pSprite->z -= nSpeed>>3;
+        if (pInput->buttonFlags.crouch)
+            pSprite->z += nSpeed>>3;
+    }
     if (xvel[nSprite] || yvel[nSprite])
     {
         if (pPlayer && gNoClip)
@@ -4356,7 +4366,19 @@ static void MoveDude(SPRITE *pSprite)
     if (pPlayer)
         clipdist += 16;
     
-    if (zvel[nSprite])
+    if (pPlayer && gFlyMode)
+    {
+        pPlayer->at2f2 = 1200;
+        pPlayer->at36e = 0;
+        pSprite->flags |= 2;
+        if (!var8)
+        {
+            xvel[nSprite] -= mulscale16r(xvel[nSprite], 3696)<<1;
+            yvel[nSprite] -= mulscale16r(yvel[nSprite], 3696)<<1;
+        }
+        var8 = 1;
+    }
+    else if (zvel[nSprite])
         pSprite->z += zvel[nSprite]>>8;
 
     long var54, var50, var4c, var48;
@@ -4701,6 +4723,12 @@ static void MoveDude(SPRITE *pSprite)
     GetSpriteExtents(pSprite, &top, &bottom);
 
     pXSprite->at30_0 = ClipLow(var4c - bottom, 0) >> 8;
+    if (pPlayer && gFlyMode)
+    {
+        if ((xvel[nSprite] || yvel[nSprite]) && (approxDist(xvel[nSprite], yvel[nSprite]) < 0x1000))
+            xvel[nSprite] = yvel[nSprite] = 0;
+        return;
+    }
     if (xvel[nSprite] || yvel[nSprite])
     {
         if ((var48 & 0xe000) == 0xc000)

@@ -79,6 +79,15 @@ static void SetClipMode(BOOL noclip)
         viewSetMessage("Normal movement.");
 }
 
+static void SetFlyMode(BOOL fly)
+{
+    gFlyMode = fly;
+    if (gFlyMode)
+        viewSetMessage("Flymode on.");
+    else
+        viewSetMessage("Flymode off.");
+}
+
 void packStuff(PLAYER *pPlayer)
 {
     for (int i = 0; i < 5; i++)
@@ -598,6 +607,7 @@ CCheatMgr::CHEATINFO CCheatMgr::s_CheatInfo[] = {
     {"HPPOJFT", kCheat16, 0 }, // GOONIES (Enable full map. Displays the message "YOU HAVE THE MAP".)
     {"TQJFMCFSH", kCheat36, 1 }, // SPIELBERG (Disables all cheats. If number values corresponding to a level and episode number are entered after the cheat word (i.e. "spielberg 1 3" for Phantom Express), you will be spawned to said level and the game will begin recording a demo from your actions.)
     {"MJNJUT", kCheat38, 0 }, // LIMITS (Display sprite/sector/wall usage (doesn't count as a cheat))
+    {"LSBWJU[", kCheat39, 0 }, // KRAVITZ (Fly mode)
 };
 
 unsigned long kCheatFlagsNone;
@@ -612,7 +622,7 @@ BOOL CCheatMgr::Check(char *pzString)
     strupr(buffer);
     for (i = 0; i < strlen(pzString); i++)
         buffer[i]++;
-    for (i = 0; i < 37UL; i++)
+    for (i = 0; i < 38UL; i++)
     {
         int nCheatLen = strlen(s_CheatInfo[i].pzString);
         if (s_CheatInfo[i].flags & 1)
@@ -812,6 +822,10 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
         if (!VanillaMode())
             gMe->at202[18] = gPowerUpInfo[18].at3;
         break;
+    case kCheat39:
+        SetFlyMode(!gFlyMode);
+        viewSetMessage(gFlyMode ? "You feel like a little dragonfly" : "You have eaten the sun");
+        break;
     case kCheat34:
         SetInfiniteAmmo(0);
         SetMap(0);
@@ -836,6 +850,7 @@ void CCheatMgr::func_5BCF4(void)
     m_bPlayerCheated = 0;
     playerSetGodMode(gMe, 0);
     gNoClip = 0;
+    gFlyMode = 0;
     packClear(gMe);
     gInfiniteAmmo = 0;
     gFullMap = 0;

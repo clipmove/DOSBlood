@@ -1318,60 +1318,54 @@ static void ProcessInput(PLAYER *pPlayer)
         }
         return;
     }
-    switch (pPlayer->at2f)
+    if (pPlayer->at2f == 1 || gFlyMode)
     {
-        case 1:
+        int vel = 0;
+        int sinVal = Sin(pSprite->ang);
+        int cosVal = Cos(pSprite->ang);
+        if (pInput->forward)
         {
-            int vel = 0;
-            int sinVal = Sin(pSprite->ang);
-            int cosVal = Cos(pSprite->ang);
-            if (pInput->forward)
-            {
-                if (pInput->forward > 0)
-                    vel = pInput->forward * pPosture->at0;
-                else
-                    vel = pInput->forward * pPosture->at8;
-                xvel[nSprite] += mulscale30(vel, cosVal);
-                yvel[nSprite] += mulscale30(vel, sinVal);
-            }
-            if (pInput->strafe)
-            {
-                vel = pInput->strafe * pPosture->at4;
-                xvel[nSprite] += mulscale30(vel, sinVal);
-                yvel[nSprite] -= mulscale30(vel, cosVal);
-            }
-            break;
+            if (pInput->forward > 0)
+                vel = pInput->forward * pPosture->at0;
+            else
+                vel = pInput->forward * pPosture->at8;
+            xvel[nSprite] += mulscale30(vel, cosVal);
+            yvel[nSprite] += mulscale30(vel, sinVal);
         }
-        default:
-            if (pXSprite->at30_0 < 256)
-            {
-                int drag = 0x10000;
-                int vel = 0;
-                if (pXSprite->at30_0 > 0)
-                    drag -= divscale16(pXSprite->at30_0, 256);
-                int sinVal = Sin(pSprite->ang);
-                int cosVal = Cos(pSprite->ang);
-                if (pInput->forward)
-                {
-                    if (pInput->forward > 0)
-                        vel = pInput->forward * pPosture->at0;
-                    else
-                        vel = pInput->forward * pPosture->at8;
-                    if (pXSprite->at30_0)
-                        vel = mulscale16(vel, drag);
-                    xvel[nSprite] += mulscale30(vel, cosVal);
-                    yvel[nSprite] += mulscale30(vel, sinVal);
-                }
-                if (pInput->strafe)
-                {
-                    vel = pInput->strafe * pPosture->at4;
-                    if (pXSprite->at30_0)
-                        vel = mulscale16(vel, drag);
-                    xvel[nSprite] += mulscale30(vel, sinVal);
-                    yvel[nSprite] -= mulscale30(vel, cosVal);
-                }
-            }
-            break;
+        if (pInput->strafe)
+        {
+            vel = pInput->strafe * pPosture->at4;
+            xvel[nSprite] += mulscale30(vel, sinVal);
+            yvel[nSprite] -= mulscale30(vel, cosVal);
+        }
+    }
+    else if (pXSprite->at30_0 < 256)
+    {
+        int drag = 0x10000;
+        int vel = 0;
+        if (pXSprite->at30_0 > 0)
+            drag -= divscale16(pXSprite->at30_0, 256);
+        int sinVal = Sin(pSprite->ang);
+        int cosVal = Cos(pSprite->ang);
+        if (pInput->forward)
+        {
+            if (pInput->forward > 0)
+                vel = pInput->forward * pPosture->at0;
+            else
+                vel = pInput->forward * pPosture->at8;
+            if (pXSprite->at30_0)
+                vel = mulscale16(vel, drag);
+            xvel[nSprite] += mulscale30(vel, cosVal);
+            yvel[nSprite] += mulscale30(vel, sinVal);
+        }
+        if (pInput->strafe)
+        {
+            vel = pInput->strafe * pPosture->at4;
+            if (pXSprite->at30_0)
+                vel = mulscale16(vel, drag);
+            xvel[nSprite] += mulscale30(vel, sinVal);
+            yvel[nSprite] -= mulscale30(vel, cosVal);
+        }
     }
     if (pInput->turn != 0)
         pSprite->ang = (pSprite->ang+((pInput->turn<<2)>>4))&2047;
@@ -1403,6 +1397,8 @@ static void ProcessInput(PLAYER *pPlayer)
                 pPlayer->at2f = 0;
             break;
         default:
+            if (gFlyMode)
+                break;
             if (!pPlayer->at31c && pInput->buttonFlags.jump && pXSprite->at30_0 == 0)
             {
                 sfxPlay3DSound(pSprite, 700, 0);
