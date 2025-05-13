@@ -73,7 +73,7 @@ void GetZRange(SPRITE *pSprite, long *ceilZ, long *ceilHit, long *floorZ, long *
 int GetWallAngle(int nWall);
 void CalcFrameRate(void);
 void GetWallNormal(int nWall, int *pX, int *pY);
-int GetClosestSpriteSectors(int nSector, int x, int y, int nDist, short *pSectors, byte *pSectBit, short *a8);
+int GetClosestSpriteSectors(int nSector, int x, int y, int nDist, short *pSectors, byte *pSectBit, short *pWalls, BOOL bAccurateCheck = FALSE);
 BOOL CheckProximity(SPRITE *pSprite, int nX, int nY, int nZ, int nSector, int nDist);
 void GetZRangeAtXYZ(long x, long y, long z, int nSector, long *ceilZ, long *ceilHit, long *floorZ, long *floorHit, int nDist, unsigned long nMask);
 int HitScan(SPRITE *pSprite, int z, int dx, int dy, int dz, unsigned long nMask, int a8);
