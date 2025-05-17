@@ -2152,11 +2152,11 @@ void viewProcessSprites(int cX, int cY, int cZ)
                     }
                     break;
                 case 147:
-                    pTSprite->cstat |= 1024;
+                    pTSprite->cstat |= 4;
                     pTSprite->pal = 10;
                     break;
                 case 148:
-                    pTSprite->cstat |= 1024;
+                    pTSprite->cstat |= 4;
                     pTSprite->pal = 7;
                     break;
                 default:
