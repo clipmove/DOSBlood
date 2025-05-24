@@ -2351,7 +2351,9 @@ void func_51340(SPRITE *pMissile, int a2)
             {
                 int dx = pMissile->x-pSprite->x;
                 int dy = pMissile->y-pSprite->y;
-                int nDamage = ClipLow((nDist-(ksqrt(dx*dx+dy*dy)>>4)+20)>>1, 10);
+                int nDamage = (nDist-(ksqrt(dx*dx+dy*dy)>>4)+20)>>1;
+                if (nDamage < 0)
+                    nDamage = 10;
                 if (nSprite == nOwner)
                     nDamage /= 2;
                 actDamageSprite(nOwner, pSprite, DAMAGE_TYPE_6, nDamage<<4);
@@ -2370,7 +2372,9 @@ void func_51340(SPRITE *pMissile, int a2)
             {
                 int dx = pMissile->x-pSprite->x;
                 int dy = pMissile->y-pSprite->y;
-                int nDamage = ClipLow(nDist-(ksqrt(dx*dx+dy*dy)>>4)+20, 20);
+                int nDamage = nDist-(ksqrt(dx*dx+dy*dy)>>4)+20;
+                if (nDamage < 0)
+                    nDamage = 20;
                 actDamageSprite(nOwner, pSprite, DAMAGE_TYPE_6, nDamage<<4);
             }
         }
