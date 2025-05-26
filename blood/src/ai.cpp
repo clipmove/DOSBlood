@@ -1104,7 +1104,7 @@ void RecoilDude(SPRITE *pSprite, XSPRITE *pXSprite)
             aiNewState(pSprite, pXSprite, &houndRecoil);
         break;
     case 229:
-        aiPlay3DSound(pSprite, 2370+Random(2), AI_SFX_PRIORITY_2, -1);
+        aiPlay3DSound(pSprite, 2370+Random(6), AI_SFX_PRIORITY_2, -1);
         aiNewState(pSprite, pXSprite, &tchernobogRecoil);
         break;
     case 212:
