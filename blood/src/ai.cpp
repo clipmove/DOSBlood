@@ -1144,7 +1144,7 @@ void RecoilDude(SPRITE *pSprite, XSPRITE *pXSprite)
             aiNewState(pSprite, pXSprite, &houndRecoil);
         break;
     case 229:
-        aiPlay3DSound(pSprite, 2370+Random(2), AI_SFX_PRIORITY_2, -1);
+        aiPlay3DSound(pSprite, 2370+Random(6), AI_SFX_PRIORITY_2, -1);
         aiNewState(pSprite, pXSprite, &tchernobogRecoil);
         break;
     case 212:
@@ -1634,7 +1634,7 @@ void aiInitSprite(SPRITE *pSprite)
         if (pSprite->cstat&kSpriteStat3)
             pSprite->flags |= 9;
         else
-            pSprite->flags |= 15;
+            pSprite->flags = 15;
         break;
     case 206:
     case 207:
@@ -1647,7 +1647,7 @@ void aiInitSprite(SPRITE *pSprite)
         if (pXSector && pXSector->at13_4)
             pSprite->flags |= 9;
         else
-            pSprite->flags |= 15;
+            pSprite->flags = 15;
         break;
     case 205:
     case 244:
