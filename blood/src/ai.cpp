@@ -1568,7 +1568,7 @@ void aiInitSprite(SPRITE *pSprite)
         if (pSprite->cstat&kSpriteStat3)
             pSprite->flags |= 9;
         else
-            pSprite->flags |= 15;
+            pSprite->flags = 15;
         break;
     case 206:
     case 207:
@@ -1581,7 +1581,7 @@ void aiInitSprite(SPRITE *pSprite)
         if (pXSector && pXSector->at13_4)
             pSprite->flags |= 9;
         else
-            pSprite->flags |= 15;
+            pSprite->flags = 15;
         break;
     case 205:
     case 244:
