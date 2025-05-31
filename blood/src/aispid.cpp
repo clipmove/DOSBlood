@@ -151,11 +151,12 @@ static void SpidJumpSeqCallback(int, int nXSprite)
             switch (pSprite->type)
             {
             case 213:
-            case 214:
             case 215:
                 xvel[nSprite] = dx << 16;
                 yvel[nSprite] = dy << 16;
                 zvel[nSprite] = dz << 16;
+                break;
+            case 214:
                 break;
             }
         }
