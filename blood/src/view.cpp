@@ -1466,8 +1466,8 @@ void viewInit(void)
     for (int i = 0; i < 16; i++)
     {
         int_172CE0[i][0] = mulscale(rand(), 2048, 15);
-        int_172CE0[i][2] = mulscale(rand(), 2048, 15);
         int_172CE0[i][1] = mulscale(rand(), 2048, 15);
+        int_172CE0[i][2] = mulscale(rand(), 2048, 15);
     }
     gViewMap.func_25C38(0, 0, gZoom, 0, gFollowMap);
 }
