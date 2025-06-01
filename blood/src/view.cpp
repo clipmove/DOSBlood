@@ -1406,7 +1406,7 @@ void DrawPackItemInStatusBar(PLAYER *pPlayer, int x, int y, int x2, int y2)
     if (pPlayer->at321 < 0) return;
 
     DrawStatSprite(gPackIcons[pPlayer->at321], x, y);
-    DrawStatNumber("%3d", pPlayer->packInfo[pPlayer->at321].at1, 2250, x2, y2, 0);
+    DrawStatNumber("%3d", pPlayer->packInfo[pPlayer->at321].at1, 2250, x2, y2, 4);
 }
 
 static void UpdateStatusBar(int arg)

@@ -2276,7 +2276,7 @@ void actAllocateSpares(void)
 
 BOOL actTypeInSector(int nSector, int nType)
 {
-    for (int nSprite = headspritesect[nSector]; nSprite >= 0; nSprite = nextspritestat[nSprite])
+    for (int nSprite = headspritesect[nSector]; nSprite >= 0; nSprite = nextspritesect[nSprite])
     {
         if (sprite[nSprite].type == nType)
             return 1;

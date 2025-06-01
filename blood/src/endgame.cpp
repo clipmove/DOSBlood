@@ -77,7 +77,7 @@ void CEndGameMgr::ProcessKeys(void)
 {
     if (int_28E3D4 == 1)
     {
-        if (gGameOptions.nGameType > GAMETYPE_0 || numplayers > 1)
+        if (gGameOptions.nGameType >= GAMETYPE_0 || numplayers > 1)
             netWaitForEveryone(0);
         Finish();
     }
@@ -89,7 +89,7 @@ void CEndGameMgr::ProcessKeys(void)
         BOOL bAlt = keystatus[bsc_LAlt] | keystatus[bsc_RAlt];
         BOOL bCtrl = keystatus[bsc_LCtrl] | keystatus[bsc_RCtrl];
         BOOL bShift = keystatus[bsc_LShift] | keystatus[bsc_RShift];
-        if (gGameOptions.nGameType > GAMETYPE_0 || numplayers > 1)
+        if (gGameOptions.nGameType >= GAMETYPE_0 || numplayers > 1)
             netWaitForEveryone(0);
         Finish();
     }

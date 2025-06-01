@@ -141,7 +141,7 @@ void CheckKeyAbend(char *pzSection, char *pzKey)
     dassert(pzSection != NULL, 352);
 
     if (!pzKey || !BloodINI->KeyExists(pzSection, pzKey))
-        ThrowError(355)("Key %s expected in section [%s] of BLOOD.INI", pzKey, pzSection);
+        ThrowError(355)("Key %s expected in section [%s] of BLOOD.INI", pzSection, pzKey);
 }
 
 LEVELINFO * levelGetInfoPtr(int nEpisode, int nLevel)
