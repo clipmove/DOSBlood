@@ -1808,7 +1808,7 @@ void FragPlayer(PLAYER *pPlayer, int nSprite)
         int nTeam2 = pPlayer->at2ea&1;
         if (nTeam1 == 0)
         {
-            if (nTeam1 != nTeam2)
+            if (nTeam1 == nTeam2)
                 evSend(0, 0, 15, COMMAND_ID_3);
             else
                 evSend(0, 0, 16, COMMAND_ID_3);
