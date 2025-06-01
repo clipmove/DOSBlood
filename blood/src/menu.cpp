@@ -224,7 +224,7 @@ CGameMenuItemSlider sliderGamma("GAMMA:", 3, 66, 55, 180, gGamma, 0, 15, 2, SetG
 CGameMenuItemSlider sliderFov(zFov, 3, 66, 65, 180, gFov, 40, 120, 1, SetFov, -1, -1);
 CGameMenuItemSlider sliderMusic("MUSIC:", 3, 66, 75, 180, MusicVolume, 0, 256, 48, SetMusicVol, -1, -1);
 CGameMenuItemSlider sliderSound("SOUND:", 3, 66, 85, 180, FXVolume, 0, 256, 48, SetSoundVol, -1, -1);
-CGameMenuItemSlider sliderCDAudio("CD AUDIO:", 3, 66, 95, 180, CDVolume, 0, 256, 48, SetCDVol, -1, -1);
+CGameMenuItemSlider sliderCDAudio("CD AUDIO:", 3, 66, 95, 180, CDVolume, 0, 255, 48, SetCDVol, -1, -1);
 CGameMenuItemZBool boolDoppler("3D AUDIO:", 3, 66, 105, 180, gDoppler, SetDoppler, NULL, NULL);
 CGameMenuItemZBool boolCrosshair("CROSSHAIR:", 3, 66, 112, 180, gAimReticle, SetCrosshair, NULL, NULL);
 CGameMenuItemZBool boolShowWeapons("SHOW WEAPONS:", 3, 66, 119, 180, gShowWeapon, SetShowWeapons, NULL, NULL);
@@ -930,8 +930,8 @@ void SetVideoMode(CGameMenuItemChain *pItem)
     if (t == validmodecnt)
     {
         ScreenMode = 2;
-        ScreenWidth = 640;
-        ScreenHeight = 480;
+        ScreenWidth = 320;
+        ScreenHeight = 200;
     }
     else
     {
