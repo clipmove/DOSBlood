@@ -827,8 +827,8 @@ void SetVideoMode(CGameMenuItemChain *pItem)
     if (t == validmodecnt)
     {
         ScreenMode = 2;
-        ScreenWidth = 640;
-        ScreenHeight = 480;
+        ScreenWidth = 320;
+        ScreenHeight = 200;
     }
     else
     {
