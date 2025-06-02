@@ -65,4 +65,4 @@ Watcom 10.6, MASM 5.10 and TASM 3.2 are required to build
    
 Note: The Build Engine (by Ken Silverman) code has been effortlessly recreated by the [gamesrc-ver-recreation project](https://bitbucket.org/gamesrc-ver-recreation/build/src/master/), and compiles close enough that DOSBlood can playback 11 hours of demo files without desyncronizing. If you prefer to use the original objects file, run `clean.bat` and then `origlib.bat` in the build directory
 
-Special thanks to nukeykt, NY00123, Hendricks266 and sirlemonhead
+Special thanks to nukeykt, NY00123, Hendricks266, sirlemonhead and Maxi Clouds.
