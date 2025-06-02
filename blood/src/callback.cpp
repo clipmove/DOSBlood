@@ -105,7 +105,7 @@ static void Remove(int nSprite) // 1
     evKill(nSprite, 3);
     if (pSprite->extra > 0)
         seqKill(3, pSprite->extra);
-    sfxKill3DSound(pSprite, 0, -1);
+    sfxKill3DSound(pSprite);
     DeleteSprite(nSprite);
 }
 
