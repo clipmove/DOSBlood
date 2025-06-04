@@ -775,7 +775,7 @@ void CGameMenuItem7EE34::Setup(void)
         at2c->Add(pItem1, FALSE);
         pItem1->Clear1();
         at2c->Add(pItem2, FALSE);
-        pItem1->Clear1();
+        pItem2->Clear1();
         at2c->Add(pItem3, TRUE);
         pItem3->Set1();
         at2c->Add(&itemBloodQAV, FALSE);
