@@ -587,7 +587,7 @@ static void func_76B78(int nSprite)
         return;
     }
     SPRITE *pOwner = &sprite[nOwner];
-    PLAYER *pPlayer = IsPlayerSprite(pOwner) ? &gPlayer[pOwner->type - kDudePlayer1] : NULL;
+    PLAYER *pPlayer = IsPlayerSprite(pOwner) ? &gPlayer[pOwner->type - kDudeBase] : NULL;
     if (!pPlayer)
     {
         evPost(nSprite, 3, 0, CALLBACK_ID_1);
@@ -613,12 +613,12 @@ static void func_76B78(int nSprite)
                 continue;
             SPRITE *pSprite2 = &sprite[nSprite2];
             int nXSprite2 = pSprite2->extra;
-            if (nXSprite2 < 0 || nXSprite2 >= kMaxXSprites)
+            if (nXSprite2 <= 0 || nXSprite2 >= kMaxXSprites)
                 continue;
             if (pSprite2->flags & kSpriteFlag5)
                 continue;
             XSPRITE *pXSprite2 = &xsprite[nXSprite2];
-            PLAYER *pPlayer2 = IsPlayerSprite(pSprite2) ? &gPlayer[pSprite2->type-kDudePlayer1] : NULL;
+            PLAYER *pPlayer2 = IsPlayerSprite(pSprite2) ? &gPlayer[pSprite2->type-kDudeBase] : NULL;
             if (pXSprite2->health > 0 && (pPlayer2 || pXSprite2->atd_3 == 0))
             {
                 if (pPlayer2)
