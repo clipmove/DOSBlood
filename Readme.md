@@ -10,6 +10,7 @@ Download can be found on [https://github.com/clipmove/DOSBlood/releases](https:/
 Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 
 ### Features
+* Auto crouch
 * Field of view slider
 * Center horizon line option
 * Show map title on level start

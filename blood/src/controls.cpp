@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include "typedefs.h"
 #include "types.h"
+#include "build.h"
 #include "config.h"
 #include "controls.h"
 #include "function.h"
@@ -28,6 +29,8 @@
 #include "loadsave.h"
 #include "map2d.h"
 #include "misc.h"
+#include "player.h"
+#include "trig.h"
 #include "view.h"
 
 INPUT gInput;
@@ -252,6 +255,67 @@ void ctrlGetInput(void)
 
     if (BUTTON(gamefunc_Crouch))
         gInput.buttonFlags.crouch = 1;
+
+    if (gCrouchAuto && gMe && gMe->pSprite && !gMe->at87)
+    {
+        static long lLastCrouchCheck = 0;
+        static schar bCrouchState = 0;
+        while (lLastCrouchCheck != gFrameClock)
+        {
+            bCrouchState = 0;
+            lLastCrouchCheck = gFrameClock;
+
+            short nSectnum = gMe->pSprite->sectnum;
+            if (!(nSectnum >= 0 && nSectnum < kMaxSectors))
+                break;
+            int nX, nY, nZ, fZ, cZ, fZCurrentSect, nDiff;
+            short nAng;
+            nAng = gMe->pSprite->ang;
+            nX = gMe->pSprite->x;
+            nY = gMe->pSprite->y;
+            nZ = gMe->pSprite->z;
+            getzsofslope(nSectnum, nX, nY, &cZ, &fZCurrentSect); // get current floor
+            if ((sector[nSectnum].ceilingpicnum < 4080) || (sector[nSectnum].ceilingpicnum > 4095)) // if sector does not have a fake ceiling (e.g. E4M4 elevator), checking this sector
+            {
+                nDiff = cZ - fZCurrentSect;
+                if ((nDiff < -3072) && (nDiff > -15000)) // we're in tiny crawl space, keep crouching
+                {
+                    bCrouchState = 1;
+                    break;
+                }
+            }
+
+            const BOOL bInAir = gMe->at31c;
+            const int nStepX = mulscale30(128, Cos(nAng));
+            const int nStepY = mulscale30(128, Sin(nAng));
+            short nSectnumNew = nSectnum;
+            for (schar i = 0; i < 3; i++) // check sector in front of player
+            {
+                nX += nStepX; // move forward
+                nY += nStepY;
+                updatesector(nX, nY, &nSectnumNew);
+                if (nSectnumNew == -1)
+                    break;
+                if (nSectnum == nSectnumNew)
+                    continue;
+                if ((sector[nSectnumNew].ceilingpicnum >= 4080) && (sector[nSectnumNew].ceilingpicnum <= 4095)) // if sector HAS a fake ceiling (e.g. E4M4 elevator), skip
+                    continue;
+                getzsofslope(nSectnumNew, nX, nY, &cZ, &fZ);
+                if (bInAir) // if player is in air, use current Z height position as compare
+                    nDiff = cZ - nZ;
+                else
+                    nDiff = cZ - fZCurrentSect;
+                if ((nDiff < -3072) && (nDiff > -15000))
+                {
+                    bCrouchState = 1;
+                    break;
+                }
+            }
+            break;
+        }
+        if (bCrouchState && !gInput.buttonFlags.jump)
+            gInput.buttonFlags.crouch = 1;
+    }
 
     if (BUTTON(gamefunc_Weapon_Fire))
         gInput.buttonFlags.shoot = 1;

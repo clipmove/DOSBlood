@@ -59,6 +59,7 @@ void SetViewSwaying(CGameMenuItemZBool *);
 void SetVanillaMode(CGameMenuItemZBool *);
 void SetMouseSensitivity(CGameMenuItemSlider *);
 void SetMouseAimFlipped(CGameMenuItemZBool *);
+void SetCrouchAuto(CGameMenuItemZBool *);
 void SetTurnSpeed(CGameMenuItemSlider *);
 void ResetKeys(CGameMenuItemChain *);
 void SetMessages(CGameMenuItemZBool *);
@@ -239,10 +240,11 @@ CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 178, 320, 1);
 CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 187, 320, 1, &menuParentalLock, -1, NULL, 0);
 
 CGameMenuItemTitle itemControlsTitle("CONTROLS", 1, 160, 20, 2038);
-CGameMenuItemSlider sliderMouseSpeed("Mouse Sensitivity:", 1, 10, 70, 300, gMouseSensitivity, 0, 0x20000, 0x1000, SetMouseSensitivity, -1,-1);
-CGameMenuItemZBool boolMouseFlipped("Invert Mouse Aim:", 1, 10, 90, 300, gMouseAimingFlipped, SetMouseAimFlipped, NULL, NULL);
-CGameMenuItemSlider sliderTurnSpeed("Key Turn Speed:", 1, 10, 110, 300, gTurnSpeed, 64, 128, 4, SetTurnSpeed, -1, -1);
-CGameMenuItemChain itemChainKeyList("Configure Keys...", 1, 0, 130, 320, 1, &menuKeys, -1, NULL, 0);
+CGameMenuItemSlider sliderMouseSpeed("Mouse Sensitivity:", 1, 10, 60, 300, gMouseSensitivity, 0, 0x20000, 0x1000, SetMouseSensitivity, -1,-1);
+CGameMenuItemZBool boolMouseFlipped("Invert Mouse Aim:", 1, 10, 80, 300, gMouseAimingFlipped, SetMouseAimFlipped, NULL, NULL);
+CGameMenuItemSlider sliderTurnSpeed("Key Turn Speed:", 1, 10, 100, 300, gTurnSpeed, 64, 128, 4, SetTurnSpeed, -1, -1);
+CGameMenuItemZBool boolCouchAuto("Crouch Auto:", 1, 10, 120, 300, gCrouchAuto, SetCrouchAuto, NULL, NULL);
+CGameMenuItemChain itemChainKeyList("Configure Keys...", 1, 0, 140, 320, 1, &menuKeys, -1, NULL, 0);
 CGameMenuItemChain itemChainKeyReset("Reset Keys...", 1, 0, 160, 320, 1, &menuKeys, -1, ResetKeys, 0);
 
 CGameMenuItemTitle itemMessagesTitle("MESSAGES", 1, 160, 20, 2038);
@@ -364,10 +366,12 @@ void SetupControlsMenu(void)
     sliderMouseSpeed.at24 = ClipRange(gMouseSensitivity, sliderMouseSpeed.at28, sliderMouseSpeed.at2c);
     sliderTurnSpeed.at24 = ClipRange(gTurnSpeed, sliderTurnSpeed.at28, sliderTurnSpeed.at2c);
     boolMouseFlipped.at20 = gMouseAimingFlipped;
+    boolCouchAuto.at20 = gCrouchAuto;
     menuControls.Add(&itemControlsTitle, 0);
     menuControls.Add(&sliderMouseSpeed, 1);
     menuControls.Add(&boolMouseFlipped, 0);
     menuControls.Add(&sliderTurnSpeed, 0);
+    menuControls.Add(&boolCouchAuto, 0);
     menuControls.Add(&itemChainKeyList, 0);
     menuControls.Add(&itemChainKeyReset, 0);
     menuControls.Add(&itemBloodQAV, 0);
@@ -887,6 +891,11 @@ void SetMouseSensitivity(CGameMenuItemSlider *pItem)
 void SetMouseAimFlipped(CGameMenuItemZBool *pItem)
 {
     gMouseAimingFlipped = pItem->at20;
+}
+
+void SetCrouchAuto(CGameMenuItemZBool *pItem)
+{
+    gCrouchAuto = pItem->at20;
 }
 
 void SetTurnSpeed(CGameMenuItemSlider *pItem)

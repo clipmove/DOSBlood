@@ -51,6 +51,7 @@ extern BOOL gMouseAim;
 extern BOOL gMouseAimingFlipped;
 extern BOOL gAutoRun;
 extern int32 gTurnSpeed;
+extern int32 gCrouchAuto;
 extern BOOL gAimReticle;
 extern BOOL gbAdultContent;
 extern BOOL gNoClip;
