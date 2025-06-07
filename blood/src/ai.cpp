@@ -1197,12 +1197,19 @@ void RecoilDude(SPRITE *pSprite, XSPRITE *pXSprite)
         }
         break;
     case 221:
+        aiNewState(pSprite, pXSprite, &podRecoil);
+        break;
     case 223:
         aiNewState(pSprite, pXSprite, &podRecoil);
         break;
     case 222:
+        aiNewState(pSprite, pXSprite, &tentacleRecoil);
+        break;
     case 224:
         aiNewState(pSprite, pXSprite, &tentacleRecoil);
+        break;
+    case 208:
+    case 209:
         break;
     default:
         aiNewState(pSprite, pXSprite, &genRecoil);
