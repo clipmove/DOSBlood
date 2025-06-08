@@ -437,7 +437,7 @@ void CCDAudio::cd_cmd(unsigned char a1)
     *cd_mode = a1;
     tray_request->f_0 = 30;
     tray_request->f_1 = 0;
-    tray_request->f_2 = 3;
+    tray_request->f_2 = 12;
     tray_request->f_d = 0;
     tray_request->f_e = (unsigned long)cd_mode << 12;
     tray_request->f_12 = 1;
@@ -457,7 +457,7 @@ void CCDAudio::cd_getpos(playinfo *a1)
     tray_request->f_16 = 0;
     tray_request->f_e = (unsigned long)pinfo << 12;
     tray_request->f_12 = 6;
-    pinfo->f_0 = 4;
+    pinfo->f_0 = 12;
     device_request(tray_request);
     cdrom_data.f_24 = tray_request->f_3;
     memcpy(a1, pinfo, 11);
