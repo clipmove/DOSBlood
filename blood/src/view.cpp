@@ -2138,6 +2138,7 @@ void viewProcessSprites(int cX, int cY, int cZ)
     int nTSprite, nOctant;
     int nXSprite;
     long dX, dY;
+    BOOL bMutedCloseBloodFx = 0;
     dassert(spritesortcnt <= kMaxViewSprites, 2713);
     int nViewSprites = spritesortcnt;
     for (nTSprite = nViewSprites-1; nTSprite >= 0; nTSprite--)
@@ -2573,7 +2574,27 @@ void viewProcessSprites(int cX, int cY, int cZ)
                 break;
             }
             case 1:
+            {
+                switch (pTSprite->type) // mute blood spurts when too close to view
+                {
+                case FX_0:
+                {
+                    if (VanillaMode())
+                        break;
+                    if (bMutedCloseBloodFx) // don't render the rest of the blood fx for this frame
+                    {
+                        pTSprite->xrepeat = 0;
+                        continue;
+                    }
+                    if (approxDist(cX - pTSprite->x, cY - pTSprite->y) < 512) // if blood fx is too close to viewer, mute every other blood fx until next frame
+                        bMutedCloseBloodFx = 1;
+                    break;
+                }
+                default:
+                    break;
+                }
                 break;
+            }
             case 2:
                 break;
             case 7:
