@@ -3280,11 +3280,10 @@ void viewDrawScreen(void)
         gViewMap.func_25DB0(gView->pSprite);
     }
     viewDrawInterface(delta);
-    int zDelta = gView->at6f-gView->at67-(12<<8);
-    int zn = 220+(zDelta>>7);
-    PLAYER *pPSprite = &gPlayer[gMe->pSprite->type-kDudePlayer1];
-    if (pPSprite->at376 == 1)
+    if (gView && IsPlayerSprite(gView->pSprite) && (gView->at376 == 1))
     {
+        const int zDelta = gView->at6f-gView->at67-(12<<8);
+        const int zn = 220+(zDelta>>7);
         gChoke.func_84110(160, zn);
     }
     if (char_1A76C6 && VanillaMode()) // don't draw monolith logo for custom maps
