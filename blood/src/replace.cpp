@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include "typedefs.h"
 #include "build.h"
+#include "config.h"
 #include "crc32.h"
 #include "globals.h"
 #include "misc.h"
@@ -128,3 +129,108 @@ extern "C" int getpalookup(int a1, int a2)
     else
         return ClipRange((a1>>8)+a2, 0, 63);
 }
+
+static int32 mouse_y_leftover = 0;
+
+extern "C" void MOUSE_GetDelta(int32 *x, int32 *y);
+
+#if 1 // optimized
+#define CONTROL_MouseSensitivity (*(int32 *)(uint32(&CONTROL_JoystickPort)+8U)) // assign offset for static MACT386.LIB variable CONTROL_MouseSensitivity (faster and less safe, use below define if using non-release MACT386.LIB)
+
+void scaleAxis32792(int32 *);
+#pragma aux scaleAxis32792 = \
+"mov ecx, [ebx]" \
+"mov edx, 16764937" \
+"mov eax, ecx" \
+"imul edx" \
+"mov eax, edx" \
+"sar eax, 7" \
+"sar ecx, 31" \
+"sub eax, ecx" \
+"mov [ebx], eax" \
+parm [ebx] \
+modify exact [eax ecx edx]
+
+int32 scaleAxis65536(int32);
+#pragma aux scaleAxis65536 = \
+"mov ecx, eax" \
+"mov edx, eax" \
+"sar edx, 31" \
+"shr edx, 16" \
+"add edx, ecx" \
+"sar edx, 16" \
+"mov eax, edx" \
+parm [eax] \
+value [eax] \
+modify [ecx edx]
+
+extern "C" void CONTROL_GetMouseDelta(int32 *x, int32 *y) // this 'hack' ensures the linker will use this function instead of the one in MACT386.LIB
+{
+    int32 dx, dy;
+    MOUSE_GetDelta(&dx, &dy);
+
+    // scale up X and Y
+    dx <<= 5; // * 32
+    dy = (dy<<4) + (dy<<5); // * 48
+
+    // multiply by CONTROL_MouseSensitivity
+    dx *= CONTROL_MouseSensitivity;
+    dy *= CONTROL_MouseSensitivity;
+
+    // divide by 32792
+    scaleAxis32792(&dx);
+    scaleAxis32792(&dy);
+
+    // apply axis sensitivity
+    dx *= gMouseAxisSensitivity[0];
+    dy *= gMouseAxisSensitivity[1];
+
+    // divide by 65536
+    *x = scaleAxis65536(dx);
+    dy = scaleAxis65536(dy);
+
+    // add mouse_y_leftover to dy, for sub-pixel accumulation
+    dy += mouse_y_leftover;
+    *y = dy;
+
+    // save the leftover for next time
+    if (dy > 0)
+    {
+        dy &= 511;
+    }
+    else
+    {
+        dy = -dy;
+        dy &= 511;
+        dy = -dy;
+    }
+    mouse_y_leftover = dy;
+}
+#else // taken from sMouse
+#define game_scale_x 32
+#define game_scale_y 48
+#define game_mouse_y_threshold 512
+#define MINIMUMMOUSESENSITIVITY 0x1000
+#define CONTROL_MouseSensitivity (gMouseSensitivity+MINIMUMMOUSESENSITIVITY) // static MACT386.LIB variable CONTROL_MouseSensitivity is set by CONTROL_SetMouseSensitivity() and adds MINIMUMMOUSESENSITIVITY to input - recreate the same logic here
+
+extern "C" void CONTROL_GetMouseDelta(int32 *x, int32 *y)
+{
+    MOUSE_GetDelta(x, y);
+    *x *= game_scale_x;
+    *y *= game_scale_y;
+    *x *= CONTROL_MouseSensitivity;
+    *y *= CONTROL_MouseSensitivity;
+    *x /= 32792L;
+    *y /= 32792L;
+    *x *= gMouseAxisSensitivity[0];
+    *y *= gMouseAxisSensitivity[1];
+    *x /= 65536L;
+    *y /= 65536L;
+
+    *y += mouse_y_leftover;
+    if (*y > 0)
+        mouse_y_leftover = *y % game_mouse_y_threshold;
+    else
+        mouse_y_leftover = -(-(*y) % game_mouse_y_threshold);
+}
+#endif

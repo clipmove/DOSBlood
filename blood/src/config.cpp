@@ -50,6 +50,7 @@ int32 MidiPort;
 int32 ReverseStereo;
 controltype ControllerType;
 int32 gMouseSensitivity;
+int32 gMouseAxisSensitivity[2] = {65536L, 65536L};
 int32 gMouseAiming;
 BOOL gMouseAimingFlipped;
 int32 gTurnSpeed = 92;
@@ -456,6 +457,7 @@ void CONFIG_SetupMouse( int32 scripthandle )
       sprintf(str,"MouseAnalogScale%ld",i);
       SCRIPT_GetNumber(scripthandle, "Controls", str,&scale);
       CONTROL_SetAnalogAxisScale( i, scale );
+      gMouseAxisSensitivity[i] = scale;
       }
 
    SCRIPT_GetNumber( scripthandle, "Controls","MouseSensitivity",&gMouseSensitivity);

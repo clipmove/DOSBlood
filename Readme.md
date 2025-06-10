@@ -24,6 +24,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * New 'LIMITS' cheat code to display wall/sprites usage
 * Restore broken blinking state for health point counter
 * Don't restart midi track when loading save for current level
+* Incorporates mouse fixes from bMouse and sMouse natively
 * Use Pentium II/PRO (if found) optimizations for a.asm functions (12% speed improvement)
 
 ### Fixes

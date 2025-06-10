@@ -37,6 +37,7 @@ extern int32 NumChannels;
 extern int32 NumBits;
 extern int32 MixRate;
 extern int32 gMouseSensitivity;
+extern int32 gMouseAxisSensitivity[2];
 extern int32 ScreenMode;
 extern int32 ScreenHeight;
 extern int32 ScreenWidth;
