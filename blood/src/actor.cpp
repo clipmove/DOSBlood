@@ -6191,7 +6191,7 @@ void actFireVector(SPRITE *pShooter, int a2, int a3, int a4, int a5, int a6, VEC
                 }
                 if (Chance(pVectorData->atd))
                 {
-                    VECTORDATA *pVectorData = &gVectorData[19];
+                    VECTORDATA *pVectorData = &gVectorData[kVectorUnused_19];
                     int t = pVectorData->at9;
                     a4 += Random3(4000);
                     a5 += Random3(4000);
@@ -6207,7 +6207,7 @@ void actFireVector(SPRITE *pShooter, int a2, int a3, int a4, int a5, int a6, VEC
                             int y = gHitInfo.hity - mulscale14(a5, 16);
                             int z = gHitInfo.hitz - mulscale14(a6, 16<<4);
                             char nSurf = surfType[wall[nWall].picnum];
-                            VECTORDATA *pVectorData = &gVectorData[19];
+                            VECTORDATA *pVectorData = &gVectorData[kVectorUnused_19];
                             FX_ID t2 = pVectorData->at1d[nSurf].at1;
                             FX_ID t3 = pVectorData->at1d[nSurf].at2;
                             SPRITE *pFX = NULL;
