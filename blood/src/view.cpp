@@ -3287,7 +3287,7 @@ void viewDrawScreen(void)
     {
         gChoke.func_84110(160, zn);
     }
-    if (char_1A76C6)
+    if (char_1A76C6 && VanillaMode()) // don't draw monolith logo for custom maps
     {
         DrawStatSprite(2048, xdim-15, 20);
     }
