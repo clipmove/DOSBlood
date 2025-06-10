@@ -259,21 +259,22 @@ void ctrlGetInput(void)
     if (gCrouchAuto && gMe && gMe->pSprite && !gMe->at87)
     {
         static long lLastCrouchCheck = 0;
-        static schar bCrouchState = 0;
+        static BOOL bCrouchState = 0;
         while (lLastCrouchCheck != gFrameClock)
         {
             bCrouchState = 0;
             lLastCrouchCheck = gFrameClock;
 
-            short nSectnum = gMe->pSprite->sectnum;
+            SPRITE *pSprite = gMe->pSprite;
+            short nSectnum = pSprite->sectnum;
             if (!(nSectnum >= 0 && nSectnum < kMaxSectors))
                 break;
             int nX, nY, nZ, fZ, cZ, fZCurrentSect, nDiff;
             short nAng;
-            nAng = gMe->pSprite->ang;
-            nX = gMe->pSprite->x;
-            nY = gMe->pSprite->y;
-            nZ = gMe->pSprite->z;
+            nAng = pSprite->ang;
+            nX = pSprite->x;
+            nY = pSprite->y;
+            nZ = pSprite->z;
             getzsofslope(nSectnum, nX, nY, &cZ, &fZCurrentSect); // get current floor
             if ((sector[nSectnum].ceilingpicnum < 4080) || (sector[nSectnum].ceilingpicnum > 4095)) // if sector does not have a fake ceiling (e.g. E4M4 elevator), checking this sector
             {
@@ -285,7 +286,7 @@ void ctrlGetInput(void)
                 }
             }
 
-            const BOOL bInAir = gMe->at31c;
+            const BOOL bInAir = (pSprite->flags&kSpriteFlag2) && (zvel[pSprite->index] < -1000);
             const int nStepX = mulscale30(128, Cos(nAng));
             const int nStepY = mulscale30(128, Sin(nAng));
             short nSectnumNew = nSectnum;
@@ -296,7 +297,7 @@ void ctrlGetInput(void)
                 updatesector(nX, nY, &nSectnumNew);
                 if (nSectnumNew == -1)
                     break;
-                if (nSectnum == nSectnumNew)
+                if (nSectnumNew == nSectnum)
                     continue;
                 if ((sector[nSectnumNew].ceilingpicnum >= 4080) && (sector[nSectnumNew].ceilingpicnum <= 4095)) // if sector HAS a fake ceiling (e.g. E4M4 elevator), skip
                     continue;
@@ -307,7 +308,8 @@ void ctrlGetInput(void)
                     nDiff = cZ - fZCurrentSect;
                 if ((nDiff < -3072) && (nDiff > -15000))
                 {
-                    bCrouchState = 1;
+                    nDiff = cZ - (nDiff>>1);
+                    bCrouchState = cansee(nX, nY, nDiff, nSectnumNew, pSprite->x, pSprite->y, nDiff, nSectnum); // if the area we want to crouch in has direct line of sight to the player
                     break;
                 }
             }
