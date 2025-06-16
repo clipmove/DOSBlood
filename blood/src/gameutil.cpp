@@ -939,17 +939,36 @@ int GetClosestSectors(int nSector, int x, int y, int nDist, short *pSectors, byt
 
 inline void GetClosestPointOnWall(int x, int y, WALL *pWall, int *nx, int *ny)
 {
-    int i, j, dx, dy;
+    const int x0 = pWall->x;
+    const int y0 = pWall->y;
+    const WALL *wall2 = &wall[pWall->point2];
+    const int x1 = wall2->x;
+    const int y1 = wall2->y;
 
-    dx = wall[pWall->point2].x-pWall->x;
-    dy = wall[pWall->point2].y-pWall->y;
-    i = dx*(x-pWall->x) + dy*(y-pWall->y);
-    if (i <= 0) { *nx = pWall->x; *ny = pWall->y; return; }
-    j = dx*dx+dy*dy;
-    if (i >= j) { *nx = pWall->x+dx; *ny = pWall->y+dy; return; }
-    i = divscale30(i,j);
-    *nx = pWall->x + mulscale30(dx,i);
-    *ny = pWall->y + mulscale30(dy,i);
+    const int dx = x1 - x0;
+    const int dy = y1 - y0;
+    const int px = x - x0;
+    const int py = y - y0;
+
+    const int dot = dx * px + dy * py;
+    if (dot <= 0) // closest point is the segment start
+    {
+        *nx = x0;
+        *ny = y0;
+        return;
+    }
+
+    const int len2 = dx * dx + dy * dy;
+    if (dot >= len2) // closest point is the segment end
+    {
+        *nx = x1;
+        *ny = y1;
+        return;
+    }
+
+    const int t = divscale30(dot, len2);
+    *nx = x0 + mulscale30(dx, t);
+    *ny = y0 + mulscale30(dy, t);
 }
 
 int getwalldist(int in_x, int in_y, WALL *pWall)
