@@ -835,7 +835,17 @@ void ProcessFrame(void)
 {
     VanillaModeUpdate();
     if (gDemo.RecordStatus())
+    {
+        static int nNetFifoHeadOld = gNetFifoHead[myconnectindex];
+        if (gGameStarted && (gGameOptions.nGameType == GAMETYPE_0) && (gInputMode == INPUT_MODE_1)) // while menu is active, don't allow game loop to continue and clear input packets
+        {
+            memset(&gFifoInput[gNetFifoTail&255][myconnectindex], 0, sizeof(INPUT));
+            gNetFifoHead[myconnectindex] = nNetFifoHeadOld;
+            return;
+        }
         gDemo.Write(gFifoInput[gNetFifoTail&255]);
+        nNetFifoHeadOld = gNetFifoHead[myconnectindex];
+    }
     for (int i = connecthead; i >= 0; i = connectpoint2[i])
     {
         gPlayer[i].atc.buttonFlags = gFifoInput[gNetFifoTail&255][i].buttonFlags;

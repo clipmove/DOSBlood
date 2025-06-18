@@ -21,6 +21,7 @@
 #include "build.h"
 #include "config.h"
 #include "controls.h"
+#include "demo.h"
 #include "function.h"
 #include "globals.h"
 #include "keyboard.h"
@@ -515,7 +516,15 @@ void ctrlGetInput(void)
 
     if (keystatus[bsc_Pause])
     {
-        gInput.keyFlags.pause = 1;
+        if (gDemo.RecordStatus()) // hack - trigger escape key rebind while demo is active
+        {
+            extern void keyPokeStream(byte);
+            keyPokeStream(bsc_Esc); // send escape key to buffer
+        }
+        else
+        {
+            gInput.keyFlags.pause = 1;
+        }
         keystatus[bsc_Pause] = 0;
     }
 
