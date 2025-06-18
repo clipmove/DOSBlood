@@ -123,6 +123,7 @@ void viewInitializePrediction(void);
 void viewProcessSprites(int cX, int cY, int cZ);
 void viewSetErrorMessage(char *);
 void viewDrawScreen(void);
+void viewUpdateDelirium(void);
 void viewClearInterpolations(void);
 void viewCorrectPrediction(void);
 void viewUpdatePrediction(INPUT *);

@@ -3426,6 +3426,34 @@ void func_1EC78(int nTile, char *pText, char *pText2, char *pText3)
     scrNextPage();
 }
 
+void viewUpdateDelirium(void)
+{
+    int powerCount = powerupCheck(gView, 28);
+    if (powerCount)
+    {
+        const long timer = gFrameClock<<1;
+        int tilt1 = 170, tilt2 = 170, pitch = 20;
+        if (powerCount < 512)
+        {
+            int powerScale = (powerCount<<16) / 512;
+            tilt1 = mulscale16(tilt1, powerScale);
+            tilt2 = mulscale16(tilt2, powerScale);
+            pitch = mulscale16(pitch, powerScale);
+        }
+        gScreenTilt = mulscale30(Sin(timer * 2) / 2 + Sin(timer * 3) / 2,tilt1);
+        deliriumTurn = mulscale30(Sin(timer * 3) / 2 + Sin(timer * 4) / 2,tilt2);
+        deliriumPitch = mulscale30(Sin(timer * 4) / 2 + Sin(timer * 5) / 2,pitch);
+    }
+    else
+    {
+        gScreenTilt = ((gScreenTilt+1024)&2047)-1024;
+        if (gScreenTilt > 0)
+            gScreenTilt = ClipLow(gScreenTilt - 8, 0);
+        else if (gScreenTilt < 0)
+            gScreenTilt = ClipHigh(gScreenTilt + 8, 0);
+    }
+}
+
 class ViewLoadSave : public LoadSave {
 public:
     void Load(void);
