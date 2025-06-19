@@ -55,6 +55,7 @@ int32 gMouseAiming;
 BOOL gMouseAimingFlipped;
 int32 gTurnSpeed = 92;
 int32 gCrouchAuto;
+int32 gMouseCalculation;
 
 //
 // Screen variables
@@ -649,6 +650,7 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetNumber( scripthandle, "Controls","ControllerType",(int32*)&ControllerType);
    SCRIPT_GetNumber( scripthandle, "Controls","TurnSpeed",&gTurnSpeed);
    SCRIPT_GetNumber( scripthandle, "Controls","CrouchAuto",&gCrouchAuto);
+   SCRIPT_GetNumber( scripthandle, "Controls","MouseCalculation",&gMouseCalculation);
 
    SCRIPT_GetString( scripthandle, "Comm Setup","PlayerName",&PlayerName[0]);
    SCRIPT_GetString( scripthandle, "Comm Setup","RTSName",&RTSName[0]);
@@ -740,6 +742,7 @@ void CONFIG_WriteSetup( void )
 
    SCRIPT_PutNumber( scripthandle, "Controls","TurnSpeed", gTurnSpeed,false,false);
    SCRIPT_PutNumber( scripthandle, "Controls","CrouchAuto", gCrouchAuto,false,false);
+   SCRIPT_PutNumber( scripthandle, "Controls","MouseCalculation", gMouseCalculation,false,false);
    SCRIPT_PutNumber( scripthandle, "Options","Detail", gDetail,false,false);
    SCRIPT_PutNumber( scripthandle, "Options","Fov", gFov,false,false);
    SCRIPT_PutBoolean( scripthandle, "Options","MouseAim", gMouseAim);

@@ -136,6 +136,7 @@ extern "C" void MOUSE_GetDelta(int32 *x, int32 *y);
 
 #if 1 // optimized
 #define CONTROL_MouseSensitivity (*(int32 *)(uint32(&CONTROL_JoystickPort)+8U)) // assign offset for static MACT386.LIB variable CONTROL_MouseSensitivity (faster and less safe, use below define if using non-release MACT386.LIB)
+static void (*CONTROL_GetMouseDeltaOld)(int32*, int32*) = (void(*)(int32*,int32*))(uint32(&CONTROL_GetMouseSensitivity)-0x70); // original function address
 
 void scaleAxis32792(int32 *);
 #pragma aux scaleAxis32792 = \
@@ -166,8 +167,21 @@ modify [ecx edx]
 
 extern "C" void CONTROL_GetMouseDelta(int32 *x, int32 *y) // this 'hack' ensures the linker will use this function instead of the one in MACT386.LIB
 {
+    if (gMouseCalculation == 2) // original code (use original MACT386.LIB function)
+    {
+        CONTROL_GetMouseDeltaOld(x, y);
+        return;
+    }
     int32 dx, dy;
     MOUSE_GetDelta(&dx, &dy);
+    if (gMouseCalculation == 1) // buildmfx code
+    {
+        dx <<= 5; // * 32
+        dy = (dy<<5) + (dy<<6); // * 96
+        *x = (dx*CONTROL_MouseSensitivity)>>15;
+        *y = (dy*CONTROL_MouseSensitivity)>>15;
+        return;
+    }
 
     // scale up X and Y
     dx <<= 5; // * 32
