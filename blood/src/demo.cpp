@@ -242,6 +242,9 @@ void CDemo::ProcessKeys(void)
             }
             break;
         }
+        default:
+            gInputMode = INPUT_MODE_0;
+            break;
     }
 }
 
