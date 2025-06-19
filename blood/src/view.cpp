@@ -964,17 +964,21 @@ void CalcInterpolations(void)
         switch (pInterpolate->type)
         {
         case INTERPOLATE_TYPE_INT:
-            pInterpolate->value2 = *((int*)pInterpolate->pointer);
-            if (pInterpolate->value2 == value)
-                continue;
-            *((int*)pInterpolate->pointer) = interpolate16(value, pInterpolate->value2, gInterpolate);
+        {
+            const int value2 = *((int*)pInterpolate->pointer);
+            pInterpolate->value2 = value2;
+            if (value2 != value)
+                *((int*)pInterpolate->pointer) = interpolate16(value, value2, gInterpolate);
             break;
+        }
         case INTERPOLATE_TYPE_SHORT:
-            pInterpolate->value2 = *((short*)pInterpolate->pointer);
-            if (pInterpolate->value2 == value)
-                continue;
-            *((short*)pInterpolate->pointer) = interpolate16(value, pInterpolate->value2, gInterpolate);
+        {
+            const int value2 = *((short*)pInterpolate->pointer);
+            pInterpolate->value2 = value2;
+            if (value2 != value)
+                *((short*)pInterpolate->pointer) = interpolate16(value, value2, gInterpolate);
             break;
+        }
         }
     }
 }
