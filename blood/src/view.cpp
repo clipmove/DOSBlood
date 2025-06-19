@@ -2592,6 +2592,7 @@ void viewProcessSprites(int cX, int cY, int cZ)
                     break;
                 }
                 case FX_5: // spark fx
+                case FX_6: // wood fx
                 {
                     if (VanillaMode())
                         break;
