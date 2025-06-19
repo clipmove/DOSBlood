@@ -87,8 +87,10 @@ int gShowFrameRate;
 int gShowLevelLimits;
 
 long gScreenTilt;
+long gScreenTiltO;
 
 int deliriumTilt, deliriumTurn, deliriumPitch;
+int deliriumTurnO, deliriumPitchO;
 
 struct INTERPOLATE{
     void* pointer;
@@ -3005,7 +3007,11 @@ void viewDrawScreen(void)
             CalcPosition(gView->pSprite, &cX, &cY, &cZ, &nSectnum, cA, va0);
         }
         CheckLink(&cX, &cY, &cZ, &nSectnum);
-        int v78 = gScreenTilt;
+        int v78;
+        if (gScreenTilt != gScreenTiltO)
+            v78 = interpolateang(gScreenTiltO, gScreenTilt, gInterpolate);
+        else
+            v78 = gScreenTilt;
         BOOL vc = 0;
         BOOL v4 = 0;
         byte v14 = 0;
@@ -3146,7 +3152,10 @@ void viewDrawScreen(void)
             }
         }
         visibility = ClipLow(gVisibility - gView->at362 * 32 - unk, 0);
-        cA = (cA + deliriumTurn) & 2047;
+        if (deliriumTurn != deliriumTurnO)
+            cA = (cA + interpolateang(deliriumTurnO, deliriumTurn, gInterpolate)) & 2047;
+        else
+            cA = (cA + deliriumTurn) & 2047;
         int vfc, vf8;
         getzsofslope(nSectnum, cX, cY, &vfc, &vf8);
         if (cZ >= vf8)
@@ -3158,7 +3167,12 @@ void viewDrawScreen(void)
             cZ = vfc+(8<<4);
         }
         va0 = ClipRange(va0, -200, 200);
-        DrawMirrors(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitch);
+        int deliriumPitchI;
+        if (deliriumPitch != deliriumPitchO)
+            deliriumPitchI = interpolate16(deliriumPitchO, deliriumPitch, gInterpolate);
+        else
+            deliriumPitchI = deliriumPitch;
+        DrawMirrors(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitchI);
         ushort bakCstat = gView->pSprite->cstat;
         if (gViewPos == VIEWPOS_0)
         {
@@ -3168,7 +3182,7 @@ void viewDrawScreen(void)
         {
             gView->pSprite->cstat |= 514;
         }
-        drawrooms(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitch, nSectnum);
+        drawrooms(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitchI, nSectnum);
         viewProcessSprites(cX, cY, cZ);
         func_5571C(TRUE);
         drawmasks();
@@ -3205,7 +3219,7 @@ void viewDrawScreen(void)
         if (gWeather.GetCount() > 0 || v8)
         {
             short vsi = gWeather.GetCount();
-            gWeather.Draw(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitch, vsi);
+            gWeather.Draw(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitchI, vsi);
             if (v8)
             {
                 gWeather.SetCount(vsi+delta*8);
@@ -3433,6 +3447,9 @@ void func_1EC78(int nTile, char *pText, char *pText2, char *pText3)
 
 void viewUpdateDelirium(void)
 {
+    gScreenTiltO = gScreenTilt;
+    deliriumTurnO = deliriumTurn;
+    deliriumPitchO = deliriumPitch;
     int powerCount = powerupCheck(gView, 28);
     if (powerCount)
     {
@@ -3475,6 +3492,9 @@ void ViewLoadSave::Load(void)
     Read(&deliriumTilt, sizeof(deliriumTilt));
     Read(&deliriumTurn, sizeof(deliriumTurn));
     Read(&deliriumPitch, sizeof(deliriumPitch));
+    gScreenTiltO = gScreenTilt;
+    deliriumTurnO = deliriumTurn;
+    deliriumPitchO = deliriumPitch;
 }
 
 void ViewLoadSave::Save(void)

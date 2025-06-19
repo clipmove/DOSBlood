@@ -311,6 +311,11 @@ int interpolate16(int, int, int);
 parm nomemory [ebx] [ecx] [eax] \
 modify nomemory exact [eax ebx ecx edx esi]
 
+inline int interpolateang(int a, int b, int c)
+{
+    return a+((mulscale16(b-a,c)+1024)&2047)-1024;
+}
+
 int divscale8(int, int);
 #pragma aux divscale8 = \
 "mov edx,eax" \
