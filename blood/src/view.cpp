@@ -96,16 +96,24 @@ struct INTERPOLATE{
     void* pointer;
     int value;
     int value2;
-    INTERPOLATE_TYPE type;
+    INTERPOLATE_TYPE type:8;
 };
 
-INTERPOLATE gInterpolation[4096];
+#define kMaxInterpolationsVanilla 4096
+#define kMaxInterpolationsPanning (256+128) // dedicate number of interpolations to texture panning
+#define kMaxInterpolations (kMaxInterpolationsVanilla+kMaxInterpolationsPanning+512) // increase max by 512
+
+INTERPOLATE gInterpolation[kMaxInterpolations];
 int nInterpolations;
+short nInterpolationsPanning;
 
 LOCATION gPrevSpriteLoc[kMaxSprites];
 byte gInterpolateSprite[(kMaxSprites+7)>>3];
 byte gInterpolateWall[(kMaxWalls+7)>>3];
 byte gInterpolateSector[(kMaxSectors+7)>>3];
+byte gInterpolatePanningWall[(kMaxWalls+7)>>3];
+byte gInterpolatePanningCeiling[(kMaxSectors+7)>>3];
+byte gInterpolatePanningFloor[(kMaxSectors+7)>>3];
 
 struct VIEW {
     int at0;
@@ -929,19 +937,23 @@ void viewBackupView(int nPlayer)
 void viewClearInterpolations(void)
 {
     nInterpolations = 0;
+    nInterpolationsPanning = 0;
     memset(gInterpolateSprite, 0, sizeof(gInterpolateSprite));
     memset(gInterpolateWall, 0, sizeof(gInterpolateWall));
     memset(gInterpolateSector, 0, sizeof(gInterpolateSector));
+    memset(gInterpolatePanningWall, 0, sizeof(gInterpolatePanningWall));
+    memset(gInterpolatePanningCeiling, 0, sizeof(gInterpolatePanningCeiling));
+    memset(gInterpolatePanningFloor, 0, sizeof(gInterpolatePanningFloor));
 }
 
 void viewAddInterpolation(void *data, INTERPOLATE_TYPE type)
 {
-    if (nInterpolations == 4096)
-    {
-        if (VanillaMode())
-            ThrowError(1328)("Too many interpolations");
+    if (nInterpolations == kMaxInterpolations) // reached limit, don't try to interpolate any further
         return;
-    }
+    if ((nInterpolationsPanning == kMaxInterpolationsPanning) && (type == INTERPOLATE_TYPE_CHAR)) // too many texture panning interpolations, don't add anymore
+        return;
+    if (VanillaMode() && (nInterpolations >= kMaxInterpolationsVanilla))
+        ThrowError(1328)("Too many interpolations");
     INTERPOLATE *pInterpolate = &gInterpolation[nInterpolations++];
     pInterpolate->pointer = data;
     pInterpolate->type = type;
@@ -952,6 +964,10 @@ void viewAddInterpolation(void *data, INTERPOLATE_TYPE type)
         break;
     case INTERPOLATE_TYPE_SHORT:
         pInterpolate->value = *((short*)data);
+        break;
+    case INTERPOLATE_TYPE_CHAR:
+        pInterpolate->value = *((char*)data);
+        nInterpolationsPanning++;
         break;
     }
 }
@@ -981,6 +997,20 @@ void CalcInterpolations(void)
                 *((short*)pInterpolate->pointer) = interpolate16(value, value2, gInterpolate);
             break;
         }
+        case INTERPOLATE_TYPE_CHAR:
+        {
+            const int value2 = *((char*)pInterpolate->pointer);
+            pInterpolate->value2 = value2;
+            const int nDiff = value - value2;
+            if (nDiff == 0)
+                break;
+            if (nDiff > 127) // handle overflow gracefully
+                value -= 256;
+            else if (nDiff < -128)
+                value += 256;
+            *((char*)pInterpolate->pointer) = (char)interpolate16(value, value2, gInterpolate);
+            break;
+        }
         }
     }
 }
@@ -998,6 +1028,9 @@ void RestoreInterpolations(void)
             break;
         case INTERPOLATE_TYPE_SHORT:
             *((short*)pInterpolate->pointer) = pInterpolate->value2;
+            break;
+        case INTERPOLATE_TYPE_CHAR:
+            *((char*)pInterpolate->pointer) = pInterpolate->value2;
             break;
         }
     }
@@ -3393,6 +3426,13 @@ void viewDrawScreen(void)
         fY += 8;
         sprintf(buffer, "xwalls=%04d/%04d", nXWallMax, kMaxXWalls);
         printext256(fX-strlen(buffer)*4, fY, 31, -1, buffer, 1);
+        if (gViewInterpolate)
+        {
+            const int nMaxInterpolations = !VanillaMode() ? kMaxInterpolations : kMaxInterpolationsVanilla;
+            fY += 8;
+            sprintf(buffer, "sect interpolation=%04d/%04d", nInterpolations, nMaxInterpolations);
+            printext256(fX-strlen(buffer)*4, fY, nInterpolations > (nMaxInterpolations-256) ? 152 : 31, -1, buffer, 1);
+        }
     }
     viewDrawMapTitle();
 #if 0

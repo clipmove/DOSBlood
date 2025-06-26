@@ -24,6 +24,7 @@
 #include "sectorfx.h"
 #include "misc.h"
 #include "trig.h"
+#include "view.h"
 
 byte flicker1[] = {
     0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0,
@@ -101,6 +102,8 @@ int shadeCount;
 int panCount;
 
 short wallPanList[kMaxXWalls];
+short wallPanListSect[kMaxXWalls];
+short wallPanListNextSect[kMaxXWalls];
 int wallPanCount;
 
 void DoSectorLighting(void)
@@ -263,6 +266,7 @@ void UndoSectorLighting(void)
 
 void DoSectorPanning(void)
 {
+    const char bDoInterpolation = !VanillaMode() && (gDetail >= 4);
     for (int i = 0; i < panCount; i++)
     {
         int nXSector = panList[i];
@@ -287,6 +291,8 @@ void DoSectorPanning(void)
                     angle -= 512;
                 px += mulscale30(speed<<2, Cos(angle))>>((picsiz[nTile]&15)-((pSector->floorstat&kSectorStat3) ? 1 : 0));
                 py -= mulscale30(speed<<2, Sin(angle))>>((picsiz[nTile]/16)-((pSector->floorstat&kSectorStat3) ? 1 : 0));
+                if (bDoInterpolation && TestBitString(gotsector, nSector)) // if we can see this sector, interpolate
+                    viewInterpolatePanningFloor(nSector, pSector);
                 pSector->floorxpanning = px>>8;
                 pSector->floorypanning = py>>8;
                 pXSector->at32_1 = px&255;
@@ -301,6 +307,8 @@ void DoSectorPanning(void)
                     angle -= 512;
                 px += mulscale30(speed<<2, Cos(angle))>>((picsiz[nTile]&15)-((pSector->ceilingstat&kSectorStat3) ? 1 : 0));
                 py += mulscale30(speed<<2, Sin(angle))>>((picsiz[nTile]/16)-((pSector->ceilingstat&kSectorStat3) ? 1 : 0));
+                if (bDoInterpolation && TestBitString(gotsector, nSector)) // if we can see this sector, interpolate
+                    viewInterpolatePanningCeiling(nSector, pSector);
                 pSector->ceilingxpanning = px>>8;
                 pSector->ceilingypanning = py>>8;
                 pXSector->at30_1 = px&255;
@@ -328,6 +336,8 @@ void DoSectorPanning(void)
             int py = (wall[nWall].ypanning<<8)+pXWall->at12_2;
             px += (psx<<2)>>(picsiz[nTile]&15);
             py += (psy<<2)>>(picsiz[nTile]/16);
+            if (bDoInterpolation && (TestBitString(gotsector, wallPanListSect[i]) || (wallPanListNextSect[i] >= 0 && TestBitString(gotsector, wallPanListNextSect[i])))) // if we can see this sector (or the linked sector), interpolate
+                viewInterpolatePanningWall(nWall, &wall[nWall]);
             wall[nWall].xpanning = px>>8;
             wall[nWall].ypanning = py>>8;
             pXWall->at11_2 = px&255;
@@ -360,7 +370,20 @@ void InitSectorFX(void)
         {
             XWALL *pXWall = &xwall[nXWall];
             if (pXWall->atd_7 || pXWall->ate_7)
+            {
+                for (int j = 0; j < numsectors; j++) // lookup sector for wall
+                {
+                    short startwall = sector[j].wallptr;
+                    const short endwall = startwall + sector[j].wallnum;
+                    if ((i >= startwall) && (i < endwall))
+                    {
+                        wallPanListSect[wallPanCount] = j;
+                        break;
+                    }
+                }
+                wallPanListNextSect[wallPanCount] = wall[i].nextsector;
                 wallPanList[wallPanCount++] = nXWall;
+            }
         }
     }
 }

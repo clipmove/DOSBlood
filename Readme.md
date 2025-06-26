@@ -16,8 +16,10 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Show map title on level start
 * Add key icons to small HUD size
 * BloodGDX style difficulty options
+* Texture panning interpolation support
 * New 'KRAVITZ' cheat code for fly mode
 * Improved aim vector response by 33ms
+* Increased max sector interpolations by 512
 * Vanilla mode option to restore original enemy bugs
 * Supports multiplayer with Blood version 1.21 clients
 * NBlood-style power-ups and level stats HUD display

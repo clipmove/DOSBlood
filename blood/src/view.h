@@ -59,6 +59,7 @@ extern VIEWPOS gViewPos;
 enum INTERPOLATE_TYPE {
     INTERPOLATE_TYPE_INT = 0,
     INTERPOLATE_TYPE_SHORT,
+    INTERPOLATE_TYPE_CHAR,
 };
 
 struct LOCATION {
@@ -71,6 +72,9 @@ extern LOCATION gPrevSpriteLoc[kMaxSprites];
 extern byte gInterpolateSprite[(kMaxSprites+7)>>3];
 extern byte gInterpolateWall[(kMaxWalls+7)>>3];
 extern byte gInterpolateSector[(kMaxSectors+7)>>3];
+extern byte gInterpolatePanningWall[(kMaxWalls+7)>>3];
+extern byte gInterpolatePanningCeiling[(kMaxSectors+7)>>3];
+extern byte gInterpolatePanningFloor[(kMaxSectors+7)>>3];
 
 void viewAddInterpolation(void *, INTERPOLATE_TYPE);
 
@@ -92,6 +96,36 @@ inline void viewInterpolateWall(int nWall, WALL *pWall)
         viewAddInterpolation(&pWall->x, INTERPOLATE_TYPE_INT);
         viewAddInterpolation(&pWall->y, INTERPOLATE_TYPE_INT);
         SetBitString(gInterpolateWall, nWall);
+    }
+}
+
+inline void viewInterpolatePanningWall(int nWall, WALL *pWall)
+{
+    if (!TestBitString(gInterpolatePanningWall, nWall))
+    {
+        viewAddInterpolation(&pWall->xpanning, INTERPOLATE_TYPE_CHAR);
+        viewAddInterpolation(&pWall->ypanning, INTERPOLATE_TYPE_CHAR);
+        SetBitString(gInterpolatePanningWall, nWall);
+    }
+}
+
+inline void viewInterpolatePanningCeiling(int nSector, SECTOR *pSector)
+{
+    if (!TestBitString(gInterpolatePanningCeiling, nSector))
+    {
+        viewAddInterpolation(&pSector->ceilingxpanning, INTERPOLATE_TYPE_CHAR);
+        viewAddInterpolation(&pSector->ceilingypanning, INTERPOLATE_TYPE_CHAR);
+        SetBitString(gInterpolatePanningCeiling, nSector);
+    }
+}
+
+inline void viewInterpolatePanningFloor(int nSector, SECTOR *pSector)
+{
+    if (!TestBitString(gInterpolatePanningFloor, nSector))
+    {
+        viewAddInterpolation(&pSector->floorxpanning, INTERPOLATE_TYPE_CHAR);
+        viewAddInterpolation(&pSector->floorypanning, INTERPOLATE_TYPE_CHAR);
+        SetBitString(gInterpolatePanningFloor, nSector);
     }
 }
 
