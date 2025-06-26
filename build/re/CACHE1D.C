@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include "pragmas.h"
 
+#ifndef CACHE1D_LEAN_AND_MEAN
+
 //   This module keeps track of a standard linear cacheing system.
 //   To use this module, here's all you need to do:
 //
@@ -298,7 +300,14 @@ reportandexit(char *errormessage)
 	exit(0);
 }
 
-
+#else // CACHE1D_LEAN_AND_MEAN
+#if (LIBVER_BUILDREV >= 19960925L)
+suckcache (long *suckptr)
+{
+    return;
+}
+#endif // LIBVER_BUILDREV
+#endif // CACHE1D_LEAN_AND_MEAN
 
 
 #include <fcntl.h>
@@ -359,6 +368,8 @@ static long filehan[MAXOPENFILES] =
 	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 };
+
+#ifndef CACHE1D_LEAN_AND_MEAN
 
 initgroupfile(char *filename)
 {
@@ -473,6 +484,8 @@ uninitgroupfile()
 		}
 #endif
 }
+
+#endif // CACHE1D_LEAN_AND_MEAN
 
 kopen4load(char *filename, char searchfirst)
 {
@@ -674,7 +687,7 @@ kclose(long handle)
 }
 
 
-
+#ifndef CACHE1D_LEAN_AND_MEAN
 
 	//Internal LZW variables
 #define LZWSIZE 16384           //Watch out for shorts!
@@ -959,3 +972,5 @@ uncompress(char *lzwinbuf, long compleng, char *lzwoutbuf)
 	} while (currstr < strtot);
 	return((long)shortptr[0]); //uncompleng
 }
+
+#endif // CACHE1D_LEAN_AND_MEAN

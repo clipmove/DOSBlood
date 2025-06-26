@@ -1,5 +1,7 @@
-#Comment to use original A.ASM and disable pentium overlays
+#Comment flag to use original A.ASM and disable pentium overlays
 !define USE_PENTIUM_ASM
+#Comment flag to use cut down cache1d.c (blood's replace.cpp overrides build's original cache1d system)
+!define CACHE1D_LEAN_AND_MEAN
 
 SRC_DIR=.\re
 OBJ_DIR=$(SRC_DIR)
@@ -11,6 +13,9 @@ CFLAGS = /5r /s /orti /D__PENTIUM_ASM__
 !else
 #Original flags
 CFLAGS = /4r /s /or
+!endif
+!ifdef CACHE1D_LEAN_AND_MEAN
+CFLAGS += /DCACHE1D_LEAN_AND_MEAN
 !endif
 
 .h: $(SRC_DIR)
