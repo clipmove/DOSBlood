@@ -130,13 +130,11 @@ extern "C" int getpalookup(int a1, int a2)
         return ClipRange((a1>>8)+a2, 0, 63);
 }
 
-static int32 mouse_y_leftover = 0;
-
 extern "C" void MOUSE_GetDelta(int32 *x, int32 *y);
 
 #if 1 // optimized
 #define CONTROL_MouseSensitivity (*(int32 *)(uint32(&CONTROL_JoystickPort)+8U)) // assign offset for static MACT386.LIB variable CONTROL_MouseSensitivity (faster and less safe, use below define if using non-release MACT386.LIB)
-static void (*CONTROL_GetMouseDeltaOld)(int32*, int32*) = (void(*)(int32*,int32*))(uint32(&CONTROL_GetMouseSensitivity)-0x70); // original function address
+const void (*CONTROL_GetMouseDeltaOrig)(int32*, int32*) = (const void(*)(int32*,int32*))(uint32(&CONTROL_GetMouseSensitivity)-0x70); // original function address
 
 void scaleAxis32792(int32 *);
 #pragma aux scaleAxis32792 = \
@@ -152,56 +150,36 @@ void scaleAxis32792(int32 *);
 parm [ebx] \
 modify exact [eax ecx edx]
 
-int32 scaleAxis65536(int32);
-#pragma aux scaleAxis65536 = \
-"mov ecx, eax" \
-"mov edx, eax" \
-"sar edx, 31" \
-"shr edx, 16" \
-"add edx, ecx" \
-"sar edx, 16" \
-"mov eax, edx" \
-parm [eax] \
-value [eax] \
-modify [ecx edx]
-
-extern "C" void CONTROL_GetMouseDelta(int32 *x, int32 *y) // this 'hack' ensures the linker will use this function instead of the one in MACT386.LIB
+void CONTROL_GetMouseDeltaNew(int32 *x, int32 *y)
 {
-    if (gMouseCalculation == 2) // original code (use original MACT386.LIB function)
-    {
-        CONTROL_GetMouseDeltaOld(x, y);
-        return;
-    }
     int32 dx, dy;
+    static int32 mouse_y_leftover = 0;
+
     MOUSE_GetDelta(&dx, &dy);
-    if (gMouseCalculation == 1) // buildmfx code
+    if (dx != 0)
     {
+        // scale up X
         dx <<= 5; // * 32
-        dy = (dy<<5) + (dy<<6); // * 96
-        *x = (dx*CONTROL_MouseSensitivity)>>15;
-        *y = (dy*CONTROL_MouseSensitivity)>>15;
-        return;
+
+        // multiply by CONTROL_MouseSensitivity
+        dx *= CONTROL_MouseSensitivity;
+
+        // divide by 32792
+        scaleAxis32792(&dx);
     }
+    *x = dx;
 
-    // scale up X and Y
-    dx <<= 5; // * 32
-    dy = (dy<<4) + (dy<<5); // * 48
+    if (dy != 0)
+    {
+        // scale up Y
+        dy = (dy<<4) + (dy<<5); // * 48
 
-    // multiply by CONTROL_MouseSensitivity
-    dx *= CONTROL_MouseSensitivity;
-    dy *= CONTROL_MouseSensitivity;
+        // multiply by CONTROL_MouseSensitivity
+        dy *= CONTROL_MouseSensitivity;
 
-    // divide by 32792
-    scaleAxis32792(&dx);
-    scaleAxis32792(&dy);
-
-    // apply axis sensitivity
-    dx *= gMouseAxisSensitivity[0];
-    dy *= gMouseAxisSensitivity[1];
-
-    // divide by 65536
-    *x = scaleAxis65536(dx);
-    dy = scaleAxis65536(dy);
+        // divide by 32792
+        scaleAxis32792(&dy);
+    }
 
     // add mouse_y_leftover to dy, for sub-pixel accumulation
     dy += mouse_y_leftover;
@@ -220,12 +198,42 @@ extern "C" void CONTROL_GetMouseDelta(int32 *x, int32 *y) // this 'hack' ensures
     }
     mouse_y_leftover = dy;
 }
+
+void CONTROL_GetMouseDeltaBuildMfx(int32 *x, int32 *y)
+{
+    int32 dx, dy;
+    MOUSE_GetDelta(&dx, &dy);
+    dx <<= 5; // * 32
+    dy = (dy<<5) + (dy<<6); // * 96
+    *x = (dx*CONTROL_MouseSensitivity)>>15;
+    *y = (dy*CONTROL_MouseSensitivity)>>15;
+}
+
+extern "C" void CONTROL_GetMouseDelta(int32 *x, int32 *y) // this 'hack' ensures the linker will use this function instead of the one in MACT386.LIB
+{
+    switch (gMouseCalculation)
+    {
+        case 0: // new (based off of sMouse)
+            CONTROL_GetMouseDeltaNew(x, y);
+            break;
+        case 1: // build mouse fix (https://ctpax-cheater.losthost.org/htmldocs/trouble.htm#buildmfx)
+            CONTROL_GetMouseDeltaBuildMfx(x, y);
+            break;
+        case 2: // original code (use original MACT386.LIB function)
+            CONTROL_GetMouseDeltaOrig(x, y);
+            break;
+        default:
+            break;
+    }
+}
 #else // taken from sMouse
 #define game_scale_x 32
 #define game_scale_y 48
 #define game_mouse_y_threshold 512
 #define MINIMUMMOUSESENSITIVITY 0x1000
 #define CONTROL_MouseSensitivity (gMouseSensitivity+MINIMUMMOUSESENSITIVITY) // static MACT386.LIB variable CONTROL_MouseSensitivity is set by CONTROL_SetMouseSensitivity() and adds MINIMUMMOUSESENSITIVITY to input - recreate the same logic here
+
+static int32 mouse_y_leftover = 0;
 
 extern "C" void CONTROL_GetMouseDelta(int32 *x, int32 *y)
 {
@@ -236,10 +244,12 @@ extern "C" void CONTROL_GetMouseDelta(int32 *x, int32 *y)
     *y *= CONTROL_MouseSensitivity;
     *x /= 32792L;
     *y /= 32792L;
+#if 0 // MACT later does this in CONTROL_PollDevices()->CONTROL_ScaleAxis(), so don't do this (this is only needed if running as an external program)
     *x *= gMouseAxisSensitivity[0];
     *y *= gMouseAxisSensitivity[1];
     *x /= 65536L;
     *y /= 65536L;
+#endif
 
     *y += mouse_y_leftover;
     if (*y > 0)
