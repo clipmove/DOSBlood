@@ -183,18 +183,22 @@ void CONTROL_GetMouseDeltaNew(int32 *x, int32 *y)
 
     // add mouse_y_leftover to dy, for sub-pixel accumulation
     dy += mouse_y_leftover;
-    *y = dy;
 
     // save the leftover for next time
-    if (dy > 0)
+    if (dy >= 512)
     {
+        *y = dy;
         dy &= 511;
+    }
+    else if (dy <= -512)
+    {
+        *y = dy;
+        dy = -((-dy) & 511);
     }
     else
     {
-        dy = -dy;
-        dy &= 511;
-        dy = -dy;
+        // not within threshold, set to 0
+        *y = 0;
     }
     mouse_y_leftover = dy;
 }
