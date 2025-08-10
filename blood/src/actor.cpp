@@ -2399,7 +2399,8 @@ void actInit(BOOL bSaveLoad)
             pSprite->cstat |= 4096+256+1;
             pSprite->clipdist = dudeInfo[nType].ata;
             xvel[nSprite] = yvel[nSprite] = zvel[nSprite] = 0;
-            pXSprite->health = dudeInfo[nType].at2<<4;
+            if (!bSaveLoad || gVanilla) // only reset health if vanilla mode is on
+                pXSprite->health = dudeInfo[nType].at2<<4;
         }
         if (gSysRes.Lookup(dudeInfo[nType].seqStartID, "SEQ"))
             seqSpawn(dudeInfo[nType].seqStartID, 3, nXSprite);

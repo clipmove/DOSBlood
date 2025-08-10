@@ -40,6 +40,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix tiny Calebs using the wrong sprite
 * Fix prone tesla Cultists infinitely firing
 * Fix Beast state when leaving water sector
+* Fix enemy health resetting on loading save
 * Update delirium tilt at a constant framerate
 * Fix cultists screaming getting cut on death
 * Fix inventory items resetting between levels
