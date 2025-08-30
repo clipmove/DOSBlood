@@ -3376,6 +3376,10 @@ void viewDrawScreen(void)
     {
         int fX = gViewMode == 3 ? gViewX1 : xdim;
         int fY = gViewMode == 3 ? gViewY0 : 0;
+        if (gViewMode == 4)
+            fY += mulscale16(20, yscale);
+        if (gShowFrameRate)
+            fY += 16;
         static int nSpriteMax = 0, nXSpriteMax = 0, nXSectorMax = 0, nXWallMax = 0;
         static long nLevelTime = gFrameClock;
         if (nLevelTime != gFrameClock)
@@ -3407,8 +3411,6 @@ void viewDrawScreen(void)
                     nXWallMax++;
             }
         }
-        if (gShowFrameRate)
-            fY += 16;
         sprintf(buffer, "sprites=%04d/%04d", nSpriteMax, kMaxSprites);
         printext256(fX-strlen(buffer)*4, fY, nSpriteMax > (kMaxSprites-512-256-192) ? 152 : 31, -1, buffer, 1);
         fY += 8;
