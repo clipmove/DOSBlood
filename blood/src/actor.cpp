@@ -4130,6 +4130,17 @@ static int MoveThing(SPRITE *pSprite)
                 if (klabs(zvel[nSprite]) > 0x80000)
                     sfxPlay3DSound(pSprite, 374, 0, 0);
                 break;
+            case kThing419:
+            case kThing420:
+                if (VanillaMode())
+                    break;
+                if (((floorHit & 0xe000) == 0xc000) && (actSpriteIdToOwnerId(nSprite) >= 0)) // force tnt/spray to 'hit' (explode) if landed directly on top of enemy
+                {
+                    int nHitDude = floorHit & 0x1fff;
+                    if (nHitDude < kMaxSprites && IsDudeSprite(&sprite[nHitDude]))
+                        return 0xc000|nHitDude;
+                }
+                break;
             }
             v8 = 0x4000|nSector;
         }

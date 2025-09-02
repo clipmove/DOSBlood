@@ -240,6 +240,8 @@ enum {
 
     kThingBase = 400,
     kThing415 = 415,
+    kThing419 = 419,
+    kThing420 = 420,
     kThing427 = 427,
     kThing428,
     kThingMax = 433,

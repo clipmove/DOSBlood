@@ -56,6 +56,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Check if voxel exists before attempting to draw tile as voxel
 * Fix demo recording desyncing when pausing/opening menu
 * Fix bloated butcher knife attack not hitting player while crouched
+* Force TNT/spray cans to explode if directly landed on enemy's head
 * Limit impulse damage when shooting enemies downward at point-blank
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 * Cheogh blasting/attacking can now hit prone players (only for well done and above difficulties)
