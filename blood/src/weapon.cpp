@@ -677,7 +677,7 @@ _goto1:
         }
         break;
     case 3:
-        if (powerupCheck(pPlayer, 17))
+        if (powerupCheck(pPlayer, 17) && (VanillaMode() || (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4))))
             StartQAV(pPlayer, 63);
         else
             StartQAV(pPlayer, 58);
@@ -704,7 +704,7 @@ _goto1:
             StartQAV(pPlayer, 81);
         break;
     case 5:
-        if (powerupCheck(pPlayer, 17))
+        if (powerupCheck(pPlayer, 17) && (VanillaMode() || (gInfiniteAmmo || CheckAmmo(pPlayer, 4, 2))))
             StartQAV(pPlayer, 124);
         else
             StartQAV(pPlayer, 92);
@@ -916,7 +916,7 @@ void WeaponUpdateState(PLAYER *pPlayer)
         switch (vb)
         {
         case 3:
-            if (powerupCheck(pPlayer, 17) && (gInfiniteAmmo || CheckAmmo(pPlayer,4, 4)))
+            if (powerupCheck(pPlayer, 17) && (gInfiniteAmmo || CheckAmmo(pPlayer, 4, VanillaMode() ? 4 : 2)))
                 pPlayer->at26 = 121;
             else
                 pPlayer->at26 = 90;
@@ -2169,7 +2169,7 @@ void WeaponProcess(PLAYER *pPlayer)
             }
             break;
         case 5:
-            if (powerupCheck(pPlayer, 17))
+            if (powerupCheck(pPlayer, 17) && (VanillaMode() || (gInfiniteAmmo || CheckAmmo(pPlayer, 4, 2))))
                 StartQAV(pPlayer, 122, nClientFireNapalm);
             else
                 StartQAV(pPlayer, 91, nClientFireNapalm);
