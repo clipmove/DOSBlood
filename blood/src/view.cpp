@@ -2924,7 +2924,7 @@ void viewDrawScreen(void)
     const int defaultHoriz = gCenterHoriz ? 100 : 90;
     int delta = ClipLow(gGameClock - lastUpdate, 0);
     lastUpdate = gGameClock;
-    viewUpdateFov(TRUE);
+    viewUpdateFov(!CGameMenuMgr::m_bActive); // always recalculate fov while menu is active
     if (!gPaused && (!CGameMenuMgr::m_bActive || gGameOptions.nGameType != GAMETYPE_0))
     {
         gInterpolate = divscale16(gGameClock-gNetFifoClock+4, 4);
