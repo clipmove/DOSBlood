@@ -93,6 +93,7 @@ short short_28F378;
 int int_28F37C;
 
 const BLOODVERSION short_1328AC[2] = {{ 20, 2 }, { 21, 2 }}; // Blood v1.21/DOSBlood
+int gDOSBloodClients = 0; // count how many DOSBlood clients are connected
 
 BOOL bNoResend = 1;
 int gSyncRate = 1;
@@ -482,7 +483,7 @@ void netGetPackets(void)
             gStartNewGame = 1;
             break;
         case 253:
-            gVanillaNet = 0;
+            gDOSBloodClients++;
             break;
         case 255:
             keystatus[1] = 1;
@@ -537,6 +538,11 @@ void netBroadcastVersion(void)
     char *pPacket = packet;
     PutPacketByte(pPacket, 253);
     netSendPacketAll(packet, pPacket-packet);
+}
+
+void netCheckVersions(void)
+{
+    gVanillaNet = gDOSBloodClients != (gNetPlayers-1); // if not all clients connected are DOSBlood, force network vanilla mode
 }
 
 void netBroadcastTaunt(int nPlayer, int nTaunt)
@@ -992,6 +998,7 @@ void netPlayerQuit(int nPlayer)
 void func_7AC28(char*) {}
 void netBroadcastNewGame(void) {}
 void netBroadcastVersion(void) {}
+void netCheckVersions(void) {}
 void netWaitForEveryone(BOOL) {}
 void netBroadcastMsg(int, char*) {}
 #endif

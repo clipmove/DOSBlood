@@ -1382,6 +1382,7 @@ void main(void)
     netBroadcastVersion();
     tioPrint("Waiting for network players!");
     netWaitForEveryone(0);
+    netCheckVersions();
     if (CONTROL_JoystickEnabled)
         CONTROL_CenterJoystick(CenterCenter, UpperLeft, LowerRight, CenterThrottle, CenterRudder);
     scrSetGameMode(ScreenMode, ScreenWidth, ScreenHeight);

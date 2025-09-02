@@ -584,7 +584,8 @@ void SetupNetStartMenu(void)
     menuNetStart.Add(&itemNetStart5, 0);
     menuNetStart.Add(&itemNetStart6, 0);
     menuNetStart.Add(&itemNetStart7, 0);
-    menuNetStart.Add(&itemNetStart8, 0);
+    if (!gVanillaNet) // only add the option if every player in the session is running DOSBlood
+        menuNetStart.Add(&itemNetStart8, 0);
     menuNetStart.Add(&itemNetStart9, 0);
     menuNetStart.Add(&itemNetStart10, 0);
     itemNetStart1.SetTextIndex(1);
