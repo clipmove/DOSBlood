@@ -223,7 +223,7 @@ void WeaponDraw(PLAYER *pPlayer, int a2, int a3, int a4, int a5)
         a2 = -128;
         flags |= 1;
     }
-    pQAV->Draw(v4, flags, a2, a5);
+    pQAV->Draw(v4, flags, a2, a5, 1);
 }
 
 void WeaponPlay(PLAYER *pPlayer)

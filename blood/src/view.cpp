@@ -3270,8 +3270,16 @@ void viewDrawScreen(void)
                 cY = defaultHoriz;
                 rotatesprite(cX<<16, cY<<16, 65536, 0, 2319, 0, 0, 2, gViewX0, gViewY0, gViewX1, gViewY1);
             }
-            cX = 160+(v4c>>8);
-            cY = 220+(v48>>8)+(zDelta>>7);
+            if (!VanillaMode()) // smooth motion
+            {
+                cX = (160<<16)+(v4c<<8);
+                cY = (220<<16)+(v48<<8)+(zDelta<<9);
+            }
+            else // quantize like vanilla v1.21
+            {
+                cX = (160+(v4c>>8))<<16;
+                cY = (220+(v48>>8)+(zDelta>>7))<<16;
+            }
             int nShade = sector[nSectnum].floorshade;
             int nPalette = 0;
             if (sector[gView->pSprite->sectnum].extra > 0)

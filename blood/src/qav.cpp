@@ -37,7 +37,7 @@ int qavRegisterClient(void(*pClient)(int, void *))
 }
 
 
-static void DrawFrame(int x, int y, TILE_FRAME *pTile, int stat, int shade, int palnum)
+static void DrawFrame(int x, int y, TILE_FRAME *pTile, int stat, int shade, int palnum, byte bUseQ16)
 {
     int angle = pTile->angle;
     byte pal;
@@ -49,12 +49,22 @@ static void DrawFrame(int x, int y, TILE_FRAME *pTile, int stat, int shade, int 
         stat ^= 0x4;
     }
     pal = palnum > 0 ? (char)palnum : (char)pTile->palnum;
-    rotatesprite((x + pTile->x) << 16, (y + pTile->y) << 16, pTile->z, angle,
+    if (!bUseQ16)
+    {
+        x = (x + pTile->x) << 16;
+        y = (y + pTile->y) << 16;
+    }
+    else
+    {
+        x += pTile->x << 16;
+        y += pTile->y << 16;
+    }
+    rotatesprite(x, y, pTile->z, angle,
                  pTile->picnum, ClipRange(pTile->shade + shade, -128, 127), pal, stat,
                  windowx1, windowy1, windowx2, windowy2);
 }
 
-void QAV::Draw(long ticks, int stat, int shade, int palnum)
+void QAV::Draw(long ticks, int stat, int shade, int palnum, byte bUseQ16)
 {
     dassert(ticksPerFrame > 0, 72);
     int nFrame = ticks / ticksPerFrame;
@@ -63,7 +73,7 @@ void QAV::Draw(long ticks, int stat, int shade, int palnum)
     for (int i = 0; i < 8; i++)
     {
         if (pFrame->tiles[i].picnum > 0)
-            DrawFrame(x, y, &pFrame->tiles[i], stat, shade, palnum);
+            DrawFrame(x, y, &pFrame->tiles[i], stat, shade, palnum, bUseQ16);
     }
 }
 
