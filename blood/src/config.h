@@ -65,6 +65,7 @@ extern int32 gDetail;
 extern int32 gFov;
 extern int32 gShowPowerUps;
 extern int32 gLevelStats;
+extern int32 gWeaponSmoothing;
 extern int32 gSkill;
 extern BOOL gViewInterpolate;
 extern BOOL gShowWeapon;

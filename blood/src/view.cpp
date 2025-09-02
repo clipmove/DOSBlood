@@ -3270,7 +3270,7 @@ void viewDrawScreen(void)
                 cY = defaultHoriz;
                 rotatesprite(cX<<16, cY<<16, 65536, 0, 2319, 0, 0, 2, gViewX0, gViewY0, gViewX1, gViewY1);
             }
-            if (!VanillaMode()) // smooth motion
+            if (gWeaponSmoothing) // smooth motion
             {
                 cX = (160<<16)+(v4c<<8);
                 cY = (220<<16)+(v48<<8)+(zDelta<<9);
@@ -3291,7 +3291,7 @@ void viewDrawScreen(void)
                     nPalette = pSector->floorpal;
                 }
             }
-            WeaponDraw(gView, nShade, cX, cY, nPalette);
+            WeaponDraw(gView, nShade, cX, cY, nPalette, gWeaponSmoothing == 2 && !CGameMenuMgr::m_bActive);
         }
         if (gViewPos == VIEWPOS_0 && actGetBurnTime(gView->pXSprite) > 60)
         {

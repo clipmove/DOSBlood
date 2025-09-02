@@ -1601,6 +1601,7 @@ CGameMenuItemQAV::CGameMenuItemQAV(char *a1, int a2, int a3, int a4, char *a5)
     at10 = a4;
     at20 = a5;
     atc = a3;
+    bInterp = FALSE;
     Clear1();
 }
 
@@ -1633,7 +1634,7 @@ void CGameMenuItemQAV::Draw(void)
     windowy1 = 0;
     windowx2 = xdim-1;
     windowy2 = ydim-1;
-    at28->Draw(t2, 10, 0, 0);
+    at28->Draw(t2, 10, 0, 0, 0, bInterp);
 
     windowx1 = wx1;
     windowy1 = wy1;

@@ -93,6 +93,7 @@ int32 gDetail = 4;
 int32 gFov = 60;
 int32 gShowPowerUps = 2;
 int32 gLevelStats = 0;
+int32 gWeaponSmoothing = 0;
 int32 gDifficulty = 2;
 int32 gSkill = 2;
 BOOL gDoppler = TRUE;
@@ -709,6 +710,7 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetBool( scripthandle, "Options","ShowWeapon",&gShowWeapon);
    SCRIPT_GetNumber( scripthandle, "Options","ShowPowerUps",&gShowPowerUps);
    SCRIPT_GetNumber( scripthandle, "Options","LevelStats",&gLevelStats);
+   SCRIPT_GetNumber( scripthandle, "Options","WeaponSmoothing",&gWeaponSmoothing);
    SCRIPT_GetBool( scripthandle, "Options","VanillaMode",&gVanilla);
 
    }
@@ -764,6 +766,7 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutBoolean( scripthandle, "Options","ShowWeapon", gShowWeapon);
    SCRIPT_PutNumber( scripthandle, "Options","ShowPowerUps", gShowPowerUps,false,false);
    SCRIPT_PutNumber( scripthandle, "Options","LevelStats", gLevelStats,false,false);
+   SCRIPT_PutNumber( scripthandle, "Options","WeaponSmoothing", gWeaponSmoothing,false,false);
    SCRIPT_PutBoolean( scripthandle, "Options","VanillaMode", gVanilla);
 
    CONFIG_WriteKeys( scripthandle );

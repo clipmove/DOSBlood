@@ -58,7 +58,7 @@ struct QAV
     SPRITE *pSprite; // 1c
     byte pad3[4]; // 20
     FRAMEINFO frames[1]; // 24
-    void Draw(long ticks, int stat, int shade, int palnum, byte bUseQ16 = 0);
+    void Draw(long ticks, int stat, int shade, int palnum, byte bUseQ16 = 0, byte bInterpolate = 0);
     void Play(long, long, int, void *);
     void Preload(void);
 

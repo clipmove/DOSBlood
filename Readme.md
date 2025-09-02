@@ -20,13 +20,13 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Texture panning interpolation support
 * New 'KRAVITZ' cheat code for fly mode
 * Improved aim vector response by 33ms
-* High precision weapon sway calculation
 * Increased max sector interpolations by 512
 * Vanilla mode option to restore original enemy bugs
 * Supports multiplayer with Blood version 1.21 clients
 * NBlood-style power-ups and level stats HUD display
 * New 'LIMITS' cheat code to display wall/sprites usage
 * Restore broken blinking state for health point counter
+* High precision weapon sway calculation and interpolation
 * Don't restart midi track when loading save for current level
 * Incorporates mouse fixes from bMouse and sMouse natively
 * Use Pentium II/PRO (if found) optimizations for a.asm functions (12% speed improvement)

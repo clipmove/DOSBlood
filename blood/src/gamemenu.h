@@ -333,6 +333,7 @@ public:
     QAV *at28;
     int at2c;
     int at30;
+    BOOL bInterp;
     CGameMenuItemQAV();
     CGameMenuItemQAV(char *, int, int, int, char *);
     virtual void Draw(void);

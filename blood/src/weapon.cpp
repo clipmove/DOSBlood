@@ -203,7 +203,7 @@ void WeaponInit(void)
     }
 }
 
-void WeaponDraw(PLAYER *pPlayer, int a2, int a3, int a4, int a5)
+void WeaponDraw(PLAYER *pPlayer, int a2, int a3, int a4, int a5, byte bInterpolate)
 {
     dassert(pPlayer != NULL, 529);
     if (pPlayer->at26 == -1)
@@ -228,7 +228,9 @@ void WeaponDraw(PLAYER *pPlayer, int a2, int a3, int a4, int a5)
         a2 = -128;
         flags |= 1;
     }
-    pQAV->Draw(v4, flags, a2, a5, 1);
+    if (bInterpolate && pPlayer->atbd == 9) // do not interpolate for life leech
+        bInterpolate = 0;
+    pQAV->Draw(v4, flags, a2, a5, 1, bInterpolate);
 }
 
 void WeaponPlay(PLAYER *pPlayer)
