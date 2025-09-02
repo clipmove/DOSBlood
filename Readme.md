@@ -45,6 +45,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Update delirium tilt at a constant framerate
 * Fix cultists screaming getting cut on death
 * Fix inventory items resetting between levels
+* Fix shotgun akimbo animation glitch on loop
 * Allow cheat phrases to be said in multiplayer
 * Fix choking hands to run at a constant framerate
 * Fix projectiles glitching when autoaim is disabled
