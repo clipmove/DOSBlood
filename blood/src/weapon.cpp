@@ -848,7 +848,9 @@ void WeaponUpdateState(PLAYER *pPlayer)
             {
                 sfxPlay3DSound(pPlayer->pSprite, 410, 3, 2);
                 StartQAV(pPlayer, 57, nClientEjectShell);
-                if (gInfiniteAmmo || pPlayer->at181[2] > 1)
+                if (powerupCheck(pPlayer, 17) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)) && !VanillaMode()) // if we now have enough ammo to carry two shotguns, update the gun state and give back our second shotgun
+                    pPlayer->atc3 = 7;
+                else if (gInfiniteAmmo || pPlayer->at181[2] > 1)
                     pPlayer->atc3 = 3;
                 else
                     pPlayer->atc3 = 2;

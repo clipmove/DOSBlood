@@ -52,6 +52,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix pod enemy projectiles using walls as enemy index
 * Fix demos desyncing if launched with -noaim argument
 * Replaced sector based damage logic for player explosions
+* Fix shotgun getting stuck in single gun state while akimbo
 * Prevent whitespace only messages being sent in multiplayer
 * Fix reverb state not resetting on level change/loading game
 * Check if voxel exists before attempting to draw tile as voxel
