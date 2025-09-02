@@ -1021,6 +1021,13 @@ void CGameMenuItemKeyList::Draw(void)
         char *sKey1 = KB_ScanCodeToString(key1);
         char *sKey2 = KB_ScanCodeToString(key2);
         sprintf(buffer, "%s", CONFIG_FunctionNumToName(k));
+        for (int j = 0; j < 40; j++)
+        {
+            if (buffer[j] == '\0')
+                break;
+            if (buffer[j] == '_')
+                buffer[j] = ' ';
+        }
         if (key2 == 0)
         {
             if (key1 == 0)
