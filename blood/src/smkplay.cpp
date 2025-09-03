@@ -51,7 +51,7 @@ int CSMKPlayer::PlaySMKWithWAV(char *a1, int a2)
     int v4;
     u32 i;
     Smack *smk;
-    func_2906C();
+    ctrlClearAllInput();
     v4 = 0;
 
     smk = SmackOpen(a1, 0xfe100, -1);
@@ -91,7 +91,7 @@ int CSMKPlayer::PlaySMKWithWAV(char *a1, int a2)
     else
         v4 = 1;
     sndKillAllSounds();
-    func_2906C();
+    ctrlClearAllInput();
     return v4;
 }
 
@@ -100,7 +100,7 @@ int CSMKPlayer::PlaySMKWithWAV(char *a1, char *a2)
     int v4;
     u32 i;
     Smack *smk;
-    func_2906C();
+    ctrlClearAllInput();
     v4 = 0;
 
     smk = SmackOpen(a1, 0xfe100, -1);
@@ -140,7 +140,7 @@ int CSMKPlayer::PlaySMKWithWAV(char *a1, char *a2)
     else
         v4 = 1;
     sndKillAllSounds();
-    func_2906C();
+    ctrlClearAllInput();
     return v4;
 }
 

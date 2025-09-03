@@ -142,7 +142,7 @@ void ctrlTerm(void)
     CONTROL_Shutdown();
 }
 
-void func_2906C(void)
+void ctrlClearAllInput(void)
 {
     KB_ClearKeysDown();
     KB_FlushKeyboardQueue();

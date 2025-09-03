@@ -102,7 +102,7 @@ struct INPUT
 extern INPUT gInput;
 extern BOOL bSilentAim;
 
-void func_2906C(void);
+void ctrlClearAllInput(void);
 
 void ctrlInit(void);
 

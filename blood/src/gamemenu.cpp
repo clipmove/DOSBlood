@@ -1546,7 +1546,7 @@ BOOL CGameMenuItemZEditBitmap::Event(CGameMenuEvent &event)
             buffer[at24-1] = 0;
             at34 = 1;
         }
-        func_2906C();
+        ctrlClearAllInput();
         break;
     case 9:
         if (!at34)

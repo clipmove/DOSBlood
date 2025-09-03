@@ -1387,7 +1387,7 @@ void main(void)
     sfxInit();
     if (MusicDevice != -1 && gUse8250 && numplayers > 1)
         Banner8250();
-    func_2906C();
+    ctrlClearAllInput();
     netBroadcastPlayerInfo(myconnectindex);
     netBroadcastVersion();
     tioPrint("Waiting for network players!");
