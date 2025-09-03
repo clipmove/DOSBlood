@@ -106,6 +106,8 @@ void LoadSave::LoadGame(char *pzFile)
     if (gDemo.PlaybackStatus() || gDemo.RecordStatus())
         gDemo.Close();
 
+    gViewPos = VIEWPOS_0;
+    gViewIndex = myconnectindex;
     sndKillAllSounds();
     sfxKillAllSounds();
     ambKillAll();
