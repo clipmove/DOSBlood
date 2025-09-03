@@ -695,6 +695,16 @@ void playerCorrectInertia(PLAYER *pPlayer, VECTOR3D *pOldpos)
     viewCorrectViewOffsets(pPlayer->at57, pOldpos);
 }
 
+void playerResetPosture(PLAYER* pPlayer) {
+    pPlayer->at37 = 0;
+    pPlayer->at3b = 0;
+    pPlayer->at4b = 0;
+    pPlayer->at3f = 0;
+    pPlayer->at43 = 0;
+    pPlayer->at4f = 0;
+    pPlayer->at53 = 0;
+}
+
 void playerStart(int nPlayer)
 {
     PLAYER *pPlayer = &gPlayer[nPlayer];
@@ -716,6 +726,8 @@ void playerStart(int nPlayer)
     DUDEINFO *pDudeInfo = &dudeInfo[nPlayer + kDudePlayer1 - kDudeBase];
     pPlayer->pDudeInfo = pDudeInfo;
     playerSetRace(pPlayer, kModeHuman);
+    if (!VanillaMode())
+        playerResetPosture(pPlayer);
     seqSpawn(pDudeInfo->seqStartID, 3, pSprite->extra);
     if (pPlayer == gMe)
         SetBitString(show2dsprite, pSprite->index);
