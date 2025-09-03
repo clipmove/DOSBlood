@@ -80,6 +80,7 @@ void ctrlInit(void)
 
     KB_ClearKeysDown();
     KB_FlushKeyboardQueue();
+    KB_ClearLastScanCode();
     CONTROL_Startup(ControllerType, GetTime, 120);
     CONTROL_DefineFlag(gamefunc_Move_Forward, false);
     CONTROL_DefineFlag(gamefunc_Move_Backward, false);
@@ -146,6 +147,7 @@ void ctrlClearAllInput(void)
 {
     KB_ClearKeysDown();
     KB_FlushKeyboardQueue();
+    KB_ClearLastScanCode();
     keyFlushStream();
     for (int i = 0; i < 256; i++)
         keystatus[i] = 0;
