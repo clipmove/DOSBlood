@@ -1472,6 +1472,10 @@ void CGameMenuItemZEditBitmap::Draw(void)
         sprintf(buffer[0], "DIFFICULTY: %s", zDiffStrings[ClipRange(gSaveGameOptions[at28].nDifficulty, 0, 4)]);
         gMenuTextMgr.DrawText(buffer[0], at8, 20, 50, 32, 0, TRUE);
     }
+    else if (!CanFocus()) // gray out disabled save slots
+    {
+        shade = 48;
+    }
     at2c->at24 = -1;
     if (at34)
         shade = -128;

@@ -613,6 +613,7 @@ void SetupSaveGameMenu(void)
     menuSaveGame.Add(&itemSaveGame8, 0);
     menuSaveGame.Add(&itemSaveGame9, 0);
     menuSaveGame.Add(&itemSaveGame10, 0);
+    menuSaveGame.Add(&itemSaveGameAutosave, 0);
     menuSaveGame.Add(&itemSaveGamePic, 0);
     menuSaveGame.Add(&itemBloodQAV, 0);
 
