@@ -25,6 +25,7 @@ void sfxKillAllSounds(SPRITE *pSprite = NULL);
 void sfxKill3DSound(SPRITE *pSprite, int a2 = -1, int a3 = -1);
 void sfxSetReverb(BOOL);
 void sfxSetReverb2(BOOL);
+void sfxResetListener(void);
 void sfxUpdate3DSounds(void);
 void sfxInit(void);
 

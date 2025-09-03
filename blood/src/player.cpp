@@ -796,6 +796,8 @@ void playerStart(int nPlayer)
         viewInitializePrediction();
         gViewMap.SetPos(pPlayer->pSprite->x, pPlayer->pSprite->y);
         gViewMap.SetAngle(pPlayer->pSprite->ang);
+        if (!VanillaMode())
+            sfxResetListener(); // player is listener, update ear position/reset ear velocity so audio pitch of surrounding sfx does not freak out when respawning player
     }
     if (IsUnderwaterSector(pSprite->sectnum))
     {

@@ -385,6 +385,12 @@ inline void sfxUpdateListenerVel(void)
     earVR.dy = earR.y-earR0.y;
 }
 
+void sfxResetListener(void)
+{
+    sfxUpdateListenerPos(); // update ear position
+    earVL.dx = earVL.dy = earVR.dx = earVR.dy = 0; // reset ear velocity
+}
+
 void sfxUpdate3DSounds(void)
 {
     sfxUpdateListenerPos();

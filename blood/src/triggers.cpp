@@ -1475,6 +1475,8 @@ void OperateTeleport(unsigned int nSector, XSECTOR *pXSector)
                 {
                     playerResetInertia(pPlayer);
                     pPlayer->at6b = pPlayer->at73 = 0;
+                    if (!VanillaMode() && pPlayer == gMe) // if player is listener, update ear position/reset ear velocity so audio pitch of surrounding sfx does not freak out when teleporting player
+                        sfxResetListener();
                 }
             }
         }
