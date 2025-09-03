@@ -20,6 +20,7 @@
 #include "db.h"
 #include "debug4g.h"
 #include "gameutil.h"
+#include "globals.h"
 #include "levels.h"
 #include "loadsave.h"
 #include "misc.h"
@@ -148,6 +149,7 @@ int CheckLink(SPRITE *pSprite)
             SPRITE *pLower = &sprite[nLower];
             dassert(pLower->sectnum >= 0 && pLower->sectnum < kMaxSectors, 171);
             ChangeSpriteSect(pSprite->index, pLower->sectnum);
+            VECTOR3D oldpos = {pSprite->x, pSprite->y, pSprite->z};
             pSprite->x += pLower->x-pUpper->x;
             pSprite->y += pLower->y-pUpper->y;
             if (pLower->type == kMarker6)
@@ -155,7 +157,10 @@ int CheckLink(SPRITE *pSprite)
             else
                 z2 = getceilzofslope(pSprite->sectnum, pSprite->x, pSprite->y);
             pSprite->z += z2-z1;
-            ClearBitString(gInterpolateSprite, pSprite->index);
+            if (!VanillaMode() && gViewInterpolate) // if sprite is set to be interpolated, update previous position
+                viewCorrectSpriteInterpolateOffsets(pSprite->index, pSprite, &oldpos);
+            else
+                ClearBitString(gInterpolateSprite, pSprite->index);
             return pUpper->type;
         }
     }
@@ -173,6 +178,7 @@ int CheckLink(SPRITE *pSprite)
             SPRITE *pUpper = &sprite[nUpper];
             dassert(pUpper->sectnum >= 0 && pUpper->sectnum < kMaxSectors, 200);
             ChangeSpriteSect(pSprite->index, pUpper->sectnum);
+            VECTOR3D oldpos = {pSprite->x, pSprite->y, pSprite->z};
             pSprite->x += pUpper->x-pLower->x;
             pSprite->y += pUpper->y-pLower->y;
             if (pUpper->type == kMarker7)
@@ -180,7 +186,10 @@ int CheckLink(SPRITE *pSprite)
             else
                 z1 = getflorzofslope(pSprite->sectnum, pSprite->x, pSprite->y);
             pSprite->z += z1-z2;
-            ClearBitString(gInterpolateSprite, pSprite->index);
+            if (!VanillaMode() && gViewInterpolate) // if sprite is set to be interpolated, update previous position
+                viewCorrectSpriteInterpolateOffsets(pSprite->index, pSprite, &oldpos);
+            else
+                ClearBitString(gInterpolateSprite, pSprite->index);
             return pLower->type;
         }
     }

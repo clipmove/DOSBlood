@@ -65,6 +65,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Limit impulse damage when shooting enemies downward at point-blank
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 * Cheogh blasting/attacking can now hit prone players (only for well done and above difficulties)
+* Fix interpolated sprite interpolation resetting when traisitoning through room-over-room sectors
 
 ### Notes
 * You must already have an installed copy of Blood.

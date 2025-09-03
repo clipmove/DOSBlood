@@ -142,6 +142,17 @@ inline void viewBackupSpriteLoc(int nSprite, SPRITE *pSprite)
     }
 }
 
+inline void viewCorrectSpriteInterpolateOffsets(int nSprite, SPRITE *pSprite, VECTOR3D *pOldpos)
+{
+    if (TestBitString(gInterpolateSprite, nSprite))
+    {
+        LOCATION *pPrevLoc = &gPrevSpriteLoc[nSprite];
+        pPrevLoc->x = pSprite->x+(pPrevLoc->x-pOldpos->dx);
+        pPrevLoc->y = pSprite->y+(pPrevLoc->y-pOldpos->dy);
+        pPrevLoc->z = pSprite->z+(pPrevLoc->z-pOldpos->dz);
+    }
+}
+
 void func_1EC78(int, char *, char *, char *);
 void viewResizeView(int);
 void viewUpdateFov(BOOL bCheck = 0);
