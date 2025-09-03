@@ -18,6 +18,7 @@
 #include "typedefs.h"
 #include "build.h"
 #include "cdrom.h"
+#include "controls.h"
 #include "credits.h"
 #include "debug4g.h"
 #include "globals.h"
@@ -32,6 +33,7 @@ BOOL exitCredits = FALSE;
 BOOL Wait(int nTicks)
 {
     gGameClock = 0;
+    ctrlClearAllInput();
     while (gGameClock < nTicks)
     {
         BYTE key = keyGet();
