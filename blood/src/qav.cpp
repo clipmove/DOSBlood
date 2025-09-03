@@ -91,17 +91,20 @@ static void DrawFrame(int x, int y, TILE_FRAME *pTile, int stat, int shade, int 
 static byte PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
 {
     if (nFrames <= 1) // single frame QAV, cannot interpolate
+    {
+        pInterpCurFrame = NULL;
         return 0;
+    }
     if (pInterpCurFrame == pFrame) // don't bother updating to last frame, we're still on the same frame
     {
-        const int nTableFracts[4] = {0, 16384, 32768, 49152}; // 0, 0.25, 0.5, 0.75
+        const int nTableFracts[4] = {0x0000, 0x4000, 0x8000, 0xC000}; // 0, 0.25, 0.5, 0.75
         if (nInterpLastClock == gGameClock) // we're still within the same quarter tick, do not bother fetching new nInterpLastFract
         {
             *pTicks = nInterpLastFract;
             return 1;
         }
         nInterpLastFract = gGameClock - nInterpLastClock;
-        if (nInterpLastFract < 0 || nInterpLastFract >= 4) // we've gone below/beyond a quarter tick, do not even attempt to interpolat
+        if (nInterpLastFract >= 4 || nInterpLastFract < 0) // we've gone below/beyond a quarter tick, do not even attempt to interpolat
             return 0;
         nInterpLastFract = nTableFracts[nInterpLastFract];
         *pTicks = nInterpLastFract;
@@ -116,6 +119,8 @@ static byte PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
         {
             const int nTileNew = pFrame->tiles[i].picnum;
             if (nTileNew <= 0) // skip this layer
+                continue;
+            if (tilesizx[nTileNew] < 4 && tilesizy[nTileNew] < 4) // tile is too small, don't attempt to lerp
                 continue;
             for (int j = 0; j < 8; j++) // search for the most likely layer that matches the layer of the new frame
             {

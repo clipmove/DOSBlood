@@ -222,6 +222,8 @@ void WeaponDraw(PLAYER *pPlayer, int a2, int a3, int a4, int a5, byte bInterpola
     pQAV->x = a3;
     pQAV->y = a4;
     int flags = 2;
+    if (bInterpolate && pPlayer->atbd == 7 && pPlayer->atc3 == 4) // do not lerp for the spray can firing animation
+        bInterpolate = 0;
     int nInv = powerupCheck(pPlayer, 13);
     if (nInv >= 120*8 || (nInv != 0 && (gGameClock&32)))
     {
