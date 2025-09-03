@@ -3275,10 +3275,10 @@ void viewDrawScreen(void)
                 cX = (160<<16)+(v4c<<8);
                 cY = (220<<16)+(v48<<8)+(zDelta<<9);
             }
-            else // quantize like vanilla v1.21
+            else // original logic
             {
-                cX = (160+(v4c>>8))<<16;
-                cY = (220+(v48>>8)+(zDelta>>7))<<16;
+                cX = 160+(v4c>>8);
+                cY = 220+(v48>>8)+(zDelta>>7);
             }
             int nShade = sector[nSectnum].floorshade;
             int nPalette = 0;
@@ -3291,7 +3291,7 @@ void viewDrawScreen(void)
                     nPalette = pSector->floorpal;
                 }
             }
-            WeaponDraw(gView, nShade, cX, cY, nPalette, gWeaponSmoothing == 2 && !CGameMenuMgr::m_bActive);
+            WeaponDraw(gView, nShade, cX, cY, nPalette, gWeaponSmoothing >= 1, gWeaponSmoothing == 2 && !CGameMenuMgr::m_bActive);
         }
         if (gViewPos == VIEWPOS_0 && actGetBurnTime(gView->pXSprite) > 60)
         {

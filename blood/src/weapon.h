@@ -20,7 +20,7 @@
 #include "typedefs.h"
 #include "player.h"
 
-void WeaponDraw(PLAYER *,int,int,int,int, byte bInterpolate);
+void WeaponDraw(PLAYER *,int,int,int,int, BOOL, BOOL);
 
 void func_51340(SPRITE *, int);
 

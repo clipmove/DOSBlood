@@ -88,12 +88,12 @@ static void DrawFrame(int x, int y, TILE_FRAME *pTile, int stat, int shade, int 
                  windowx1, windowy1, windowx2, windowy2);
 }
 
-static byte PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
+static BOOL PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
 {
     if (nFrames <= 1) // single frame QAV, cannot interpolate
     {
         pInterpCurFrame = NULL;
-        return 0;
+        return FALSE;
     }
     if (pInterpCurFrame == pFrame) // don't bother updating to last frame, we're still on the same frame
     {
@@ -101,14 +101,14 @@ static byte PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
         if (nInterpLastClock == gGameClock) // we're still within the same quarter tick, do not bother fetching new nInterpLastFract
         {
             *pTicks = nInterpLastFract;
-            return 1;
+            return TRUE;
         }
         nInterpLastFract = gGameClock - nInterpLastClock;
-        if (nInterpLastFract >= 4 || nInterpLastFract < 0) // we've gone below/beyond a quarter tick, do not even attempt to interpolat
-            return 0;
+        if (nInterpLastFract >= 4 || nInterpLastFract < 0) // we've gone below/beyond a quarter tick, do not even attempt to interpolate
+            return FALSE;
         nInterpLastFract = nTableFracts[nInterpLastFract];
         *pTicks = nInterpLastFract;
-        return 1;
+        return TRUE;
     }
     *pTicks = 0; // new frame, set to 0
     nInterpLastClock = gGameClock; // update on new frame
@@ -146,8 +146,7 @@ static byte PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
     {
         for (int i = 0; i < 8; i++)
         {
-            const int nTileNew = pFrame->tiles[i].picnum;
-            if (nTileNew <= 0) // skip this layer
+            if (pFrame->tiles[i].picnum <= 0) // skip this layer
                 continue;
             oldFrame[i].x = pFrame->tiles[i].x<<16;
             oldFrame[i].y = pFrame->tiles[i].y<<16;
@@ -156,16 +155,16 @@ static byte PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
     }
     pInterpCurFrame = pFrame;
     memcpy(fInterpOldTiles, pFrame->tiles, sizeof(fInterpOldTiles)); // copy entire old frame for interp checking next frame
-    return 1;
+    return TRUE;
 }
 
-void QAV::Draw(long ticks, int stat, int shade, int palnum, byte bUseQ16, byte bInterpolate)
+void QAV::Draw(long ticks, int stat, int shade, int palnum, BOOL bUseQ16, BOOL bInterpolate)
 {
     dassert(ticksPerFrame > 0, 72);
     int nFrame = ticks / ticksPerFrame;
     dassert(nFrame >= 0 && nFrame < nFrames, 74);
     FRAMEINFO *pFrame = &frames[nFrame];
-    if (bInterpolate) // cache old frame for interpolate logic
+    if (bInterpolate) // cache old frame for interpolate logic (note: only one QAV can be interpolated at a time)
         bInterpolate = PrepareInterpolate(pFrame, &ticks, nFrames);
     for (int i = 0; i < 8; i++)
     {
