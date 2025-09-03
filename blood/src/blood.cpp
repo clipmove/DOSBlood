@@ -448,6 +448,7 @@ void EndLevel(void)
 void StartLevel(GAMEOPTIONS *gameOptions)
 {
     int i;
+    const char bTriggerAutosave = !gDemo.RecordStatus() && !gDemo.PlaybackStatus() && (gGameOptions.nGameType == GAMETYPE_0) && (gameOptions->uGameFlags&1); // if demo isn't active and not in multiplayer session and we switched to new level
     EndLevel();
     gStartNewGame = 0;
     ready2send = 0;
@@ -611,6 +612,9 @@ void StartLevel(GAMEOPTIONS *gameOptions)
     gPaused = 0;
     gGameStarted = 1;
     ready2send = 1;
+    if (bTriggerAutosave)
+        AutosaveGame();
+    gAutosaveInCurLevel = bTriggerAutosave;
 }
 
 void StartNetworkLevel(void)
@@ -876,6 +880,12 @@ void ProcessFrame(void)
         if (gPlayer[i].atc.keyFlags.restart)
         {
             gPlayer[i].atc.keyFlags.restart = 0;
+            if (gAutosaveInCurLevel && !VanillaMode() && !gDemo.RecordStatus() && !gDemo.PlaybackStatus()) // load autosave
+            {
+                LoadSave::LoadGame("GAME0010.SAV");
+                gAutosaveInCurLevel = 1;
+                return;
+            }
             levelRestart();
             return;
         }
@@ -1408,6 +1418,7 @@ _RESTARTNOLOGO:
     viewResizeView(gViewSize);
     gQuitGame = 0;
     gRestartGame = 0;
+    gAutosaveInCurLevel = 0;
     VanillaModeUpdate();
     if (gGameOptions.nGameType > GAMETYPE_0)
     {

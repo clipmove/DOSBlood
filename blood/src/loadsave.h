@@ -20,10 +20,11 @@
 #include "typedefs.h"
 #include "levels.h"
 
-extern GAMEOPTIONS gSaveGameOptions[10];
+extern GAMEOPTIONS gSaveGameOptions[11];
 extern unsigned int gSavedOffset;
-extern byte *gSaveGamePic[10];
+extern byte *gSaveGamePic[11];
 
+extern int gAutosaveInCurLevel;
 extern int gMusicPrevLoadedEpisode;
 extern int gMusicPrevLoadedLevel;
 

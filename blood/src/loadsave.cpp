@@ -46,10 +46,11 @@
 #include "sound.h"
 #include "view.h"
 
-GAMEOPTIONS gSaveGameOptions[10];
-byte *gSaveGamePic[10];
+GAMEOPTIONS gSaveGameOptions[11];
+byte *gSaveGamePic[11];
 unsigned int gSavedOffset;
 
+int gAutosaveInCurLevel = 0;
 int gMusicPrevLoadedEpisode = -1;
 int gMusicPrevLoadedLevel = -1;
 
@@ -108,6 +109,7 @@ void LoadSave::LoadGame(char *pzFile)
 
     gViewPos = VIEWPOS_0;
     gViewIndex = myconnectindex;
+    gAutosaveInCurLevel = 0;
     sndKillAllSounds();
     sfxKillAllSounds();
     ambKillAll();
@@ -417,7 +419,7 @@ void LoadSavedInfo(void)
     struct find_t find;
     int nStatus = _dos_findfirst("GAME*.SAV", 0, &find);
     int nCount = 0;
-    while (!nStatus && nCount < 10)
+    while (!nStatus && nCount < 11)
     {
         int hFile = open(find.name, O_BINARY);
         if (hFile == -1)
@@ -454,7 +456,7 @@ void LoadSavedInfo(void)
             nCount++; nStatus = _dos_findnext(&find);
             continue;
         }
-        nSlot = ClipRange(atoi(&find.name[4]), 0, 9);
+        nSlot = ClipRange(atoi(&find.name[4]), 0, 10);
         if (read(hFile, &gSaveGameOptions[nSlot], sizeof(gSaveGameOptions[0])) == -1)
             ThrowError(752)("File error #%d reading save file.", errno);
         close(hFile);

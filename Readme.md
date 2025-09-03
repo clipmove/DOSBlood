@@ -12,6 +12,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 ### Features
 * Auto crouch
 * Field of view slider
+* Autosave on level start
 * Center horizon line option
 * Show map title on level start
 * Add key icons to small HUD size

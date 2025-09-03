@@ -86,6 +86,7 @@ char strRestoreGameStrings[][16] =
     "<Empty>",
     "<Empty>",
     "<Empty>",
+    "<Empty>",
 };
 
 char *zNetGameTypes[] =
@@ -280,6 +281,7 @@ CGameMenuItemZEditBitmap itemSaveGame7(NULL, 3, 20, 120, 320, strRestoreGameStri
 CGameMenuItemZEditBitmap itemSaveGame8(NULL, 3, 20, 130, 320, strRestoreGameStrings[7], 16, 1, SaveGame, 7);
 CGameMenuItemZEditBitmap itemSaveGame9(NULL, 3, 20, 140, 320, strRestoreGameStrings[8], 16, 1, SaveGame, 8);
 CGameMenuItemZEditBitmap itemSaveGame10(NULL, 3, 20, 150, 320, strRestoreGameStrings[9], 16, 1, SaveGame, 9);
+CGameMenuItemZEditBitmap itemSaveGameAutosave(NULL, 3, 20, 170, 320, strRestoreGameStrings[10], 16, 1, SaveGame, 10);
 CGameMenuItemBitmapLS itemSaveGamePic(NULL, 3, 0, 0, 2050);
 
 CGameMenuItemTitle itemLoadTitle("Load Game", 1, 160, 20, 2038);
@@ -293,6 +295,7 @@ CGameMenuItemZEditBitmap itemLoadGame7(NULL, 3, 20, 120, 320, strRestoreGameStri
 CGameMenuItemZEditBitmap itemLoadGame8(NULL, 3, 20, 130, 320, strRestoreGameStrings[7], 16, 1, LoadGame, 7);
 CGameMenuItemZEditBitmap itemLoadGame9(NULL, 3, 20, 140, 320, strRestoreGameStrings[8], 16, 1, LoadGame, 8);
 CGameMenuItemZEditBitmap itemLoadGame10(NULL, 3, 20, 150, 320, strRestoreGameStrings[9], 16, 1, LoadGame, 9);
+CGameMenuItemZEditBitmap itemLoadGameAutosave(NULL, 3, 20, 170, 320, strRestoreGameStrings[10], 16, 1, LoadGame, 10);
 CGameMenuItemBitmapLS itemLoadGamePic(NULL, 3, 0, 0, 2518);
 
 CGameMenuItemTitle itemNetStartTitle("NETWORK GAME", 1, 160, 20, 2038);
@@ -653,6 +656,11 @@ void SetupSaveGameMenu(void)
     if (!strcmp(strRestoreGameStrings[9], "<Empty>"))
         itemSaveGame10.at37 = 1;
 
+    itemSaveGameAutosave.at2c = &itemSaveGamePic;
+    if (!strcmp(strRestoreGameStrings[10], "<Empty>"))
+        itemSaveGameAutosave.at37 = 1;
+    itemSaveGameAutosave.Clear1(); // don't allow autosave slot to be selected
+
     itemSaveGamePic.Clear1(); // don't allow picture element to be selected
 }
 
@@ -669,6 +677,7 @@ void SetupLoadGameMenu(void)
     menuLoadGame.Add(&itemLoadGame8, 0);
     menuLoadGame.Add(&itemLoadGame9, 0);
     menuLoadGame.Add(&itemLoadGame10, 0);
+    menuLoadGame.Add(&itemLoadGameAutosave, 0);
     menuLoadGame.Add(&itemLoadGamePic, 0);
     itemLoadGame1.at35 = 0;
     itemLoadGame2.at35 = 0;
@@ -680,6 +689,7 @@ void SetupLoadGameMenu(void)
     itemLoadGame8.at35 = 0;
     itemLoadGame9.at35 = 0;
     itemLoadGame10.at35 = 0;
+    itemLoadGameAutosave.at35 = 0;
     itemLoadGame1.at2c = &itemLoadGamePic;
     itemLoadGame2.at2c = &itemLoadGamePic;
     itemLoadGame3.at2c = &itemLoadGamePic;
@@ -690,6 +700,7 @@ void SetupLoadGameMenu(void)
     itemLoadGame8.at2c = &itemLoadGamePic;
     itemLoadGame9.at2c = &itemLoadGamePic;
     itemLoadGame10.at2c = &itemLoadGamePic;
+    itemLoadGameAutosave.at2c = &itemLoadGamePic;
     menuLoadGame.Add(&itemBloodQAV, 0);
     itemLoadGamePic.Clear1(); // don't allow picture element to be selected
 }
@@ -1077,6 +1088,28 @@ void QuickSaveGame(void)
     gGameMenuMgr.Deactivate();
 }
 
+void AutosaveGame(void)
+{
+    char strSaveGameName[13] = "";
+    if (gGameOptions.nGameType > GAMETYPE_0 || gGameStarted == 0)
+        return;
+    if (strSaveGameName[0])
+    {
+        gGameMenuMgr.Deactivate();
+        return;
+    }
+    sprintf(strSaveGameName, "GAME00%02d.SAV", 10);
+    sprintf(gGameOptions.szUserGameName, "E%dM%d START", gGameOptions.nEpisode+1, gGameOptions.nLevel+1);
+    sprintf(gGameOptions.szSaveGameName, strSaveGameName);
+    gGameOptions.nSaveGameSlot = 10;
+    func_1EC78(2518, "Saving", "Saving Your Game", strRestoreGameStrings[10]);
+    LoadSave::SaveGame(strSaveGameName);
+    gGameOptions.picEntry = gSavedOffset;
+    memcpy(&gSaveGameOptions[10], &gGameOptions, sizeof(GAMEOPTIONS));
+    UpdateSavedInfo(10);
+    gGameMenuMgr.Deactivate();
+}
+
 void LoadGame(CGameMenuItemZEditBitmap *pItem, CGameMenuEvent *event)
 {
     if (gGameOptions.nGameType > GAMETYPE_0)
@@ -1093,6 +1126,7 @@ void LoadGame(CGameMenuItemZEditBitmap *pItem, CGameMenuEvent *event)
     LoadSave::LoadGame(strLoadGameName);
     gGameMenuMgr.Deactivate();
     gQuickLoadSlot = nSlot;
+    gAutosaveInCurLevel = 0;
 }
 
 void QuickLoadGame(void)
@@ -1106,6 +1140,7 @@ void QuickLoadGame(void)
     func_1EC78(2518, "Loading", "Loading Saved Game", strRestoreGameStrings[gQuickLoadSlot]);
     LoadSave::LoadGame(strLoadGameName);
     gGameMenuMgr.Deactivate();
+    gAutosaveInCurLevel = 0;
 }
 
 void SetupNetLevels(CGameMenuItemZCycle *pItem)

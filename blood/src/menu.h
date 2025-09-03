@@ -45,6 +45,7 @@ extern char *zDiffStrings[];
 
 void QuickLoadGame(void);
 void QuickSaveGame(void);
+void AutosaveGame(void);
 void SetupMenus(void);
 
 void func_5A828(void);
