@@ -4435,8 +4435,12 @@ static void MoveDude(SPRITE *pSprite)
     }
     if (pPlayer && zvel[nSprite] > 0x155555 && !pPlayer->at31b && pXSprite->at30_0 > 0)
     {
-        pPlayer->at31b = 1;
-        sfxPlay3DSound(pSprite, 719, 0, 0);
+        const char bPlayerAlive = (pXSprite->health > 0) || VanillaMode(); // only trigger falling scream if player is alive
+        if (bPlayerAlive)
+        {
+            pPlayer->at31b = 1;
+            sfxPlay3DSound(pSprite, 719, 0, 0);
+        }
     }
     int nLink = CheckLink(pSprite);
     if (nLink)
