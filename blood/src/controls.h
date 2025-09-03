@@ -103,6 +103,7 @@ extern INPUT gInput;
 extern BOOL bSilentAim;
 
 void ctrlClearAllInput(void);
+void ctrlClearMouseInput(void);
 
 void ctrlInit(void);
 

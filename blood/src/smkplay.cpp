@@ -92,6 +92,7 @@ int CSMKPlayer::PlaySMKWithWAV(char *a1, int a2)
         v4 = 1;
     sndKillAllSounds();
     ctrlClearAllInput();
+    ctrlClearMouseInput();
     return v4;
 }
 
@@ -141,6 +142,7 @@ int CSMKPlayer::PlaySMKWithWAV(char *a1, char *a2)
         v4 = 1;
     sndKillAllSounds();
     ctrlClearAllInput();
+    ctrlClearMouseInput();
     return v4;
 }
 

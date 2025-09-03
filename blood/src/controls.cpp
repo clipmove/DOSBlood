@@ -153,6 +153,12 @@ void ctrlClearAllInput(void)
         keystatus[i] = 0;
 }
 
+void ctrlClearMouseInput(void)
+{
+    ControlInfo info;
+    CONTROL_GetInput(&info);
+}
+
 void ctrlGetInput(void)
 {
     schar forward = 0, strafe = 0;
