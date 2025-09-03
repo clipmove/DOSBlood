@@ -934,6 +934,15 @@ void viewBackupView(int nPlayer)
     pView->at1c = pPlayer->at53;
 }
 
+void viewCorrectViewOffsets(int nPlayer, VECTOR3D *pOldpos)
+{
+    PLAYER *pPlayer = &gPlayer[nPlayer];
+    VIEW *pView = &gPrevView[nPlayer];
+    pView->at50 += pPlayer->pSprite->x-pOldpos->dx;
+    pView->at54 += pPlayer->pSprite->y-pOldpos->dy;
+    pView->at38 += pPlayer->pSprite->z-pOldpos->dz;
+}
+
 void viewClearInterpolations(void)
 {
     nInterpolations = 0;

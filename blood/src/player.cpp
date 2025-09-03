@@ -688,6 +688,13 @@ void playerResetInertia(PLAYER *pPlayer)
     viewBackupView(pPlayer->at57);
 }
 
+void playerCorrectInertia(PLAYER *pPlayer, VECTOR3D *pOldpos)
+{
+    pPlayer->at67 += pPlayer->pSprite->z-pOldpos->dz;
+    pPlayer->at6f += pPlayer->pSprite->z-pOldpos->dz;
+    viewCorrectViewOffsets(pPlayer->at57, pOldpos);
+}
+
 void playerStart(int nPlayer)
 {
     PLAYER *pPlayer = &gPlayer[nPlayer];

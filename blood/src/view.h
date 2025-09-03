@@ -153,6 +153,7 @@ void viewUpdatePages(void);
 void viewDrawSprite(long,long,long,int,int,schar,byte,ushort,long,long,long,long);
 void viewInit(void);
 void viewBackupView(int);
+void viewCorrectViewOffsets(int nPlayer, VECTOR3D *pOldpos);
 void viewInitializePrediction(void);
 void viewProcessSprites(int cX, int cY, int cZ);
 void viewSetErrorMessage(char *);

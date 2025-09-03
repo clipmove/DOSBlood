@@ -192,6 +192,7 @@ void playerSetRace(PLAYER *, int);
 int playerDamageSprite(int, PLAYER *, DAMAGE_TYPE, int);
 
 void playerResetInertia(PLAYER*);
+void playerCorrectInertia(PLAYER*, VECTOR3D*);
 void playerLandingSound(PLAYER*);
 
 void packUseItem(PLAYER*, int);
