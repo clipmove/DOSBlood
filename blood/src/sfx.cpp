@@ -365,20 +365,30 @@ void sfxKillAllSounds(SPRITE* pSprite)
     }
 }
 
-void sfxUpdate3DSounds(void)
+inline void sfxUpdateListenerPos(void)
 {
-    int dx = mulscale30(Cos(gMe->pSprite->ang+512), 43);
-    int dy = mulscale30(Sin(gMe->pSprite->ang+512), 43);
+    const int dx = mulscale30(Cos(gMe->pSprite->ang+512), 43);
+    const int dy = mulscale30(Sin(gMe->pSprite->ang+512), 43);
     earL0 = earL;
     earR0 = earR;
     earL.x = gMe->pSprite->x-dx;
     earL.y = gMe->pSprite->y-dy;
     earR.x = gMe->pSprite->x+dx;
     earR.y = gMe->pSprite->y+dy;
+}
+
+inline void sfxUpdateListenerVel(void)
+{
     earVL.dx = earL.x-earL0.x;
     earVL.dy = earL.y-earL0.y;
     earVR.dx = earR.x-earR0.x;
     earVR.dy = earR.y-earR0.y;
+}
+
+void sfxUpdate3DSounds(void)
+{
+    sfxUpdateListenerPos();
+    sfxUpdateListenerVel();
     for (int i = nBonkles - 1; i >= 0; i--)
     {
         BONKLE *pBonkle = BonkleCache[i];
