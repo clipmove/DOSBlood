@@ -385,6 +385,17 @@ inline void sfxUpdateListenerVel(void)
     earVR.dy = earR.y-earR0.y;
 }
 
+void sfxCorrectListenerPos(void)
+{
+    sfxUpdateListenerPos();
+    earL0 = earL;
+    earR0 = earR;
+    earL0.x += -earVL.dx;
+    earL0.y += -earVL.dy;
+    earR0.x += -earVR.dx;
+    earR0.y += -earVR.dy;
+}
+
 void sfxResetListener(void)
 {
     sfxUpdateListenerPos(); // update ear position

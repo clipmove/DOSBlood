@@ -63,6 +63,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Don't reset inertia when traveling through room-over-room sectors
 * Force TNT/spray cans to explode if directly landed on enemy's head
 * Limit impulse damage when shooting enemies downward at point-blank
+* Correct ear velocity when transitioning through room-over-room sectors
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 * Cheogh blasting/attacking can now hit prone players (only for well done and above difficulties)
 * Fix interpolated sprite interpolation resetting when traisitoning through room-over-room sectors
