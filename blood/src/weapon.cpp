@@ -601,7 +601,17 @@ void WeaponLower(PLAYER *pPlayer)
         switch (vc)
         {
         case 1:
-            StartQAV(pPlayer, 7);
+            if (VanillaMode())
+            {
+                StartQAV(pPlayer, 7);
+            }
+            else if(pPlayer->atc.newWeapon == 6) // do not put away lighter if TNT was selected while throwing a spray can
+            {
+                pPlayer->atc3 = 2;
+                StartQAV(pPlayer, 11);
+                WeaponRaise(pPlayer);
+                return;
+            }
             break;
         case 2:
             pPlayer->atc3 = 1;
@@ -631,12 +641,25 @@ _goto1:
                 StartQAV(pPlayer, 11);
             }
             break;
+        case 7: // throwing ignited alt fire spray (this happens when submerging underwater while holding down throw spray can)
+            if (VanillaMode() || (pPlayer->atc.newWeapon != 0))
+                break;
+            pPlayer->atc3 = 1;
+            StartQAV(pPlayer, 11);
+            break;
         }
         break;
     case 6:
         switch (vc)
         {
         case 1:
+            if (!VanillaMode() && (pPlayer->atc.newWeapon == 7)) // do not put away lighter after TNT is thrown if while throwing the weapon was switched already to spray
+            {
+                pPlayer->atc3 = 2;
+                StartQAV(pPlayer, 11);
+                WeaponRaise(pPlayer);
+                return;
+            }
             StartQAV(pPlayer, 7);
             break;
         case 2:
