@@ -652,6 +652,8 @@ void SetupSaveGameMenu(void)
     itemSaveGame10.at2c = &itemSaveGamePic;
     if (!strcmp(strRestoreGameStrings[9], "<Empty>"))
         itemSaveGame10.at37 = 1;
+
+    itemSaveGamePic.Clear1(); // don't allow picture element to be selected
 }
 
 void SetupLoadGameMenu(void)
@@ -689,6 +691,7 @@ void SetupLoadGameMenu(void)
     itemLoadGame9.at2c = &itemLoadGamePic;
     itemLoadGame10.at2c = &itemLoadGamePic;
     menuLoadGame.Add(&itemBloodQAV, 0);
+    itemLoadGamePic.Clear1(); // don't allow picture element to be selected
 }
 
 void SetupSoundsMenu(void)
