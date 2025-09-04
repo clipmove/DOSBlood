@@ -97,7 +97,7 @@ static BOOL PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
     }
     if (pInterpCurFrame == pFrame) // don't bother updating to last frame, we're still on the same frame
     {
-        const int nTableFracts[4] = {0x0000, 0x4000, 0x8000, 0xC000}; // 0, 0.25, 0.5, 0.75
+        static int nTableFracts[4] = {0x0000, 0x4000, 0x8000, 0xC000}; // 0, 0.25, 0.5, 0.75
         if (nInterpLastClock == gGameClock) // we're still within the same quarter tick, do not bother fetching new nInterpLastFract
         {
             *pTicks = nInterpLastFract;
@@ -106,8 +106,9 @@ static BOOL PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
         nInterpLastFract = gGameClock - nInterpLastClock;
         if (nInterpLastFract >= 4 || nInterpLastFract < 0) // we've gone below/beyond a quarter tick, do not even attempt to interpolate
             return FALSE;
-        nInterpLastFract = nTableFracts[nInterpLastFract];
-        *pTicks = nInterpLastFract;
+        const int nFraction = nTableFracts[nInterpLastFract];
+        nInterpLastFract = nFraction;
+        *pTicks = nFraction;
         return TRUE;
     }
     *pTicks = 0; // new frame, set to 0

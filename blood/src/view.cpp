@@ -2954,6 +2954,19 @@ void viewDrawScreen(void)
     lastUpdate = gGameClock;
     viewUpdateFov(!CGameMenuMgr::m_bActive); // always recalculate fov while menu is active
     if (!gPaused && (!CGameMenuMgr::m_bActive || gGameOptions.nGameType != GAMETYPE_0))
+#if 1 // optimized gInterpolate calculation
+    {
+        // blood renders at max of 120hz, and the game logic runs at 30hz - so our interpolation precision is 0-3 units before we're onto the next game tick
+        // we can *cheaply* get our interpolation step fraction by using the coefficiency delta between game ticks, and using an array lookup
+        static int nTableFracts[4] = {0x0000, 0x4000, 0x8000, 0xC000}; // 0, 0.25, 0.5, 0.75
+        gInterpolate = gGameClock-gNetFifoClock+4;
+        gInterpolate = nTableFracts[gInterpolate&3];
+    }
+    else
+    {
+        gInterpolate = 0xC000; // set to 0.75
+    }
+#else // original logic, we're wasting a whole idiv 44 cycles!!
     {
         gInterpolate = divscale16(gGameClock-gNetFifoClock+4, 4);
     }
@@ -2961,6 +2974,7 @@ void viewDrawScreen(void)
     {
         gInterpolate = ClipRange(gInterpolate, 0, 65536);
     }
+#endif
     if (gViewInterpolate)
     {
         CalcInterpolations();
