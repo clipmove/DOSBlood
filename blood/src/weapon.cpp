@@ -670,7 +670,7 @@ _goto1:
         switch (vc)
         {
         case 1:
-            if (!VanillaMode() && (pPlayer->atc.newWeapon == 7)) // do not put away lighter after TNT is thrown if while throwing the weapon was switched already to spray
+            if (!VanillaMode() && (pPlayer->atc.newWeapon == 7)) // do not put away lighter if switched to spray can
             {
                 pPlayer->atc3 = 2;
                 StartQAV(pPlayer, 11);

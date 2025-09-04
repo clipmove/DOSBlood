@@ -4227,7 +4227,7 @@ static void MoveDude(SPRITE *pSprite)
     int clipdist = pSprite->clipdist<<2;
     int nSector = pSprite->sectnum;
     dassert(nSector >= 0 && nSector < kMaxSectors, 4598);
-    if (pPlayer && gFlyMode)
+    if (pPlayer && gFlyMode && pXSprite->health > 0)
     {
         static int nSpeed = 0;
         INPUT *pInput = &pPlayer->atc;
