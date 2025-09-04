@@ -72,6 +72,8 @@ BOOL gViewVBobbing = TRUE;
 BOOL gFollowMap = TRUE;
 BOOL gAutoAim = TRUE;
 BOOL gAutoRun = TRUE;
+BOOL gAutosaveOnLevelStart = TRUE;
+BOOL gAutosaveLoadOnDeath = TRUE;
 BOOL gCenterHoriz = FALSE;
 BOOL gSlopeTilting = TRUE;
 BOOL gOverlayMap;
@@ -691,6 +693,8 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetNumber( scripthandle, "Options","Fov",&gFov);
    SCRIPT_GetBool( scripthandle, "Options","MouseAim",&gMouseAim);
    SCRIPT_GetBool( scripthandle, "Options","AutoRun",&gAutoRun);
+   SCRIPT_GetBool( scripthandle, "Options","AutosaveOnLevelStart",&gAutosaveOnLevelStart);
+   SCRIPT_GetBool( scripthandle, "Options","AutosaveLoadOnDeath",&gAutosaveLoadOnDeath);
    SCRIPT_GetBool( scripthandle, "Options","Interpolation",&gViewInterpolate);
    SCRIPT_GetBool( scripthandle, "Options","ViewHBobbing",&gViewHBobbing);
    SCRIPT_GetBool( scripthandle, "Options","ViewVBobbing",&gViewVBobbing);
@@ -747,6 +751,8 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutNumber( scripthandle, "Options","Fov", gFov,false,false);
    SCRIPT_PutBoolean( scripthandle, "Options","MouseAim", gMouseAim);
    SCRIPT_PutBoolean( scripthandle, "Options","AutoRun", gAutoRun);
+   SCRIPT_PutBoolean( scripthandle, "Options","AutosaveOnLevelStart", gAutosaveOnLevelStart);
+   SCRIPT_PutBoolean( scripthandle, "Options","AutosaveLoadOnDeath", gAutosaveLoadOnDeath);
    SCRIPT_PutBoolean( scripthandle, "Options","Interpolation", gViewInterpolate);
    SCRIPT_PutBoolean( scripthandle, "Options","ViewHBobbing", gViewHBobbing);
    SCRIPT_PutBoolean( scripthandle, "Options","ViewVBobbing", gViewVBobbing);

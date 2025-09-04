@@ -448,7 +448,7 @@ void EndLevel(void)
 void StartLevel(GAMEOPTIONS *gameOptions)
 {
     int i;
-    const char bTriggerAutosave = !gDemo.RecordStatus() && !gDemo.PlaybackStatus() && (gGameOptions.nGameType == GAMETYPE_0) && (gameOptions->uGameFlags&1); // if demo isn't active and not in multiplayer session and we switched to new level
+    const char bTriggerAutosave = gAutosaveOnLevelStart && !gDemo.RecordStatus() && !gDemo.PlaybackStatus() && (gGameOptions.nGameType == GAMETYPE_0) && (gameOptions->uGameFlags&1); // if demo isn't active and not in multiplayer session and we switched to new level
     EndLevel();
     gStartNewGame = 0;
     ready2send = 0;
@@ -880,7 +880,7 @@ void ProcessFrame(void)
         if (gPlayer[i].atc.keyFlags.restart)
         {
             gPlayer[i].atc.keyFlags.restart = 0;
-            if (gAutosaveInCurLevel && !VanillaMode() && !gDemo.RecordStatus() && !gDemo.PlaybackStatus()) // load autosave
+            if (gAutosaveLoadOnDeath && gAutosaveInCurLevel && !gDemo.RecordStatus() && !gDemo.PlaybackStatus()) // load autosave
             {
                 LoadSave::LoadGame("GAME0010.SAV");
                 gAutosaveInCurLevel = 1;

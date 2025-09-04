@@ -78,6 +78,8 @@ extern char gzAdultPassword[12];
 extern BOOL gFullMap;
 extern BOOL gInfiniteAmmo;
 extern BOOL gAutoAim;
+extern BOOL gAutosaveOnLevelStart;
+extern BOOL gAutosaveLoadOnDeath;
 
 extern char CommbatMacro[10][34];
 
