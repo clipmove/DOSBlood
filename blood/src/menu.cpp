@@ -176,6 +176,7 @@ CGameMenu menuEpisode;
 CGameMenu menuDifficulty;
 CGameMenu menuDifficultyCustom;
 CGameMenu menuOptions;
+CGameMenu menuOptionsExtra;
 CGameMenu menuControls;
 CGameMenu menuMessages;
 CGameMenu menuKeys;
@@ -236,26 +237,29 @@ CGameMenuItemSlider sliderDifficultyCustomDamage("PLAYER DAMAGE SCALE:", 3, 66, 
 CGameMenuItemChain itemDifficultyCustomStart("START GAME", 1, 0, 150, 320, 1, NULL, -1, SetDifficultyCustomAndStart, 0);
 
 CGameMenuItemTitle itemOptionsTitle("OPTIONS", 1, 160, 20, 2038);
-CGameMenuItemChain itemOption1("CONTROLS...", 3, 0, 33, 320, 1, &menuControls, -1, NULL, 0);
-CGameMenuItemSlider sliderDetail("DETAIL:", 3, 66, 42, 180, gDetail, 0, 4, 1, SetDetail, -1, -1);
-CGameMenuItemSlider sliderGamma("GAMMA:", 3, 66, 52, 180, gGamma, 0, 15, 2, SetGamma, -1, -1);
-CGameMenuItemSlider sliderFov(zFov, 3, 66, 62, 180, gFov, 40, 120, 1, SetFov, -1, -1);
-CGameMenuItemSlider sliderMusic("MUSIC:", 3, 66, 72, 180, MusicVolume, 0, 256, 48, SetMusicVol, -1, -1);
-CGameMenuItemSlider sliderSound("SOUND:", 3, 66, 82, 180, FXVolume, 0, 256, 48, SetSoundVol, -1, -1);
-CGameMenuItemSlider sliderCDAudio("CD AUDIO:", 3, 66, 92, 180, CDVolume, 0, 255, 48, SetCDVol, -1, -1);
-CGameMenuItemZBool boolDoppler("3D AUDIO:", 3, 66, 102, 180, gDoppler, SetDoppler, NULL, NULL);
-CGameMenuItemZBool boolCrosshair("CROSSHAIR:", 3, 66, 109, 180, gAimReticle, SetCrosshair, NULL, NULL);
-CGameMenuItemZBool boolShowWeapons("SHOW WEAPONS:", 3, 66, 116, 180, gShowWeapon, SetShowWeapons, NULL, NULL);
-CGameMenuItemZCycle cycleShowPowerUps("SHOW POWERUPS:", 3, 66, 123, 180, 0, SetShowPowerUps, zShowPowerUpsStrings, 3, 0);
-CGameMenuItemZCycle cycleLevelStats("LEVEL STATS:", 3, 66, 130, 180, 0, SetLevelStats, zLevelStatsStrings, 3, 0);
-CGameMenuItemZBool boolCenterHorizon("CENTER HORIZON LINE:", 3, 66, 137, 180, gCenterHoriz, SetCenterHorizon, NULL, NULL);
-CGameMenuItemZBool boolSlopeTilting("SLOPE TILTING:", 3, 66, 144, 180, gSlopeTilting, SetSlopeTilting, NULL, NULL);
-CGameMenuItemZBool boolViewBobbing("VIEW BOBBING:", 3, 66, 151, 180, gViewVBobbing, SetViewBobbing, NULL, NULL);
-CGameMenuItemZBool boolViewSwaying("VIEW SWAYING:", 3, 66, 158, 180, gViewHBobbing, SetViewSwaying, NULL, NULL);
-CGameMenuItemZCycle cycleWeaponSmoothing("WEAPON SMOOTHING:", 3, 66, 165, 180, 0, SetWeaponSmoothing, zWeaponSmoothingStrings, 3, 0);
-CGameMenuItemZBool boolVanillaMode("VANILLA MODE:", 3, 66, 172, 180, gViewHBobbing, SetVanillaMode, NULL, NULL);
-CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 181, 320, 1);
-CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 189, 320, 1, &menuParentalLock, -1, NULL, 0);
+CGameMenuItemChain itemOptionControls("CONTROLS...", 3, 0, 34, 320, 1, &menuControls, -1, NULL, 0);
+CGameMenuItemSlider sliderDetail("DETAIL:", 3, 66, 45, 180, gDetail, 0, 4, 1, SetDetail, -1, -1);
+CGameMenuItemSlider sliderGamma("GAMMA:", 3, 66, 55, 180, gGamma, 0, 15, 2, SetGamma, -1, -1);
+CGameMenuItemSlider sliderFov(zFov, 3, 66, 65, 180, gFov, 65, 120, 1, SetFov, -1, -1);
+CGameMenuItemSlider sliderMusic("MUSIC:", 3, 66, 75, 180, MusicVolume, 0, 256, 48, SetMusicVol, -1, -1);
+CGameMenuItemSlider sliderSound("SOUND:", 3, 66, 85, 180, FXVolume, 0, 256, 48, SetSoundVol, -1, -1);
+CGameMenuItemSlider sliderCDAudio("CD AUDIO:", 3, 66, 95, 180, CDVolume, 0, 255, 48, SetCDVol, -1, -1);
+CGameMenuItemZBool boolDoppler("3D AUDIO:", 3, 66, 105, 180, gDoppler, SetDoppler, NULL, NULL);
+CGameMenuItemZBool boolCrosshair("CROSSHAIR:", 3, 66, 114, 180, gAimReticle, SetCrosshair, NULL, NULL);
+CGameMenuItemZBool boolShowWeapons("SHOW WEAPONS:", 3, 66, 123, 180, gShowWeapon, SetShowWeapons, NULL, NULL);
+CGameMenuItemZBool boolSlopeTilting("SLOPE TILTING:", 3, 66, 132, 180, gSlopeTilting, SetSlopeTilting, NULL, NULL);
+CGameMenuItemZBool boolViewBobbing("VIEW BOBBING:", 3, 66, 141, 180, gViewVBobbing, SetViewBobbing, NULL, NULL);
+CGameMenuItemZBool boolViewSwaying("VIEW SWAYING:", 3, 66, 150, 180, gViewHBobbing, SetViewSwaying, NULL, NULL);
+CGameMenuItemZBool boolVanillaMode("VANILLA MODE:", 3, 66, 159, 180, gViewHBobbing, SetVanillaMode, NULL, NULL);
+CGameMenuItemChain itemChainOptionsExtra("EXTRA OPTIONS", 3, 0, 169, 320, 1, &menuOptionsExtra, -1, NULL, 0);
+CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 178, 320, 1);
+CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 187, 320, 1, &menuParentalLock, -1, NULL, 0);
+
+CGameMenuItemTitle itemOptionsExtraTitle("EXTRAS", 1, 160, 20, 2038);
+CGameMenuItemZBool boolCenterHorizon("CENTER HORIZON LINE:", 1, 10, 45, 300, gCenterHoriz, SetCenterHorizon, NULL, NULL);
+CGameMenuItemZCycle cycleLevelStats("LEVEL STATS:", 1, 10, 65, 300, 0, SetLevelStats, zLevelStatsStrings, 3, 0);
+CGameMenuItemZCycle cycleShowPowerUps("SHOW POWERUPS:", 1, 10, 85, 300, 0, SetShowPowerUps, zShowPowerUpsStrings, 3, 0);
+CGameMenuItemZCycle cycleWeaponSmoothing("WEAPON SMOOTHING:", 1, 10, 105, 300, 0, SetWeaponSmoothing, zWeaponSmoothingStrings, 3, 0);
 
 CGameMenuItemTitle itemControlsTitle("CONTROLS", 1, 160, 20, 2038);
 CGameMenuItemSlider sliderMouseSpeed("Mouse Sensitivity:", 1, 10, 50, 300, gMouseSensitivity, 0, 0x20000, 0x1000, SetMouseSensitivity, -1,-1);
@@ -411,17 +415,13 @@ void SetupOptionsMenu(void)
     boolDoppler.at20 = gDoppler;
     boolCrosshair.at20 = gAimReticle;
     boolShowWeapons.at20 = gShowWeapon;
-    cycleShowPowerUps.at24 = ClipRange(gShowPowerUps, 0, cycleShowPowerUps.at2c);
-    cycleLevelStats.at24 = ClipRange(gLevelStats, 0, cycleLevelStats.at2c);
-    boolCenterHorizon.at20 = gCenterHoriz;
     boolSlopeTilting.at20 = gSlopeTilting;
     boolViewBobbing.at20 = gViewVBobbing;
     boolViewSwaying.at20 = gViewHBobbing;
-    cycleWeaponSmoothing.at24 = ClipRange(gWeaponSmoothing, 0, cycleWeaponSmoothing.at2c);
     boolVanillaMode.at20 = gVanilla;
     boolMessages.at20 = gGameMessageMgr.at0;
     menuOptions.Add(&itemOptionsTitle, 0);
-    menuOptions.Add(&itemOption1, 1);
+    menuOptions.Add(&itemOptionControls, 1);
     menuOptions.Add(&sliderDetail, 0);
     menuOptions.Add(&sliderGamma, 0);
     menuOptions.Add(&sliderFov, 0);
@@ -431,19 +431,31 @@ void SetupOptionsMenu(void)
     menuOptions.Add(&boolDoppler, 0);
     menuOptions.Add(&boolCrosshair, 0);
     menuOptions.Add(&boolShowWeapons, 0);
-    menuOptions.Add(&cycleShowPowerUps, 0);
-    menuOptions.Add(&cycleLevelStats, 0);
-    menuOptions.Add(&boolCenterHorizon, 0);
     menuOptions.Add(&boolSlopeTilting, 0);
     menuOptions.Add(&boolViewBobbing, 0);
     menuOptions.Add(&boolViewSwaying, 0);
-    menuOptions.Add(&cycleWeaponSmoothing, 0);
     menuOptions.Add(&boolVanillaMode, 0);
+    menuOptions.Add(&itemChainOptionsExtra, 0);
     menuOptions.Add(&itemVideoMode, 0);
     menuOptions.Add(&itemChainParentalLock, 0);
     menuOptions.Add(&itemBloodQAV, 0);
 
     SetFov(NULL);
+}
+
+void SetupOptionsExtraMenu(void)
+{
+    boolCenterHorizon.at20 = gCenterHoriz;
+    cycleLevelStats.at24 = ClipRange(gLevelStats, 0, cycleLevelStats.at2c);
+    cycleShowPowerUps.at24 = ClipRange(gShowPowerUps, 0, cycleShowPowerUps.at2c);
+    cycleWeaponSmoothing.at24 = ClipRange(gWeaponSmoothing, 0, cycleWeaponSmoothing.at2c);
+
+    menuOptionsExtra.Add(&itemOptionsExtraTitle, 0);
+    menuOptionsExtra.Add(&boolCenterHorizon, 1);
+    menuOptionsExtra.Add(&cycleLevelStats, 0);
+    menuOptionsExtra.Add(&cycleShowPowerUps, 0);
+    menuOptionsExtra.Add(&cycleWeaponSmoothing, 0);
+    menuOptionsExtra.Add(&itemBloodQAV, 0);
 }
 
 void SetupDifficultyMenu(void)
@@ -806,6 +818,7 @@ void SetupMenus(void)
     SetupSaveGameMenu();
     SetupLoadGameMenu();
     SetupOptionsMenu();
+    SetupOptionsExtraMenu();
     SetupCreditsMenu();
     SetupHelpOrderMenu();
     SetupSoundsMenu();
