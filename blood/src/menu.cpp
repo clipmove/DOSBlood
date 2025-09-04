@@ -1145,7 +1145,10 @@ void LoadGame(CGameMenuItemZEditBitmap *pItem, CGameMenuEvent *event)
     LoadSave::LoadGame(strLoadGameName);
     gGameMenuMgr.Deactivate();
     gQuickLoadSlot = nSlot;
-    gAutosaveInCurLevel = 0;
+    if (nSlot == 10) // if we loaded the autosave slot, set to true
+        gAutosaveInCurLevel = 1;
+    else
+        gAutosaveInCurLevel = 0;
 }
 
 void QuickLoadGame(void)
