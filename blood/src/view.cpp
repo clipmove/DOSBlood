@@ -2866,9 +2866,9 @@ void viewBurnTime(int gScale)
     }
 }
 
-void viewSetMessage(char *pMessage)
+void viewSetMessage(char *pMessage, char nPal)
 {
-    gGameMessageMgr.Add(pMessage, 15);
+    gGameMessageMgr.Add(pMessage, 15, nPal);
 }
 
 void viewDisplayMessage(void)

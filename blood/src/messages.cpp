@@ -344,7 +344,7 @@ void CGameMessageMgr::SetState(byte state)
         at0 = 1;
 }
 
-void CGameMessageMgr::Add(char *a1, byte a2)
+void CGameMessageMgr::Add(char *a1, byte a2, byte nPal)
 {
     if (a2 && at21)
     {
@@ -352,6 +352,7 @@ void CGameMessageMgr::Add(char *a1, byte a2)
         strncpy(pMessage->at4, a1, 80);
         pMessage->at4[80] = 0;
         pMessage->at0 = gFrameClock + at1d*120;
+        nPalMsg[at2a] = nPal;
         at2a = (at2a+1)%16;
         at22++;
         if (at22 > at19)
@@ -376,13 +377,14 @@ void CGameMessageMgr::Display(void)
         for (int i = 0; i < v10; i++)
         {
             messageStruct *pMessage = &at2e[(v18+i)%16];
+            byte *pPal = &nPalMsg[(v18+i)%16];
             if (gFrameClock >= pMessage->at0)
             {
                 at26 = (at26+1)%16;
                 at22--;
                 continue;
             }
-            viewDrawText(at11, pMessage->at4, v14+1, v8, vc, 0);
+            viewDrawText(at11, pMessage->at4, v14+1, v8, vc, *pPal);
             if (gViewMode == 3)
             {
                 int height;

@@ -38,13 +38,14 @@ public:
     int at26;
     int at2a;
     messageStruct at2e[16];
+    byte nPalMsg[16];
     CGameMessageMgr();
 	void SetCoordinates(int,int);
     void SetState(byte);
     void SetFont(int);
     void SetMaxMessages(int);
     void SetMessageTime(int);
-    void Add(char *, byte);
+    void Add(char *, byte, byte nPal = 0);
     void Display(void);
     void Clear();
     void SetMessageFlags(unsigned int nFlags);

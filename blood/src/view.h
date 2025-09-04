@@ -157,7 +157,7 @@ void func_1EC78(int, char *, char *, char *);
 void viewResizeView(int);
 void viewUpdateFov(BOOL bCheck = 0);
 void viewToggle(int);
-void viewSetMessage(char *);
+void viewSetMessage(char *, char nPal = 0);
 void viewDrawText(int, char *, int, int, int, int, int position = 0, BOOL shadow = 0);
 void viewGetFontInfo(int nFont, char *pString, int *pXSize, int *pYSize);
 void viewUpdatePages(void);

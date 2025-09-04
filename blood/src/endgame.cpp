@@ -237,10 +237,10 @@ void CSecretMgr::Found(int nType)
         switch (Random(2))
         {
         case 0:
-            viewSetMessage("A secret is revealed.");
+            viewSetMessage("A secret is revealed.", VanillaMode() ? 0 : 8); // 8: gold
             break;
         case 1:
-            viewSetMessage("You found a secret.");
+            viewSetMessage("You found a secret.", VanillaMode() ? 0 : 8); // 8: gold
             break;
         }
     }
