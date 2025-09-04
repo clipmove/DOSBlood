@@ -36,6 +36,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix E4M8 cutscene playing on E4M1 start
 * Initializes gSpriteHit on XSprite creation
 * Clear interpolation queue on new level
+* Fix life leech shadow
 * Fix Cerberus spinning on lava
 * Ignore floor pal zero for sectors
 * Fix infinite burning enemies bug
@@ -68,6 +69,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Force TNT/spray cans to explode if directly landed on enemy's head
 * Limit impulse damage when shooting enemies downward at point-blank
 * Correct ear velocity when transitioning through room-over-room sectors
+* Fix shadows and flare glow effects rendering on room-over-room surfaces
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 * Cheogh blasting/attacking can now hit prone players (only for well done and above difficulties)
 * Fix interpolated sprite interpolation resetting when traisitoning through room-over-room sectors

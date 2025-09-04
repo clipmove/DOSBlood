@@ -2082,13 +2082,22 @@ SPRITE *viewAddEffect(int nTSprite, VIEW_EFFECT nViewEffect)
             }
             case VIEW_EFFECT_0:
             {
+                SECTOR *pSector = &sector[pTSprite->sectnum];
+                if (!VanillaMode()) // if floor has ror, don't render effect
+                {
+                    if ((pSector->floorpicnum >= 4080) && (pSector->floorpicnum <= 4095))
+                        break;
+                }
                 SPRITE *pNSprite = viewInsertTSprite(pTSprite->sectnum, 32767, pTSprite);
                 pNSprite->z = getflorzofslope(pTSprite->sectnum, pNSprite->x, pNSprite->y);
                 pNSprite->cstat |= 2;
                 pNSprite->shade = 127;
                 pNSprite->xrepeat = pTSprite->xrepeat;
                 pNSprite->yrepeat = pTSprite->yrepeat>>2;
-                pNSprite->picnum = pTSprite->picnum;
+                if (!VanillaMode() && (pTSprite->type == 431)) // fix shadow for thrown lifeleech
+                    pNSprite->picnum = 800;
+                else
+                    pNSprite->picnum = pTSprite->picnum;
                 pNSprite->pal = 5;
                 int nTile = pNSprite->picnum;
                 pNSprite->z -= (tilesizy[nTile]-(tilesizy[nTile]/2+picanm[nTile].yoffset)) * (pNSprite->yrepeat<<2);
@@ -2108,8 +2117,13 @@ SPRITE *viewAddEffect(int nTSprite, VIEW_EFFECT nViewEffect)
             }
             case VIEW_EFFECT_2:
             {
-                SPRITE *pNSprite = viewInsertTSprite(pTSprite->sectnum, 32767, pTSprite);
                 SECTOR *pSector = &sector[pTSprite->sectnum];
+                if (!VanillaMode()) // if ceiling has ror, don't render effect
+                {
+                    if ((pSector->ceilingpicnum >= 4080) && (pSector->ceilingpicnum <= 4095))
+                        break;
+                }
+                SPRITE *pNSprite = viewInsertTSprite(pTSprite->sectnum, 32767, pTSprite);
                 int nShade = (pTSprite->z-pSector->ceilingz)>>8;
                 pNSprite->x = pTSprite->x;
                 pNSprite->y = pTSprite->y;
@@ -2126,8 +2140,13 @@ SPRITE *viewAddEffect(int nTSprite, VIEW_EFFECT nViewEffect)
             }
             case VIEW_EFFECT_3:
             {
-                SPRITE *pNSprite = viewInsertTSprite(pTSprite->sectnum, 32767, pTSprite);
                 SECTOR *pSector = &sector[pTSprite->sectnum];
+                if (!VanillaMode()) // if floor has ror, don't render effect
+                {
+                    if ((pSector->floorpicnum >= 4080) && (pSector->floorpicnum <= 4095))
+                        break;
+                }
+                SPRITE *pNSprite = viewInsertTSprite(pTSprite->sectnum, 32767, pTSprite);
                 int nShade = (pSector->floorz-pTSprite->z)>>8; 
                 pNSprite->x = pTSprite->x;
                 pNSprite->y = pTSprite->y;
