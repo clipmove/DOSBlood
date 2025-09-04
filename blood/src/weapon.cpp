@@ -762,6 +762,9 @@ _goto1:
     }
     pPlayer->atbd = 0;
     pPlayer->at1b1 = 0;
+
+    if ((t != 6 && t != 7) && !VanillaMode()) // reset weapon state after switching weapon (except when switching from tnt/spray)
+        pPlayer->atc3 = 0;
 }
 
 void WeaponUpdateState(PLAYER *pPlayer)
