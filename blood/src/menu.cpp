@@ -253,7 +253,7 @@ CGameMenuItemZBool boolSlopeTilting("SLOPE TILTING:", 3, 66, 132, 180, gSlopeTil
 CGameMenuItemZBool boolViewBobbing("VIEW BOBBING:", 3, 66, 141, 180, gViewVBobbing, SetViewBobbing, NULL, NULL);
 CGameMenuItemZBool boolViewSwaying("VIEW SWAYING:", 3, 66, 150, 180, gViewHBobbing, SetViewSwaying, NULL, NULL);
 CGameMenuItemZBool boolVanillaMode("VANILLA MODE:", 3, 66, 159, 180, gViewHBobbing, SetVanillaMode, NULL, NULL);
-CGameMenuItemChain itemChainOptionsExtra("EXTRA OPTIONS", 3, 0, 169, 320, 1, &menuOptionsExtra, -1, NULL, 0);
+CGameMenuItemChain itemChainOptionsExtra("EXTRA OPTIONS...", 3, 0, 169, 320, 1, &menuOptionsExtra, -1, NULL, 0);
 CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 178, 320, 1);
 CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 187, 320, 1, &menuParentalLock, -1, NULL, 0);
 
