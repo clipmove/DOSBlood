@@ -118,17 +118,30 @@ void QAV::PlaySound3D(SPRITE *pSprite, int nSound, int a3, int a4)
     sfxPlay3DSound(pSprite, nSound, a3, a4);
 }
 
-static BOOL func_4B1A4(PLAYER *pPlayer)
+static BOOL checkLitSprayOrTNT(PLAYER *pPlayer)
 {
     switch (pPlayer->atbd)
     {
     case 7:
-        if (pPlayer->atc3 == 5 || pPlayer->atc3 == 6)
+        switch (pPlayer->atc3)
+        {
+        case 5:
+        case 6:
             return 1;
+        case 7:
+            if (VanillaMode())
+                return 0;
+            return 1;
+        }
         break;
     case 6:
-        if (pPlayer->atc3 == 4 || pPlayer->atc3 == 5 || pPlayer->atc3 == 6)
+        switch (pPlayer->atc3)
+        {
+        case 4:
+        case 5:
+        case 6:
             return 1;
+        }
         break;
     }
     return 0;
@@ -590,7 +603,7 @@ void WeaponRaise(PLAYER *pPlayer)
 void WeaponLower(PLAYER *pPlayer)
 {
     dassert(pPlayer != 0, 1009);
-    if (func_4B1A4(pPlayer))
+    if (checkLitSprayOrTNT(pPlayer))
         return;
     pPlayer->at1ba = 0;
     int t = pPlayer->atbd;
@@ -1593,7 +1606,7 @@ BOOL gWeaponUpgrade[][13] = {
 byte WeaponUpgrade(PLAYER *pPlayer, BOOL newWeapon)
 {
     char weapon = pPlayer->atbd;
-    if (!func_4B1A4(pPlayer) && gWeaponUpgrade[pPlayer->atbd][newWeapon])
+    if (!checkLitSprayOrTNT(pPlayer) && gWeaponUpgrade[pPlayer->atbd][newWeapon])
         return newWeapon;
     return weapon;
 }
@@ -1853,7 +1866,7 @@ void WeaponProcess(PLAYER *pPlayer)
     }
     if (pPlayer->at87 && BannedUnderwater(pPlayer->atbd))
     {
-        if (func_4B1A4(pPlayer))
+        if (checkLitSprayOrTNT(pPlayer))
         {
             if (pPlayer->atbd == 7)
             {
@@ -2016,12 +2029,21 @@ void WeaponProcess(PLAYER *pPlayer)
                     pPlayer->atc.newWeapon = 12;
             }
         }
+        else if ((pPlayer->atc.newWeapon == 7) && !VanillaMode())
+        {
+            if ((pPlayer->atbd == 7) && (pPlayer->atc3 == 2)) // fix spray can state glitch when switching from spray to tnt and back quickly
+            {
+                pPlayer->atc3 = 1;
+                pPlayer->atc.newWeapon = 0;
+                return;
+            }
+        }
         if (pPlayer->pXSprite->health == 0 || !pPlayer->atcb[pPlayer->atc.newWeapon])
         {
             pPlayer->atc.newWeapon = 0;
             return;
         }
-        if (pPlayer->at87 && BannedUnderwater(pPlayer->atc.newWeapon) && !func_4B1A4(pPlayer))
+        if (pPlayer->at87 && BannedUnderwater(pPlayer->atc.newWeapon) && !checkLitSprayOrTNT(pPlayer))
         {
             pPlayer->atc.newWeapon = 0;
             return;

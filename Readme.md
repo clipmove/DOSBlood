@@ -54,6 +54,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix secrets for maps with glitched secret triggers
 * Fix projectiles glitching when autoaim is disabled
 * Fix pod enemy projectiles using walls as enemy index
+* Fix spray can glitching when alt-firing and entering water
 * Fix demos desyncing if launched with -noaim argument
 * Replaced sector based damage logic for player explosions
 * Fix shotgun getting stuck in single gun state while akimbo
