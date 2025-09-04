@@ -294,6 +294,8 @@ void LifeLeechOperate(SPRITE *pSprite, XSPRITE *pXSprite, EVENT a3)
                             pXSprite->at32_0 = 1;
                             evPost(pSprite->index, 3, t2, CALLBACK_ID_20);
                             pXSprite->at14_0 = ClipLow(pXSprite->at14_0-1, 0);
+                            if (!VanillaMode()) // disable collisions so lifeleech doesn't do that weird bobbing
+                                pMissile->cstat &= ~(kSpriteStat0|kSpriteStat8);
                         }
                         pSprite->ang = angBak;
                     }
