@@ -633,56 +633,36 @@ retry:
     }
     if (gHitInfo.hitsect >= 0)
     {
+        int nSprite, nLink;
         if (dz > 0)
         {
-            int nSprite = gUpperLink[gHitInfo.hitsect];
-            if (nSprite >= 0)
-            {
-                gHitInfo.hitsect = -1;
-                gHitInfo.hitwall = -1;
-                gHitInfo.hitsprite = -1;
-                int nLink = sprite[nSprite].owner & 0xfff;
-                x1 = gHitInfo.hitx + sprite[nLink].x - sprite[nSprite].x;
-                y1 = gHitInfo.hity + sprite[nLink].y - sprite[nSprite].y;
-                z1 = gHitInfo.hitz + sprite[nLink].z - sprite[nSprite].z;
-                if (pAdjustedRORPos && nRange) // only adjust if vector has range limit
-                {
-                    pAdjustedRORPos->dx = pAdjustedRORPos->dx + sprite[nLink].x - sprite[nSprite].x;
-                    pAdjustedRORPos->dy = pAdjustedRORPos->dy + sprite[nLink].y - sprite[nSprite].y;
-                    pAdjustedRORPos->dz = pAdjustedRORPos->dz + sprite[nLink].z - sprite[nSprite].z;
-                }
-                nSector = sprite[nLink].sectnum;
-                hitscan(x1, y1, z1, nSector, dx, dy, dz<<4, &gHitInfo.hitsect, &gHitInfo.hitwall, &gHitInfo.hitsprite,
-                    &gHitInfo.hitx, &gHitInfo.hity, &gHitInfo.hitz, CLIPMASK1);
-                goto retry;
-            }
-            return 2;
+            nSprite = gUpperLink[gHitInfo.hitsect];
+            if (nSprite < 0)
+                return 2;
         }
         else
         {
-            int nSprite = gLowerLink[gHitInfo.hitsect];
-            if (nSprite >= 0)
-            {
-                gHitInfo.hitsect = -1;
-                gHitInfo.hitwall = -1;
-                gHitInfo.hitsprite = -1;
-                int nLink = sprite[nSprite].owner & 0xfff;
-                x1 = gHitInfo.hitx + sprite[nLink].x - sprite[nSprite].x;
-                y1 = gHitInfo.hity + sprite[nLink].y - sprite[nSprite].y;
-                z1 = gHitInfo.hitz + sprite[nLink].z - sprite[nSprite].z;
-                if (pAdjustedRORPos && nRange) // only adjust if vector has range limit
-                {
-                    pAdjustedRORPos->dx = pAdjustedRORPos->dx + sprite[nLink].x - sprite[nSprite].x;
-                    pAdjustedRORPos->dy = pAdjustedRORPos->dy + sprite[nLink].y - sprite[nSprite].y;
-                    pAdjustedRORPos->dz = pAdjustedRORPos->dz + sprite[nLink].z - sprite[nSprite].z;
-                }
-                nSector = sprite[nLink].sectnum;
-                hitscan(x1, y1, z1, nSector, dx, dy, dz<<4, &gHitInfo.hitsect, &gHitInfo.hitwall, &gHitInfo.hitsprite,
-                    &gHitInfo.hitx, &gHitInfo.hity, &gHitInfo.hitz, CLIPMASK1);
-                goto retry;
-            }
-            return 1;
+            nSprite = gLowerLink[gHitInfo.hitsect];
+            if (nSprite < 0)
+                return 1;
         }
+        gHitInfo.hitsect = -1;
+        gHitInfo.hitwall = -1;
+        gHitInfo.hitsprite = -1;
+        nLink = sprite[nSprite].owner & 0xfff;
+        x1 = gHitInfo.hitx + sprite[nLink].x - sprite[nSprite].x;
+        y1 = gHitInfo.hity + sprite[nLink].y - sprite[nSprite].y;
+        z1 = gHitInfo.hitz + sprite[nLink].z - sprite[nSprite].z;
+        if (pAdjustedRORPos && nRange) // only adjust if vector has range limit
+        {
+            pAdjustedRORPos->dx = pAdjustedRORPos->dx + sprite[nLink].x - sprite[nSprite].x;
+            pAdjustedRORPos->dy = pAdjustedRORPos->dy + sprite[nLink].y - sprite[nSprite].y;
+            pAdjustedRORPos->dz = pAdjustedRORPos->dz + sprite[nLink].z - sprite[nSprite].z;
+        }
+        nSector = sprite[nLink].sectnum;
+        hitscan(x1, y1, z1, nSector, dx, dy, dz<<4, &gHitInfo.hitsect, &gHitInfo.hitwall, &gHitInfo.hitsprite,
+            &gHitInfo.hitx, &gHitInfo.hity, &gHitInfo.hitz, CLIPMASK1);
+        goto retry;
     }
     return -1;
 }
