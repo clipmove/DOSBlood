@@ -6066,7 +6066,19 @@ void actFireVector(SPRITE *pShooter, int a2, int a3, int a4, int a5, int a6, VEC
     dassert(vectorType >= 0 && vectorType < kVectorMax, 7172);
     VECTORDATA *pVectorData = &gVectorData[vectorType];
     int nRange = pVectorData->at9;
-    int hit = VectorScan(pShooter, a2, a3, a4, a5, a6, nRange, 1);
+    VECTOR3D shooterPos;
+    int hit;
+    if (!VanillaMode()) // use room over room vector scan check to allow shooting while floating above water
+    {
+        hit = VectorScanROR(pShooter, a2, a3, a4, a5, a6, nRange, 1, &shooterPos);
+    }
+    else
+    {
+        hit = VectorScan(pShooter, a2, a3, a4, a5, a6, nRange, 1);
+        shooterPos.dx = pShooter->x;
+        shooterPos.dy = pShooter->y;
+        shooterPos.dz = pShooter->z;
+    }
     if (hit == 3)
     {
         int nSprite = gHitInfo.hitsprite;
@@ -6078,9 +6090,9 @@ void actFireVector(SPRITE *pShooter, int a2, int a3, int a4, int a5, int a6, VEC
             if (powerupCheck(pPlayer, 24))
             {
                 gHitInfo.hitsprite = nShooter;
-                gHitInfo.hitx = pShooter->x;
-                gHitInfo.hity = pShooter->y;
-                gHitInfo.hitz = pShooter->z;
+                gHitInfo.hitx = shooterPos.dx;
+                gHitInfo.hity = shooterPos.dy;
+                gHitInfo.hitz = shooterPos.dz;
             }
         }
     }
@@ -6089,7 +6101,7 @@ void actFireVector(SPRITE *pShooter, int a2, int a3, int a4, int a5, int a6, VEC
     int z = gHitInfo.hitz-mulscale14(a6, 256);
     short nSector = gHitInfo.hitsect;
     char nSurf = 0;
-    if (nRange == 0 || approxDist(gHitInfo.hitx-pShooter->x, gHitInfo.hity-pShooter->y) < nRange)
+    if (nRange == 0 || approxDist(gHitInfo.hitx-shooterPos.dx, gHitInfo.hity-shooterPos.dy) < nRange)
     {
         switch (hit)
         {

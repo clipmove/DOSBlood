@@ -49,6 +49,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix cultists screaming getting cut on death
 * Fix inventory items resetting between levels
 * Fix shotgun akimbo animation glitch on loop
+* Fixed underwater issue with hitscan weapons
 * Allow cheat phrases to be said in multiplayer
 * Reset view bob/view sway inertia on level start
 * Fix fall scream triggering after player has died

@@ -77,7 +77,8 @@ int GetClosestSpriteSectors(int nSector, int x, int y, int nDist, short *pSector
 BOOL CheckProximity(SPRITE *pSprite, int nX, int nY, int nZ, int nSector, int nDist);
 void GetZRangeAtXYZ(long x, long y, long z, int nSector, long *ceilZ, long *ceilHit, long *floorZ, long *floorHit, int nDist, unsigned long nMask);
 int HitScan(SPRITE *pSprite, int z, int dx, int dy, int dz, unsigned long nMask, int a8);
-int VectorScan(SPRITE *pSprite, int nOffset, int nZOffset, int dx, int dy, int dz, int nRange, int ac);
+int VectorScan(SPRITE *pSprite, int nOffset, int nZOffset, int dx, int dy, int dz, int nRange, int ac, VECTOR3D *pAdjustedRORPos = NULL, int nAdjustedRORSect = 0);
+int VectorScanROR(SPRITE *pSprite, int nOffset, int nZOffset, int dx, int dy, int dz, int nRange, int ac, VECTOR3D *pAdjustedRORPos);
 
 
 #endif // !_GAMEUTIL_H_

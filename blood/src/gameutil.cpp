@@ -25,6 +25,7 @@
 #include "misc.h"
 #include "tile.h"
 #include "trig.h"
+#include "warp.h"
 
 POINT2D baseWall[kMaxWalls];
 POINT3D baseSprite[kMaxSprites];
@@ -438,17 +439,30 @@ int HitScan(SPRITE *pSprite, int z, int dx, int dy, int dz, unsigned long nMask,
     return -1;
 }
 
-int VectorScan(SPRITE *pSprite, int nOffset, int nZOffset, int dx, int dy, int dz, int nRange, int ac)
+int VectorScan(SPRITE *pSprite, int nOffset, int nZOffset, int dx, int dy, int dz, int nRange, int ac, VECTOR3D *pAdjustedRORPos, int nAdjustedRORSect)
 {
     int nNum = 256;
     dassert(pSprite != NULL, 646);
     gHitInfo.hitsect = -1;
     gHitInfo.hitwall = -1;
     gHitInfo.hitsprite = -1;
-    int x1 = pSprite->x+mulscale30(nOffset, Cos(pSprite->ang+512));
-    int y1 = pSprite->y+mulscale30(nOffset, Sin(pSprite->ang+512));
-    int z1 = pSprite->z+nZOffset;
-    short nSector = pSprite->sectnum;
+    VECTOR3D vPov;
+    int nSector;
+    if (pAdjustedRORPos) // check using ror sector position offset instead of absolute sprite location
+    {
+        vPov = *pAdjustedRORPos;
+        nSector = nAdjustedRORSect;
+    }
+    else
+    {
+        vPov.dx = pSprite->x;
+        vPov.dy = pSprite->y;
+        vPov.dz = pSprite->z;
+        nSector = pSprite->sectnum;
+    }
+    int x1 = vPov.dx+mulscale30(nOffset, Cos(pSprite->ang+512));
+    int y1 = vPov.dy+mulscale30(nOffset, Sin(pSprite->ang+512));
+    int z1 = vPov.dz+nZOffset;
     ushort bakCstat = pSprite->cstat;
     pSprite->cstat &= ~kSpriteStat8;
     if (nRange)
@@ -467,8 +481,12 @@ retry:
         return -1;
     if (gHitInfo.hitsprite >= kMaxSprites || gHitInfo.hitwall >= kMaxWalls || gHitInfo.hitsect >= kMaxSectors)
         return -1;
-    if (nRange && approxDist(gHitInfo.hitx - pSprite->x, gHitInfo.hity - pSprite->y) > nRange)
-        return -1;
+    if (nRange)
+    {
+        const VECTOR3D *pSourcePos = pAdjustedRORPos != NULL ? pAdjustedRORPos : &vPov; // check using ror sector position offset instead of absolute sprite location
+        if (approxDist(gHitInfo.hitx - pSourcePos->dx, gHitInfo.hity - pSourcePos->dy) > nRange)
+            return -1;
+    }
     if (gHitInfo.hitsprite >= 0)
     {
         SPRITE *pOther = &sprite[gHitInfo.hitsprite];
@@ -623,11 +641,17 @@ retry:
                 gHitInfo.hitsect = -1;
                 gHitInfo.hitwall = -1;
                 gHitInfo.hitsprite = -1;
-                int nLink = sprite[nSprite].owner;
-                x1 = gHitInfo.hitx + sprite[nLink & 0xfff].x - sprite[nSprite].x;
-                y1 = gHitInfo.hity + sprite[nLink & 0xfff].y - sprite[nSprite].y;
-                z1 = gHitInfo.hitz + sprite[nLink & 0xfff].z - sprite[nSprite].z;
-                nSector = sprite[nLink & 0xfff].sectnum;
+                int nLink = sprite[nSprite].owner & 0xfff;
+                x1 = gHitInfo.hitx + sprite[nLink].x - sprite[nSprite].x;
+                y1 = gHitInfo.hity + sprite[nLink].y - sprite[nSprite].y;
+                z1 = gHitInfo.hitz + sprite[nLink].z - sprite[nSprite].z;
+                if (pAdjustedRORPos && nRange) // only adjust if vector has range limit
+                {
+                    pAdjustedRORPos->dx = pAdjustedRORPos->dx + sprite[nLink].x - sprite[nSprite].x;
+                    pAdjustedRORPos->dy = pAdjustedRORPos->dy + sprite[nLink].y - sprite[nSprite].y;
+                    pAdjustedRORPos->dz = pAdjustedRORPos->dz + sprite[nLink].z - sprite[nSprite].z;
+                }
+                nSector = sprite[nLink].sectnum;
                 hitscan(x1, y1, z1, nSector, dx, dy, dz<<4, &gHitInfo.hitsect, &gHitInfo.hitwall, &gHitInfo.hitsprite,
                     &gHitInfo.hitx, &gHitInfo.hity, &gHitInfo.hitz, CLIPMASK1);
                 goto retry;
@@ -642,11 +666,17 @@ retry:
                 gHitInfo.hitsect = -1;
                 gHitInfo.hitwall = -1;
                 gHitInfo.hitsprite = -1;
-                int nLink = sprite[nSprite].owner;
-                x1 = gHitInfo.hitx + sprite[nLink & 0xfff].x - sprite[nSprite].x;
-                y1 = gHitInfo.hity + sprite[nLink & 0xfff].y - sprite[nSprite].y;
-                z1 = gHitInfo.hitz + sprite[nLink & 0xfff].z - sprite[nSprite].z;
-                nSector = sprite[nLink & 0xfff].sectnum;
+                int nLink = sprite[nSprite].owner & 0xfff;
+                x1 = gHitInfo.hitx + sprite[nLink].x - sprite[nSprite].x;
+                y1 = gHitInfo.hity + sprite[nLink].y - sprite[nSprite].y;
+                z1 = gHitInfo.hitz + sprite[nLink].z - sprite[nSprite].z;
+                if (pAdjustedRORPos && nRange) // only adjust if vector has range limit
+                {
+                    pAdjustedRORPos->dx = pAdjustedRORPos->dx + sprite[nLink].x - sprite[nSprite].x;
+                    pAdjustedRORPos->dy = pAdjustedRORPos->dy + sprite[nLink].y - sprite[nSprite].y;
+                    pAdjustedRORPos->dz = pAdjustedRORPos->dz + sprite[nLink].z - sprite[nSprite].z;
+                }
+                nSector = sprite[nLink].sectnum;
                 hitscan(x1, y1, z1, nSector, dx, dy, dz<<4, &gHitInfo.hitsect, &gHitInfo.hitwall, &gHitInfo.hitsprite,
                     &gHitInfo.hitx, &gHitInfo.hity, &gHitInfo.hitz, CLIPMASK1);
                 goto retry;
@@ -655,6 +685,30 @@ retry:
         }
     }
     return -1;
+}
+
+int VectorScanROR(SPRITE *pSprite, int nOffset, int nZOffset, int dx, int dy, int dz, int nRange, int ac, VECTOR3D *pAdjustedRORPos)
+{
+    // this function operates the same as VectorScan() but it'll check if initial starting position is clipping into a ror sector, as well as accumulating offsets for every ror sector traversal
+    dassert(pAdjustedRORPos != NULL, __LINE__);
+    long x = pSprite->x+mulscale30(nOffset, Cos(pSprite->ang+512));
+    long y = pSprite->y+mulscale30(nOffset, Sin(pSprite->ang+512));
+    long z = pSprite->z+nZOffset;
+    int nSector = pSprite->sectnum;
+    const int cX = x-pSprite->x, cY = y-pSprite->y, cZ = z-pSprite->z;
+    if (CheckLink(&x, &y, &z, &nSector)) // if hitscan start position is overlapping into ror sector, offset origin into ror sector
+    {
+        pAdjustedRORPos->dx = x-cX;
+        pAdjustedRORPos->dy = y-cY;
+        pAdjustedRORPos->dz = z-cZ;
+    }
+    else
+    {
+        pAdjustedRORPos->dx = pSprite->x;
+        pAdjustedRORPos->dy = pSprite->y;
+        pAdjustedRORPos->dz = pSprite->z;
+    }
+    return VectorScan(pSprite, nOffset, nZOffset, dx, dy, dz, nRange, ac, pAdjustedRORPos, nSector);
 }
 
 void GetZRange(SPRITE *pSprite, long *ceilZ, long *ceilHit, long *floorZ, long *floorHit, int nDist, ulong nMask)

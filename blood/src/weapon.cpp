@@ -34,6 +34,7 @@
 #include "sfx.h"
 #include "sound.h"
 #include "trig.h"
+#include "warp.h"
 #include "weapon.h"
 
 #define kQAVEnd 125
@@ -327,9 +328,10 @@ static void UpdateAimVector(PLAYER * pPlayer)
 {
     dassert(pPlayer != NULL, 628);
     SPRITE *pPSprite = pPlayer->pSprite;
-    int x = pPSprite->x;
-    int y = pPSprite->y;
-    int z = pPlayer->at6f;
+    long x = pPSprite->x;
+    long y = pPSprite->y;
+    long z = pPlayer->at6f;
+    int nSector = pPSprite->sectnum;
     VECTOR3D aim;
     aim.dx = Cos(pPSprite->ang)>>16;
     aim.dy = Sin(pPSprite->ang)>>16;
@@ -340,6 +342,8 @@ static void UpdateAimVector(PLAYER * pPlayer)
     if (gProfile[pPlayer->at57].at0 || pPlayer->atbd == 10 || pPlayer->atbd == 9)
     {
         int nClosest = 0x7fffffff;
+        if (!VanillaMode()) // check for ror so autoaim can work peering above water
+            CheckLink(&x, &y, &z, &nSector);
         for (short nSprite = headspritestat[6]; nSprite >= 0; nSprite = nextspritestat[nSprite])
         {
             SPRITE *pSprite = &sprite[nSprite];
@@ -373,7 +377,7 @@ static void UpdateAimVector(PLAYER * pPlayer)
             int angle = getangle(x2-x,y2-y);
             if (klabs(((angle-pPSprite->ang+1024)&2047)-1024) > pWeaponTrack->at8)
                 continue;
-            if (pPlayer->at1da < 16 && cansee(x,y,z,pPSprite->sectnum,x2,y2,z2,pSprite->sectnum))
+            if (pPlayer->at1da < 16 && cansee(x,y,z,nSector,x2,y2,z2,pSprite->sectnum))
             {
                 pPlayer->at1de[pPlayer->at1da] = nSprite;
                 pPlayer->at1da++;
@@ -383,7 +387,7 @@ static void UpdateAimVector(PLAYER * pPlayer)
                 continue;
             DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type-kDudeBase];
             int dzCenter = (z2-((pDudeInfo->atf*pSprite->yrepeat)<<2))-z;
-            if (cansee(x, y, z, pPSprite->sectnum, x2, y2, z2, pSprite->sectnum))
+            if (cansee(x, y, z, nSector, x2, y2, z2, pSprite->sectnum))
             {
                 nClosest = nDist2;
                 aim.dx = Cos(angle)>>16;
@@ -419,7 +423,7 @@ static void UpdateAimVector(PLAYER * pPlayer)
                 int angle = getangle(dx,dy);
                 if (klabs(((angle-pPSprite->ang+1024)&2047)-1024) > pWeaponTrack->atc)
                     continue;
-                if (pPlayer->at1da < 16 && cansee(x,y,z,pPSprite->sectnum,pSprite->x,pSprite->y,pSprite->z,pSprite->sectnum))
+                if (pPlayer->at1da < 16 && cansee(x,y,z,nSector,pSprite->x,pSprite->y,pSprite->z,pSprite->sectnum))
                 {
                     pPlayer->at1de[pPlayer->at1da] = nSprite;
                     pPlayer->at1da++;
@@ -427,7 +431,7 @@ static void UpdateAimVector(PLAYER * pPlayer)
                 int nDist2 = Dist3d(lx-x2,ly-y2,lz-z2);
                 if (nDist2 >= nClosest)
                     continue;
-                if (cansee(x, y, z, pPSprite->sectnum, pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum))
+                if (cansee(x, y, z, nSector, pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum))
                 {
                     nClosest = nDist2;
                     aim.dx = Cos(angle)>>16;
@@ -1368,6 +1372,15 @@ static void AltFireVoodoo(int nTrigger, PLAYER *pPlayer)
 {
     if (nTrigger != 2)
         return;
+    long dx = pPlayer->pSprite->x;
+    long dy = pPlayer->pSprite->y;
+    long dz = pPlayer->pSprite->z;
+    if (!VanillaMode()) // check for ror so voodoo doll attack can work peering above water
+    {
+        dz = pPlayer->at6f; // offset view height to weapon level
+        int nSector = pPlayer->pSprite->sectnum;
+        CheckLink(&dx, &dy, &dz, &nSector);
+    }
     int nAmmo = pPlayer->at181[9];
     int nCount = nAmmo < pPlayer->at1da ? nAmmo : pPlayer->at1da;
     if (nCount > 0)
@@ -1380,8 +1393,8 @@ static void AltFireVoodoo(int nTrigger, PLAYER *pPlayer)
             if (v4 > 0)
                 v4--;
             SPRITE *pSprite = pPlayer->pSprite;
-            int dx = pTarget->x - pSprite->x;
-            int dy = pTarget->y - pSprite->y;
+            int dx = pTarget->x - dx;
+            int dy = pTarget->y - dy;
             int nDist = approxDist(dx, dy);
             if (nDist > 0 && nDist < 51200)
             {
