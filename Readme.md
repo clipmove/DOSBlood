@@ -51,6 +51,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Reset view bob/view sway inertia on level start
 * Fix fall scream triggering after player has died
 * Fix choking hands to run at a constant framerate
+* Fix secrets for maps with glitched secret triggers
 * Fix projectiles glitching when autoaim is disabled
 * Fix pod enemy projectiles using walls as enemy index
 * Fix demos desyncing if launched with -noaim argument

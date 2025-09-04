@@ -117,6 +117,43 @@ int CompareChannels(void const *a, void const *b)
     return GetBucketChannel((RXBUCKET*)a)-GetBucketChannel((RXBUCKET*)b);
 }
 
+struct SECRETFOUND {
+    short nIndex;
+    char nType;
+    char bSuperSecret;
+} gSecretsFound[64];
+
+void evSecretInit(void)
+{
+    int i, nSize = 64;
+
+    for (i = 0; i < nSize; i++)
+    {
+        gSecretsFound[i].nIndex = -1;
+        gSecretsFound[i].nType = -1;
+        gSecretsFound[i].bSuperSecret = -1;
+    }
+}
+
+char evSecretNew(int nIndex, char nType, char bSuperSecret)
+{
+    int i, nSize = 64;
+    const SECRETFOUND curSecret = {(short)nIndex, nType, bSuperSecret};
+
+    for (i = 0; i < nSize; i++)
+    {
+        if (gSecretsFound[i].nIndex == -1) // reached end of list, add newly found secret to list
+        {
+            gSecretsFound[i] = curSecret;
+            return 1; // this secret is new, return true
+        }
+
+        if ((gSecretsFound[i].nIndex == curSecret.nIndex) && (gSecretsFound[i].nType == curSecret.nType) && (gSecretsFound[i].bSuperSecret == curSecret.bSuperSecret))
+            return 0; // this secret has been discovered before, return false
+    }
+    return 1; // this secret cannot be checked if it has been found or not, as the list is full - so consider it newly found
+}
+
 unsigned short bucketHead[1024+1];
 
 void evInit(void)
@@ -175,6 +212,7 @@ void evInit(void)
             j++;
     }
     bucketHead[i] = j;
+    evSecretInit();
 }
 
 BOOL evGetSourceState(int nType, int nIndex)
@@ -239,6 +277,8 @@ void evSend(int nIndex, int nType, int rxId, COMMAND_ID command)
             levelSetupSecret(command - COMMAND_ID_64);
             break;
         case 2:
+            if (!VanillaMode() && !evSecretNew(nIndex, (char)nType, (char)(command - COMMAND_ID_64) == 1))
+                break; // secret already found, don't count it
             if (command < COMMAND_ID_64)
                 ThrowError(311)("Invalid Secret command by xobject %d(type %d)", nIndex, nType);
             levelTriggerSecret(command - COMMAND_ID_64);
@@ -396,6 +436,7 @@ void EventQLoadSave::Load()
     Read(&eventQ, sizeof(eventQ));
     Read(rxBucket, sizeof(rxBucket));
     Read(bucketHead, sizeof(bucketHead));
+    Read(gSecretsFound, sizeof(gSecretsFound));
 }
 
 void EventQLoadSave::Save()
@@ -403,4 +444,5 @@ void EventQLoadSave::Save()
     Write(&eventQ, sizeof(eventQ));
     Write(rxBucket, sizeof(rxBucket));
     Write(bucketHead, sizeof(bucketHead));
+    Write(&gSecretsFound, sizeof(gSecretsFound));
 }
