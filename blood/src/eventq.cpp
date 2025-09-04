@@ -117,17 +117,17 @@ int CompareChannels(void const *a, void const *b)
     return GetBucketChannel((RXBUCKET*)a)-GetBucketChannel((RXBUCKET*)b);
 }
 
+#define kMaxSecretTracked 64
+
 struct SECRETFOUND {
     short nIndex;
     char nType;
     char bSuperSecret;
-} gSecretsFound[64];
+} gSecretsFound[kMaxSecretTracked];
 
 void evSecretInit(void)
 {
-    int i, nSize = 64;
-
-    for (i = 0; i < nSize; i++)
+    for (int i = 0; i < kMaxSecretTracked; i++)
     {
         gSecretsFound[i].nIndex = -1;
         gSecretsFound[i].nType = -1;
@@ -137,10 +137,8 @@ void evSecretInit(void)
 
 char evSecretNew(int nIndex, char nType, char bSuperSecret)
 {
-    int i, nSize = 64;
     const SECRETFOUND curSecret = {(short)nIndex, nType, bSuperSecret};
-
-    for (i = 0; i < nSize; i++)
+    for (int i = 0; i < kMaxSecretTracked; i++)
     {
         if (gSecretsFound[i].nIndex == -1) // reached end of list, add newly found secret to list
         {
