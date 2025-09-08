@@ -75,11 +75,8 @@ static void DrawFrame(int x, int y, TILE_FRAME *pTile, int stat, int shade, int 
     }
     if (pTileInterp && pTileInterp->bLerp)
     {
-        if ((klabs(pTileInterp->x - tileX) < 32<<16) && (klabs(pTileInterp->y - tileY) < 32<<16))
-        {
-            tileX = interpolate16(pTileInterp->x, tileX, nInterpolate);
-            tileY = interpolate16(pTileInterp->y, tileY, nInterpolate);
-        }
+        tileX = interpolate16(pTileInterp->x, tileX, nInterpolate);
+        tileY = interpolate16(pTileInterp->y, tileY, nInterpolate);
     }
     x += tileX;
     y += tileY;
@@ -92,7 +89,11 @@ static BOOL PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
 {
     if (nFrames <= 1) // single frame QAV, cannot interpolate
     {
-        pInterpCurFrame = NULL;
+        if (pInterpCurFrame != pFrame)
+        {
+            pInterpCurFrame = pFrame;
+            memcpy(fInterpOldTiles, pFrame->tiles, sizeof(fInterpOldTiles)); // copy entire old frame for interp checking next frame
+        }
         return FALSE;
     }
     if (pInterpCurFrame == pFrame) // don't bother updating to last frame, we're still on the same frame
@@ -133,9 +134,9 @@ static BOOL PrepareInterpolate(FRAMEINFO *pFrame, long *pTicks, int nFrames)
                     if (tilesizx[nTileOld] != tilesizx[nTileNew] || tilesizy[nTileOld] != tilesizy[nTileNew]) // if the tile and tile sizes are different, skip
                         continue;
                 }
-                if (klabs(fInterpOldTiles[j].x - pFrame->tiles[i].x) > 24) // the step is too big, and will result in a bad frame, likely not the tile we're trying to assign
+                if (klabs(fInterpOldTiles[j].x - pFrame->tiles[i].x) > 48) // the step is too big, and will result in a bad frame, likely not the tile we're trying to assign
                     continue;
-                if (klabs(fInterpOldTiles[j].y - pFrame->tiles[i].y) > 24)
+                if (klabs(fInterpOldTiles[j].y - pFrame->tiles[i].y) > 48)
                     continue;
                 oldFrame[i].x = fInterpOldTiles[j].x<<16;
                 oldFrame[i].y = fInterpOldTiles[j].y<<16;
