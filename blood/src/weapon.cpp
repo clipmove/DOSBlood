@@ -244,8 +244,6 @@ void WeaponDraw(PLAYER *pPlayer, int a2, int a3, int a4, int a5, BOOL bQ16Precis
         a2 = -128;
         flags |= 1;
     }
-    if (bInterpolate && pPlayer->atbd == 9) // do not interpolate for life leech
-        bInterpolate = 0;
     pQAV->Draw(v4, flags, a2, a5, bQ16Precision, bInterpolate);
 }
 
