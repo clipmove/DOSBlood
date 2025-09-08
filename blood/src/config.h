@@ -66,6 +66,7 @@ extern int32 gFov;
 extern int32 gShowPowerUps;
 extern int32 gLevelStats;
 extern int32 gWeaponSmoothing;
+extern int32 gLoadSaveOnDeath;
 extern int32 gSkill;
 extern BOOL gViewInterpolate;
 extern BOOL gShowWeapon;
@@ -79,7 +80,6 @@ extern BOOL gFullMap;
 extern BOOL gInfiniteAmmo;
 extern BOOL gAutoAim;
 extern BOOL gAutosaveOnLevelStart;
-extern BOOL gAutosaveLoadOnDeath;
 
 extern char CommbatMacro[10][34];
 

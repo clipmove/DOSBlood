@@ -58,7 +58,7 @@ void SetViewBobbing(CGameMenuItemZBool *);
 void SetViewSwaying(CGameMenuItemZBool *);
 void SetWeaponSmoothing(CGameMenuItemZCycle *);
 void SetAutosaveOnLevelStart(CGameMenuItemZBool *);
-void SetAutosaveLoadOnDeath(CGameMenuItemZBool *);
+void SetLoadSaveOnDeath(CGameMenuItemZCycle *);
 void SetVanillaMode(CGameMenuItemZBool *);
 void SetMouseSensitivity(CGameMenuItemSlider *);
 void SetMouseCalculation(CGameMenuItemZCycle *);
@@ -156,6 +156,13 @@ char *zWeaponSmoothingStrings[] =
     "OFF",
     "ONLY SWAYING",
     "ALL ANIMATION"
+};
+
+char *zLoadSaveOnDeathStrings[] =
+{
+    "NO",
+    "LOAD AUTOSAVE",
+    "LOAD QUICKSAVE"
 };
 
 char *zMouseCalculationStrings[] =
@@ -263,7 +270,7 @@ CGameMenuItemZCycle cycleLevelStats("LEVEL STATS:", 1, 10, 65, 300, 0, SetLevelS
 CGameMenuItemZCycle cycleShowPowerUps("SHOW POWERUPS:", 1, 10, 85, 300, 0, SetShowPowerUps, zShowPowerUpsStrings, 3, 0);
 CGameMenuItemZCycle cycleWeaponSmoothing("WEAPON SMOOTHING:", 1, 10, 105, 300, 0, SetWeaponSmoothing, zWeaponSmoothingStrings, 3, 0);
 CGameMenuItemZBool boolAutosaveOnLevelStart("AUTOSAVE ON LEVEL START:", 1, 10, 125, 300, gAutosaveOnLevelStart, SetAutosaveOnLevelStart, NULL, NULL);
-CGameMenuItemZBool boolAutosaveLoadOnDeath("LOAD AUTOSAVE ON DEATH:", 1, 10, 145, 300, gAutosaveLoadOnDeath, SetAutosaveLoadOnDeath, NULL, NULL);
+CGameMenuItemZCycle cycleLoadSaveOnDeath("LOAD SAVE ON DEATH:", 1, 10, 145, 300, 0, SetLoadSaveOnDeath, zLoadSaveOnDeathStrings, 3, 0);
 
 CGameMenuItemTitle itemControlsTitle("CONTROLS", 1, 160, 20, 2038);
 CGameMenuItemSlider sliderMouseSpeed("Mouse Sensitivity:", 1, 10, 50, 300, gMouseSensitivity, 0, 0x20000, 0x1000, SetMouseSensitivity, -1,-1);
@@ -454,7 +461,7 @@ void SetupOptionsExtraMenu(void)
     cycleShowPowerUps.at24 = ClipRange(gShowPowerUps, 0, cycleShowPowerUps.at2c);
     cycleWeaponSmoothing.at24 = ClipRange(gWeaponSmoothing, 0, cycleWeaponSmoothing.at2c);
     boolAutosaveOnLevelStart.at20 = gAutosaveOnLevelStart;
-    boolAutosaveLoadOnDeath.at20 = gAutosaveLoadOnDeath;
+    cycleLoadSaveOnDeath.at24 = gLoadSaveOnDeath;
 
     menuOptionsExtra.Add(&itemOptionsExtraTitle, 0);
     menuOptionsExtra.Add(&boolCenterHorizon, 1);
@@ -462,7 +469,7 @@ void SetupOptionsExtraMenu(void)
     menuOptionsExtra.Add(&cycleShowPowerUps, 0);
     menuOptionsExtra.Add(&cycleWeaponSmoothing, 0);
     menuOptionsExtra.Add(&boolAutosaveOnLevelStart, 0);
-    menuOptionsExtra.Add(&boolAutosaveLoadOnDeath, 0);
+    menuOptionsExtra.Add(&cycleLoadSaveOnDeath, 0);
     menuOptionsExtra.Add(&itemBloodQAV, 0);
 }
 
@@ -905,9 +912,9 @@ void SetAutosaveOnLevelStart(CGameMenuItemZBool *pItem)
     gAutosaveOnLevelStart = pItem->at20;
 }
 
-void SetAutosaveLoadOnDeath(CGameMenuItemZBool *pItem)
+void SetLoadSaveOnDeath(CGameMenuItemZCycle *pItem)
 {
-    gAutosaveLoadOnDeath = pItem->at20;
+    gLoadSaveOnDeath = ClipRange(pItem->at24, 0, pItem->at2c);
 }
 
 void SetVanillaMode(CGameMenuItemZBool *pItem)

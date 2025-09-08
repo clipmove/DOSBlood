@@ -73,7 +73,6 @@ BOOL gFollowMap = TRUE;
 BOOL gAutoAim = TRUE;
 BOOL gAutoRun = TRUE;
 BOOL gAutosaveOnLevelStart = TRUE;
-BOOL gAutosaveLoadOnDeath = TRUE;
 BOOL gCenterHoriz = FALSE;
 BOOL gSlopeTilting = TRUE;
 BOOL gOverlayMap;
@@ -96,6 +95,7 @@ int32 gFov = 60;
 int32 gShowPowerUps = 2;
 int32 gLevelStats = 0;
 int32 gWeaponSmoothing = 0;
+int32 gLoadSaveOnDeath = 1;
 int32 gDifficulty = 2;
 int32 gSkill = 2;
 BOOL gDoppler = TRUE;
@@ -694,8 +694,7 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetBool( scripthandle, "Options","MouseAim",&gMouseAim);
    SCRIPT_GetBool( scripthandle, "Options","AutoRun",&gAutoRun);
    SCRIPT_GetBool( scripthandle, "Options","AutosaveOnLevelStart",&gAutosaveOnLevelStart);
-   SCRIPT_GetBool( scripthandle, "Options","AutosaveLoadOnDeath",&gAutosaveLoadOnDeath);
-   SCRIPT_GetBool( scripthandle, "Options","Interpolation",&gViewInterpolate);
+      SCRIPT_GetBool( scripthandle, "Options","Interpolation",&gViewInterpolate);
    SCRIPT_GetBool( scripthandle, "Options","ViewHBobbing",&gViewHBobbing);
    SCRIPT_GetBool( scripthandle, "Options","ViewVBobbing",&gViewVBobbing);
    SCRIPT_GetBool( scripthandle, "Options","FollowMap",&gFollowMap);
@@ -715,6 +714,7 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetNumber( scripthandle, "Options","ShowPowerUps",&gShowPowerUps);
    SCRIPT_GetNumber( scripthandle, "Options","LevelStats",&gLevelStats);
    SCRIPT_GetNumber( scripthandle, "Options","WeaponSmoothing",&gWeaponSmoothing);
+   SCRIPT_GetNumber( scripthandle, "Options","LoadSaveOnDeath",&gLoadSaveOnDeath);
    SCRIPT_GetBool( scripthandle, "Options","VanillaMode",&gVanilla);
 
    }
@@ -752,7 +752,6 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutBoolean( scripthandle, "Options","MouseAim", gMouseAim);
    SCRIPT_PutBoolean( scripthandle, "Options","AutoRun", gAutoRun);
    SCRIPT_PutBoolean( scripthandle, "Options","AutosaveOnLevelStart", gAutosaveOnLevelStart);
-   SCRIPT_PutBoolean( scripthandle, "Options","AutosaveLoadOnDeath", gAutosaveLoadOnDeath);
    SCRIPT_PutBoolean( scripthandle, "Options","Interpolation", gViewInterpolate);
    SCRIPT_PutBoolean( scripthandle, "Options","ViewHBobbing", gViewHBobbing);
    SCRIPT_PutBoolean( scripthandle, "Options","ViewVBobbing", gViewVBobbing);
@@ -773,6 +772,7 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutNumber( scripthandle, "Options","ShowPowerUps", gShowPowerUps,false,false);
    SCRIPT_PutNumber( scripthandle, "Options","LevelStats", gLevelStats,false,false);
    SCRIPT_PutNumber( scripthandle, "Options","WeaponSmoothing", gWeaponSmoothing,false,false);
+   SCRIPT_PutNumber( scripthandle, "Options","LoadSaveOnDeath", gLoadSaveOnDeath,false,false);
    SCRIPT_PutBoolean( scripthandle, "Options","VanillaMode", gVanilla);
 
    CONFIG_WriteKeys( scripthandle );

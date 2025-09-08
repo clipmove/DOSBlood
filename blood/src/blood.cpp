@@ -880,7 +880,13 @@ void ProcessFrame(void)
         if (gPlayer[i].atc.keyFlags.restart)
         {
             gPlayer[i].atc.keyFlags.restart = 0;
-            if (gAutosaveLoadOnDeath && gAutosaveInCurLevel && !gDemo.RecordStatus() && !gDemo.PlaybackStatus()) // load autosave
+            if ((gLoadSaveOnDeath == 2) && (gQuickLoadSlot != -1))
+            {
+                QuickLoadGame();
+                gAutosaveInCurLevel = 0;
+                return;
+            }
+            else if (gLoadSaveOnDeath && gAutosaveInCurLevel && !gDemo.RecordStatus() && !gDemo.PlaybackStatus()) // load autosave
             {
                 LoadSave::LoadGame("GAME0010.SAV");
                 gAutosaveInCurLevel = 1;
