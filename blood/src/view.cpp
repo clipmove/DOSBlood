@@ -3081,7 +3081,7 @@ void viewDrawScreen(void)
         {
             CalcPosition(gView->pSprite, &cX, &cY, &cZ, &nSectnum, cA, va0);
         }
-        CheckLink(&cX, &cY, &cZ, &nSectnum);
+        char bLink = CheckLink(&cX, &cY, &cZ, &nSectnum);
         int v78;
         if (gScreenTilt != gScreenTiltO)
             v78 = interpolateang(gScreenTiltO, gScreenTilt, gInterpolate);
@@ -3175,7 +3175,7 @@ void viewDrawScreen(void)
                     vd0 = vc8+(8<<4);
                 }
                 v54 = ClipRange(v54, -200, 200);
-                DrawMirrors(vd8, vd4, vd0, v50, defaultHoriz + v54);
+                DrawMirrors(vd8, vd4, vd0, v50, defaultHoriz + v54, -1);
                 drawrooms(vd8, vd4, vd0, v50, defaultHoriz + v54, vcc);
                 memcpy(otherMirrorGotpic, gotpic+510, 2);
                 memcpy(gotpic+510, bakMirrorGotpic, 2);
@@ -3247,7 +3247,7 @@ void viewDrawScreen(void)
             deliriumPitchI = interpolate16(deliriumPitchO, deliriumPitch, gInterpolate);
         else
             deliriumPitchI = deliriumPitch;
-        DrawMirrors(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitchI);
+        DrawMirrors(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitchI, bLink && !VanillaMode() ? gViewIndex : -1);
         ushort bakCstat = gView->pSprite->cstat;
         if (gViewPos == VIEWPOS_0)
         {

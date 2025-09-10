@@ -19,7 +19,7 @@
 
 #include "typedefs.h"
 
-void DrawMirrors(long, long, long, int, long);
+void DrawMirrors(long, long, long, int, long, int);
 
 void func_5571C(BOOL);
 void func_557C4(long, long, int);
