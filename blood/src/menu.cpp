@@ -1270,19 +1270,17 @@ void SetNetcode(CGameMenuItemZBool *pItem)
 {
     if (itemNetOptionsNetcode.at20) // if set to vanilla netcode mode, lock options and reset to vanilla settings
     {
-        itemNetOptionsChaseView.Clear0();
         itemNetOptionsChaseView.Clear1();
-        itemNetOptionsChaseView.at20 = TRUE;
-        itemNetOptionsHolstering.Clear0();
         itemNetOptionsHolstering.Clear1();
+        itemNetOptionsChaseView.at20 = TRUE;
         itemNetOptionsHolstering.at20 = TRUE;
     }
     else
     {
-        itemNetOptionsChaseView.Set0();
         itemNetOptionsChaseView.Set1();
-        itemNetOptionsHolstering.Set0();
         itemNetOptionsHolstering.Set1();
+        itemNetOptionsChaseView.at20 = FALSE;
+        itemNetOptionsHolstering.at20 = FALSE;
     }
 }
 
