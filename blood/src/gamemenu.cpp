@@ -257,6 +257,8 @@ void CGameMenu::Draw(void)
 {
     for (int i = 0; i < m_nItems; i++)
     {
+        if (!pItemList[i]->CanShow())
+            continue;
         if (i == m_nFocus || (i != m_nFocus && !pItemList[i]->Can3()))
             pItemList[i]->Draw();
     }
@@ -483,6 +485,10 @@ void CGameMenuItemZBool::Draw(void)
     int shade = 32;
     if (pMenu->IsFocusItem(this))
         shade = 32-(totalclock&63);
+    else if (!CanFocus()) // gray out disabled save slots
+    {
+        shade = 48;
+    }
     int vc = atc;
     int v4 = at10;
     if (at4)
