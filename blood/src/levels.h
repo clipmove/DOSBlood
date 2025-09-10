@@ -65,6 +65,14 @@ enum RESPAWNSETTINGS
     RESPAWNSETTINGS_0 = 0,
 };
 
+enum NETFLAGSETTINGS
+{
+    kNetGameFlagNone                = 0,
+    kNetGameFlagNoChaseView         = 1 << 0,
+    kNetGameFlagNoTeleFrag          = 1 << 1,
+    kNetGameFlagNoHolstering        = 1 << 2,
+};
+
 #define kMaxFileKeyLen 16
 #define kMaxMessages 32
 

@@ -1462,7 +1462,7 @@ void OperateTeleport(unsigned int nSector, XSECTOR *pXSector)
             PLAYER *pPlayer = IsPlayerSprite(pSprite) ? &gPlayer[pSprite->type - kDudePlayer1] : NULL;
             if (pPlayer || !SectorContainsDudes(pDest->sectnum))
             {
-                if (!(gGameOptions.uNetGameFlags&2))
+                if (!(gGameOptions.uNetGameFlags&kNetGameFlagNoTeleFrag))
                     TeleFrag(pXSector->at4_0, pDest->sectnum);
                 pSprite->x = pDest->x;
                 pSprite->y = pDest->y;

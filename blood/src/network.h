@@ -36,7 +36,7 @@ struct PKT_STARTGAME {
     schar gameType;
     char difficulty, monsterSettings, weaponSettings, itemSettings, respawnSettings;
     schar episodeId, levelId;
-    int unk;
+    int uGameFlags;
     char userMap, userMapName[13];
 };
 

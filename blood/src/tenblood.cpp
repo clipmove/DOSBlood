@@ -483,7 +483,7 @@ void func_86910(void)
     gPacketStartGame.weaponSettings = int_13C828[func_868B0("wpns", 2)];
     gPacketStartGame.itemSettings = int_13C838[func_868B0("itms", 1)];
     gPacketStartGame.respawnSettings = 0;
-    gPacketStartGame.unk = 0;
+    gPacketStartGame.uGameFlags = 0;
     gPacketStartGame.userMapName[0] = 0;
     int status = tenUtGetStringParam(pgGameOptions, "umap", buffer, 13);
     tenDbLprintf(gTenLog, 5, "options '%s'", pgGameOptions);

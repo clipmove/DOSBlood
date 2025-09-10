@@ -1623,10 +1623,16 @@ static void ProcessInput(PLAYER *pPlayer)
     if (pInput->keyFlags.holsterWeapon)
     {
         pInput->keyFlags.holsterWeapon = 0;
-        if (pPlayer->atbd != 0)
+        if (gGameOptions.uNetGameFlags&kNetGameFlagNoHolstering)
+        {
+            if (VanillaMode() || (pPlayer == gMe))
+                viewSetMessage("Holstering is off in this match");
+        }
+        else if (pPlayer->atbd != 0)
         {
             WeaponLower(pPlayer);
-            viewSetMessage("Holstering weapon");
+            if (VanillaMode() || (pPlayer == gMe))
+                viewSetMessage("Holstering weapon");
         }
     }
     CheckPickUp(pPlayer);

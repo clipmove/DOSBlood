@@ -185,7 +185,7 @@ void func_10324(void)
         gPacketStartGame.weaponSettings = iniFile->GetKeyHex("options", "WeaponSettings", 1);
         gPacketStartGame.itemSettings = iniFile->GetKeyHex("options", "ItemSettings", 1);
         gPacketStartGame.respawnSettings = iniFile->GetKeyHex("options", "RespawnSettings", 0);
-        gPacketStartGame.unk = 0;
+        gPacketStartGame.uGameFlags = 0;
         gPacketStartGame.userMapName[0] = 0;
         char *um = iniFile->GetKeyString("options", "UserMapName", "");
         strncpy(gPacketStartGame.userMapName, um, 13);
@@ -484,6 +484,10 @@ void StartLevel(GAMEOPTIONS *gameOptions)
         gGameOptions.nWeaponSettings = (WEAPONSETTINGS)gPacketStartGame.weaponSettings;
         gGameOptions.nItemSettings = (ITEMSETTINGS)gPacketStartGame.itemSettings;
         gGameOptions.nRespawnSettings = (RESPAWNSETTINGS)gPacketStartGame.respawnSettings;
+        if (!VanillaMode())
+            gGameOptions.uNetGameFlags = (ulong)gPacketStartGame.uGameFlags;
+        else
+            gGameOptions.uNetGameFlags = 0;
         if (gPacketStartGame.userMap)
             levelAddUserMap(gPacketStartGame.userMapName);
         else
@@ -634,6 +638,10 @@ void StartNetworkLevel(void)
         gGameOptions.nWeaponSettings = (WEAPONSETTINGS)gPacketStartGame.weaponSettings;
         gGameOptions.nItemSettings = (ITEMSETTINGS)gPacketStartGame.itemSettings;
         gGameOptions.nRespawnSettings = (RESPAWNSETTINGS)gPacketStartGame.respawnSettings;
+        if (!VanillaMode())
+            gGameOptions.uNetGameFlags = (ulong)gPacketStartGame.uGameFlags;
+        else
+            gGameOptions.uNetGameFlags = 0;
         if (gPacketStartGame.userMap)
             levelAddUserMap(gPacketStartGame.userMapName);
         else
@@ -651,7 +659,12 @@ void LocalKeys(void)
     if (BUTTON(gamefunc_See_Chase_View) && !alt && !shift)
     {
         CONTROL_ClearButton(gamefunc_See_Chase_View);
-        if (gViewPos > 0)
+        if (gGameOptions.uNetGameFlags&kNetGameFlagNoChaseView)
+        {
+            gViewPos = VIEWPOS_0;
+            viewSetMessage("Chase view is off in this match");
+        }
+        else if (gViewPos > VIEWPOS_0)
             gViewPos = VIEWPOS_0;
         else
             gViewPos = VIEWPOS_1;

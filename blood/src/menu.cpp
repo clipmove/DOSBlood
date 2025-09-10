@@ -70,6 +70,7 @@ void SetMessages(CGameMenuItemZBool *);
 void LoadGame(CGameMenuItemZEditBitmap *, CGameMenuEvent *);
 void SetupNetLevels(CGameMenuItemZCycle *);
 void StartNetGame(CGameMenuItemChain *);
+void SetNetcode(CGameMenuItemZBool *);
 void SetParentalLock(CGameMenuItemZBool *);
 void TenProcess(CGameMenuItemChain *);
 void SetupLevelMenuItem(int);
@@ -181,6 +182,7 @@ CGameMenu menuMain;
 CGameMenu menuMainWithSave;
 CGameMenu menuNetMain;
 CGameMenu menuNetStart;
+CGameMenu menuNetOptions;
 CGameMenu menuEpisode;
 CGameMenu menuDifficulty;
 CGameMenu menuDifficultyCustom;
@@ -330,9 +332,14 @@ CGameMenuItemZCycle itemNetStart4("DIFFICULTY", 1, 20, 80, 280, 0, 0, zDiffStrin
 CGameMenuItemZCycle itemNetStart5("MONSTERS", 1, 20, 95, 280, 0, 0, zMonsterStrings, 3, 0);
 CGameMenuItemZCycle itemNetStart6("WEAPONS", 1, 20, 110, 280, 0, 0, zWeaponStrings, 4, 0);
 CGameMenuItemZCycle itemNetStart7("ITEMS", 1, 20, 125, 280, 0, 0, zItemStrings, 3, 0);
-CGameMenuItemZBool itemNetStart8("NETCODE SUPPORT", 1, 20, 140, 280, 0, NULL, "BLOOD 1.21", "DOSBLOOD");
+CGameMenuItemChain itemNetStart8("EXTRA OPTIONS", 1, 20, 140, 280, 0, &menuNetOptions, -1, NULL, 0);
 CGameMenuItemZEdit itemNetStart9("USER MAP:", 1, 20, 155, 280, zUserMapName, 13, 0, NULL, 0);
 CGameMenuItemChain itemNetStart10("START GAME", 1, 20, 170, 280, 0, 0, -1, StartNetGame, 0);
+
+CGameMenuItemTitle itemNetOptionsTitle("EXTRA OPTIONS", 1, 160, 20, 2038);
+CGameMenuItemZBool itemNetOptionsNetcode("NETCODE SUPPORT", 1, 20, 60, 280, 0, SetNetcode, "BLOOD 1.21", "DOSBLOOD");
+CGameMenuItemZBool itemNetOptionsChaseView("CHASE VIEW", 1, 20, 100, 280, 1, NULL, NULL, NULL);
+CGameMenuItemZBool itemNetOptionsHolstering("HOLSTERING", 1, 20, 120, 280, 1, NULL, NULL, NULL);
 
 CGameMenuItemText itemLoadingText("LOADING...", 1, 160, 100, 1);
 
@@ -625,7 +632,7 @@ void SetupNetStartMenu(void)
     menuNetStart.Add(&itemNetStart5, 0);
     menuNetStart.Add(&itemNetStart6, 0);
     menuNetStart.Add(&itemNetStart7, 0);
-    if (!gVanillaNet) // only add the option if every player in the session is running DOSBlood
+    if (!gVanillaNet) // only add the options menu if every player in the session is running DOSBlood
         menuNetStart.Add(&itemNetStart8, 0);
     menuNetStart.Add(&itemNetStart9, 0);
     menuNetStart.Add(&itemNetStart10, 0);
@@ -634,8 +641,18 @@ void SetupNetStartMenu(void)
     itemNetStart5.SetTextIndex(0);
     itemNetStart6.SetTextIndex(1);
     itemNetStart7.SetTextIndex(1);
-    itemNetStart8.at20 = gVanillaNet;
     menuNetStart.Add(&itemBloodQAV, 0);
+}
+
+void SetupNetOptionsMenu(void)
+{
+    itemNetOptionsNetcode.at20 = gVanillaNet;
+    menuNetOptions.Add(&itemNetOptionsTitle, 0);
+    menuNetOptions.Add(&itemNetOptionsNetcode, 1);
+    menuNetOptions.Add(&itemNetOptionsChaseView, 0);
+    menuNetOptions.Add(&itemNetOptionsHolstering, 0);
+    menuNetOptions.Add(&itemBloodQAV, 0);
+    SetNetcode(NULL);
 }
 
 void SetupSaveGameMenu(void)
@@ -842,6 +859,7 @@ void SetupMenus(void)
     SetupMainMenu();
     SetupMainMenuWithSave();
     SetupNetStartMenu();
+    SetupNetOptionsMenu();
     SetupQuitMenu();
     SetupParentalLockMenu();
     SetupSorryMenu();
@@ -1220,8 +1238,15 @@ void StartNetGame(CGameMenuItemChain *pItem)
     gPacketStartGame.weaponSettings = itemNetStart6.at24;
     gPacketStartGame.itemSettings = itemNetStart7.at24;
     gPacketStartGame.respawnSettings = 0;
-    gPacketStartGame.unk = 0;
-    gVanillaNet = itemNetStart8.at20;
+    gPacketStartGame.uGameFlags = 0;
+    gVanillaNet = itemNetOptionsNetcode.at20;
+    if (!gVanillaNet)
+    {
+        if (!itemNetOptionsChaseView.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoChaseView;
+        if (!itemNetOptionsHolstering.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoHolstering;
+    }
     gPacketStartGame.userMapName[0] = 0;
     strncpy(gPacketStartGame.userMapName, zUserMapName, 13);
     gPacketStartGame.userMapName[12] = 0;
@@ -1239,6 +1264,26 @@ void Quit(CGameMenuItemChain *pItem)
     else
         gQuitRequest = 1;
     gGameMenuMgr.Deactivate();
+}
+
+void SetNetcode(CGameMenuItemZBool *pItem)
+{
+    if (itemNetOptionsNetcode.at20) // if set to vanilla netcode mode, lock options and reset to vanilla settings
+    {
+        itemNetOptionsChaseView.Clear0();
+        itemNetOptionsChaseView.Clear1();
+        itemNetOptionsChaseView.at20 = TRUE;
+        itemNetOptionsHolstering.Clear0();
+        itemNetOptionsHolstering.Clear1();
+        itemNetOptionsHolstering.at20 = TRUE;
+    }
+    else
+    {
+        itemNetOptionsChaseView.Set0();
+        itemNetOptionsChaseView.Set1();
+        itemNetOptionsHolstering.Set0();
+        itemNetOptionsHolstering.Set1();
+    }
 }
 
 void SetParentalLock(CGameMenuItemZBool *pItem)
