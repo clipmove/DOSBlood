@@ -4005,7 +4005,10 @@ static int MoveThing(SPRITE *pSprite)
             case 0x8000:
             {
                 int nHitWall = gSpriteHit[nXSprite].hit&0x1fff;
-                actWallBounceVector(&xvel[nSprite], &yvel[nSprite], nHitWall, pThingInfo->at7);
+                if (v8 && 0)
+                    actWallBounceVector(&xvel[nSprite], &yvel[nSprite], nHitWall, pThingInfo->at7);
+                else
+                    actWallBounceVector(&xvel[nSprite], &yvel[nSprite], nHitWall, pThingInfo->at7);
                 switch (pSprite->type)
                 {
                 case kThing427:
@@ -4034,47 +4037,27 @@ static int MoveThing(SPRITE *pSprite)
     {
         pSprite->z += 455;
         zvel[nSprite] += 58254;
-#if 0
-        if (pSprite->type == kThing427)
-        {
-            SPRITE *pFX = gFX.fxSpawn(FX_27, pSprite->sectnum, pSprite->x, pSprite->y, pSprite->z);
-            if (pFX)
-            {
-                int v34 = (gFrameClock*3)&2047;
-                int v30 = (gFrameClock*5)&2047;
-                int vbx = (gFrameClock*11)&2047;
-                long v2c = 0x44444, v28 = 0, v24 = 0;
-                RotateVector(&v2c,&v28,vbx);
-                RotateVector(&v2c,&v24,v30);
-                RotateVector(&v28,&v24,v34);
-                xvel[pFX->index] = xvel[pSprite->index] + v2c;
-                yvel[pFX->index] = yvel[pSprite->index] + v28;
-                zvel[pFX->index] = zvel[pSprite->index] + v24;
-            }
-        }
-#endif
-#if 1
         switch (pSprite->type)
         {
             case 427:
             {
                 SPRITE *pFX = gFX.fxSpawn(FX_27, pSprite->sectnum, pSprite->x, pSprite->y, pSprite->z, 0);
-                if (!pFX)
-                    break;
-                int v34 = (gFrameClock*3)&2047;
-                int v30 = (gFrameClock*5)&2047;
-                int vbx = (gFrameClock*11)&2047;
-                long v2c = 0x44444, v28 = 0, v24 = 0;
-                RotateVector(&v2c,&v28,vbx);
-                RotateVector(&v2c,&v24,v30);
-                RotateVector(&v28,&v24,v34);
-                xvel[pFX->index] = xvel[pSprite->index] + v2c;
-                yvel[pFX->index] = yvel[pSprite->index] + v28;
-                zvel[pFX->index] = zvel[pSprite->index] + v24;
+                if (pFX)
+                {
+                    int v34 = (gFrameClock*3)&2047;
+                    int v30 = (gFrameClock*5)&2047;
+                    int vbx = (gFrameClock*11)&2047;
+                    long v2c = 0x44444, v28 = 0, v24 = 0;
+                    RotateVector(&v2c,&v28,vbx);
+                    RotateVector(&v2c,&v24,v30);
+                    RotateVector(&v28,&v24,v34);
+                    xvel[pFX->index] = xvel[pSprite->index] + v2c;
+                    yvel[pFX->index] = yvel[pSprite->index] + v28;
+                    zvel[pFX->index] = zvel[pSprite->index] + v24;
+                }
                 break;
             }
         }
-#endif
     }
     if (CheckLink(pSprite))
         GetZRange(pSprite, &ceilZ, &ceilHit, &floorZ, &floorHit, pSprite->clipdist<<2, CLIPMASK0);
@@ -4309,10 +4292,7 @@ static void MoveDude(SPRITE *pSprite)
         {
             if (sector[nSector].type == kSectorType604)
             {
-                if (pPlayer)
-                    pXSector->at4_0 = nSprite;
-                else
-                    pXSector->at4_0 = -1;
+                pXSector->at4_0 = pPlayer ? nSprite : -1;
             }
             trTriggerSector(nSector, pXSector, 42);
         }
@@ -4626,7 +4606,8 @@ static void MoveDude(SPRITE *pSprite)
             }
             else
                 pSprite->flags |= kSpriteFlag2;
-            switch (tileGetSurfType(var48))
+            int surf = tileGetSurfType(var48);
+            switch (surf)
             {
                 case 5:
                     gFX.fxSpawn(FX_9, pSprite->sectnum, pSprite->x, pSprite->y, var4c);
@@ -4714,14 +4695,14 @@ static int MoveMissile(SPRITE *pSprite)
     XSPRITE *pXSprite = &xsprite[nXSprite];
     int vdi = -1;
     SPRITE *pOwner = NULL;
-    int bakCstat = 0;
+    short bakCstat = 0;
     if (pSprite->owner >= 0)
     {
         int nOwner = actSpriteOwnerToSpriteId(pSprite);
         pOwner = &sprite[nOwner];
         if (IsDudeSprite(pOwner))
         {
-            bakCstat = pOwner->cstat;
+            bakCstat = sprite[nOwner].cstat;
             pOwner->cstat &= ~257;
         }
         else
@@ -4741,19 +4722,17 @@ static int MoveMissile(SPRITE *pSprite)
         {
             int nTargetAngle = getangle(-(pTarget->y-pSprite->y), pTarget->x-pSprite->x);
             int nAngle = getangle(xvel[nSprite]>>12,yvel[nSprite]>>12);
-            long vx = missileInfo[pSprite->type-300].at2;
+            int nTargetAngle2 = (nTargetAngle + 1536) & 2047;
+            int nVel = missileInfo[pSprite->type - 300].at2;
+            long vx = nVel;
             long vy = 0;
-            RotatePoint(&vx, &vy, (nTargetAngle+1536)&2047, 0, 0);
+            RotatePoint(&vx, &vy, nTargetAngle2, 0, 0);
             xvel[nSprite] = vx;
             yvel[nSprite] = vy;
             int dx = pTarget->x-pSprite->x;
             int dy = pTarget->y-pSprite->y;
             int dz = pTarget->z-pSprite->z;
-            // Inlined
-            int vax = dz/10;
-            if (pTarget->z < pSprite->z)
-                vax = -vax;
-            zvel[nSprite] += vax;
+            zvel[nSprite] += (pTarget->z < pSprite->z) ? -(dz / 10) : (dz / 10);
             ksqrt(dx*dx+dy*dy+dz*dz);
         }
     }
@@ -4763,108 +4742,106 @@ static int MoveMissile(SPRITE *pSprite)
     int top, bottom;
     GetSpriteExtents(pSprite, &top, &bottom);
     int i = 1;
-    while (1)
+retry:
+    long x = pSprite->x;
+    long y = pSprite->y;
+    long z = pSprite->z;
+    int nSector2 = pSprite->sectnum;
+    clipmoveboxtracenum = 1;
+    unsigned int vdx = ClipMove(&x, &y, &z, &nSector2, vx, vy, pSprite->clipdist<<2, (z-top)/4, (bottom-z)/4, CLIPMASK0);
+    clipmoveboxtracenum = 3;
+    short nSector = nSector2;
+    if (nSector2 < 0)
     {
-        long x = pSprite->x;
-        long y = pSprite->y;
-        long z = pSprite->z;
-        int nSector2 = pSprite->sectnum;
-        clipmoveboxtracenum = 1;
-        int vdx = ClipMove(&x, &y, &z, &nSector2, vx, vy, pSprite->clipdist<<2, (z-top)/4, (bottom-z)/4, CLIPMASK0);
-        clipmoveboxtracenum = 3;
-        short nSector = nSector2;
-        if (nSector2 < 0)
+        vdi = -1;
+        goto end;
+    }
+    if (vdx)
+    {
+        if ((vdx&0xe000) == 0xc000)
         {
-            vdi = -1;
-            break;
+            gHitInfo.hitsprite = vdx & 0x1fff;
+            vdi = 3;
         }
-        if (vdx)
+        else if ((vdx & 0xe000) == 0x8000)
         {
-            int nHitSprite = vdx & 0x1fff;
-            if ((vdx&0xe000) == 0xc000)
+            gHitInfo.hitwall = vdx & 0x1fff;
+            short nNextSector = wall[gHitInfo.hitwall].nextsector;
+            if (nNextSector == -1)
+                vdi = 0;
+            else
             {
-                gHitInfo.hitsprite = nHitSprite;
-                vdi = 3;
-            }
-            else if ((vdx & 0xe000) == 0x8000)
-            {
-                gHitInfo.hitwall = nHitSprite;
-                if (wall[nHitSprite].nextsector == -1)
+                int cz, fz;
+                getzsofslope(nNextSector, x, y, &cz, &fz);
+                if (z <= cz || z >= fz)
                     vdi = 0;
                 else
-                {
-                    int fz, cz;
-                    getzsofslope(wall[nHitSprite].nextsector, x, y, &cz, &fz);
-                    if (z <= cz || z >= fz)
-                        vdi = 0;
-                    else
-                        vdi = 4;
-                }
+                    vdi = 4;
             }
         }
-        if (vdi == 4)
-        {
-            WALL *pWall = &wall[gHitInfo.hitwall];
-            if (pWall->extra > 0)
-            {
-                XWALL *pXWall = &xwall[pWall->extra];
-                if (pXWall->at10_6)
-                {
-                    trTriggerWall(gHitInfo.hitwall, pXWall, 51);
-                    if (!(pWall->cstat&64))
-                    {
-                        vdi = -1;
-                        if (i-- > 0)
-                            continue;
-                        vdi = 0;
-                        break;
-                    }
-                }
-            }
-        }
-        if (vdi >= 0 && vdi != 3)
-        {
-            int nAngle = getangle(xvel[nSprite], yvel[nSprite]);
-            x -= mulscale30(Cos(nAngle), 16);
-            y -= mulscale30(Sin(nAngle), 16);
-            int nVel = approxDist(xvel[nSprite], yvel[nSprite]);
-            vz -= kscale(0x100, zvel[nSprite], nVel);
-            updatesector(x, y, &nSector);
-            nSector2 = nSector;
-        }
-        long ceilZ, ceilHit, floorZ, floorHit;
-        GetZRangeAtXYZ(x, y, z, nSector2, &ceilZ, &ceilHit, &floorZ, &floorHit, pSprite->clipdist<<2, CLIPMASK0);
-        GetSpriteExtents(pSprite, &top, &bottom);
-        top += vz;
-        bottom += vz;
-        if (bottom >= floorZ)
-        {
-            gSpriteHit[nXSprite].florhit = floorHit;
-            vz += floorZ-bottom;
-            vdi = 2;
-        }
-        if (top <= ceilZ)
-        {
-            gSpriteHit[nXSprite].ceilhit = ceilHit;
-            vz += ClipLow(ceilZ-top, 0);
-            vdi = 1;
-        }
-        pSprite->x = x;
-        pSprite->y = y;
-        pSprite->z = z+vz;
-        updatesector(x, y, &nSector);
-        if (nSector >= 0 && nSector != pSprite->sectnum)
-        {
-            dassert(nSector >= 0 && nSector < kMaxSectors, 5490);
-            ChangeSpriteSect(nSprite, nSector);
-        }
-        CheckLink(pSprite);
-        gHitInfo.hitsect = pSprite->sectnum;
-        gHitInfo.hitx = pSprite->x;
-        gHitInfo.hity = pSprite->y;
-        gHitInfo.hitz = pSprite->z;
-        break;
     }
+    if (vdi == 4)
+    {
+        WALL *pWall = &wall[gHitInfo.hitwall];
+        if (pWall->extra > 0)
+        {
+            XWALL *pXWall = &xwall[pWall->extra];
+            if (pXWall->at10_6)
+            {
+                trTriggerWall(gHitInfo.hitwall, pXWall, 51);
+                if (!(pWall->cstat&kWallStat6))
+                {
+                    vdi = -1;
+                    if (i-- > 0)
+                        goto retry;
+                    vdi = 0;
+                    goto end;
+                }
+            }
+        }
+    }
+    if (vdi >= 0 && vdi != 3)
+    {
+        int nAngle = getangle(xvel[nSprite], yvel[nSprite]);
+        x -= mulscale30(Cos(nAngle), 16);
+        y -= mulscale30(Sin(nAngle), 16);
+        int nVel = approxDist(xvel[nSprite], yvel[nSprite]);
+        vz -= kscale(0x100, zvel[nSprite], nVel);
+        updatesector(x, y, &nSector);
+        nSector2 = nSector;
+    }
+    long ceilZ, ceilHit, floorZ, floorHit;
+    GetZRangeAtXYZ(x, y, z, nSector2, &ceilZ, &ceilHit, &floorZ, &floorHit, pSprite->clipdist<<2, CLIPMASK0);
+    GetSpriteExtents(pSprite, &top, &bottom);
+    top += vz;
+    bottom += vz;
+    if (bottom >= floorZ)
+    {
+        gSpriteHit[nXSprite].florhit = floorHit;
+        vdi = 2;
+        vz += floorZ-bottom;
+    }
+    if (top <= ceilZ)
+    {
+        gSpriteHit[nXSprite].ceilhit = ceilHit;
+        vdi = 1;
+        vz += ClipLow(ceilZ-top, 0);
+    }
+    pSprite->x = x;
+    pSprite->y = y;
+    pSprite->z = z+vz;
+    updatesector(x, y, &nSector);
+    if (nSector >= 0 && nSector != pSprite->sectnum)
+    {
+        dassert(nSector >= 0 && nSector < kMaxSectors, 5490);
+        ChangeSpriteSect(nSprite, nSector);
+    }
+    CheckLink(pSprite);
+    gHitInfo.hitsect = pSprite->sectnum;
+    gHitInfo.hitx = pSprite->x;
+    gHitInfo.hity = pSprite->y;
+    gHitInfo.hitz = pSprite->z;
+end:
     if (pOwner)
         pOwner->cstat = bakCstat;
     return vdi;
@@ -5021,29 +4998,30 @@ static void MakeSplash(SPRITE *pSprite, XSPRITE *pXSprite);
 void actProcessSprites(void)
 {
     int nSprite;
+    int nSprite2;
     int nNextSprite;
     for (nSprite = headspritestat[4]; nSprite >= 0; nSprite = nextspritestat[nSprite])
     {
         SPRITE *pSprite = &sprite[nSprite];
         if (pSprite->flags&32)
             continue;
-        int nXSprite = pSprite->extra;
-        if (nXSprite > 0)
+        if (pSprite->extra > 0)
         {
-            XSPRITE *pXSprite = &xsprite[nXSprite];
+            XSPRITE *pXSprite = &xsprite[pSprite->extra];
             if (pSprite->type == 425 || pSprite->type == 426 || pSprite->type == 427)
                 if (pXSprite->at17_5 && gFrameClock >= pXSprite->at20_0)
                     pXSprite->at17_5 = 0;
             if (pXSprite->at2c_0 > 0)
             {
                 pXSprite->at2c_0 = ClipLow(pXSprite->at2c_0-4,0);
-                actDamageSprite(actOwnerIdToSpriteId(pXSprite->at2e_0), pSprite, DAMAGE_TYPE_1, 8);
+                int nOwner = actOwnerIdToSpriteId(pXSprite->at2e_0);
+                actDamageSprite(nOwner, pSprite, DAMAGE_TYPE_1, 8);
             }
             if (pXSprite->ate_4)
             {
                 if (pSprite->type == 431)
                     pXSprite->target = -1;
-                for (int nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nNextSprite)
+                for (nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nNextSprite)
                 {
                     int v1b0 = 96;
                     nNextSprite = nextspritestat[nSprite2];
@@ -5051,7 +5029,7 @@ void actProcessSprites(void)
                     if (pSprite2->flags&32)
                         continue;
                     XSPRITE *pXSprite2 = &xsprite[pSprite2->extra];
-                    if ((unsigned int)pXSprite2->health > 0)
+                    if (pXSprite2->health > 0)
                     {
                         if (pSprite->type == 431 && pXSprite->target == -1)
                         {
@@ -5110,8 +5088,7 @@ void actProcessSprites(void)
         }
         if (pXSector && pXSector->at14_0 && (pXSector->at13_0 || pXSector->at1_6 || pXSector->at1_7))
         {
-            int nType = pSprite->type - kThingBase;
-            THINGINFO *pThingInfo = &thingInfo[nType];
+            THINGINFO *pThingInfo = &thingInfo[pSprite->type - kThingBase];
             if (pThingInfo->at5 & 1)
                 pSprite->flags |= 1;
             if (pThingInfo->at5 & 2)
@@ -5124,10 +5101,11 @@ void actProcessSprites(void)
             {
                 int top, bottom;
                 GetSpriteExtents(pSprite, &top, &bottom);
-                if (getflorzofslope(nSector, pSprite->x, pSprite->y) <= bottom)
+                int fz = getflorzofslope(nSector, pSprite->x, pSprite->y);
+                if (bottom >= fz)
                 {
-                    int angle = pXSector->at15_0;
                     int speed = 0;
+                    int angle = pXSector->at15_0;
                     if (pXSector->at13_0 || pXSector->at1_6 || pXSector->at1_7)
                     {
                         speed = pXSector->at14_0 << 9;
@@ -5135,7 +5113,10 @@ void actProcessSprites(void)
                             speed = mulscale16(speed, pXSector->at1_7);
                     }
                     if (sector[nSector].floorstat&64)
-                        angle = (angle+GetWallAngle(sector[nSector].wallptr)+512)&2047;
+                    {
+                        angle += GetWallAngle(sector[nSector].wallptr) + 512;
+                        angle &= 2047;
+                    }
                     int dx = mulscale30(speed, Cos(angle));
                     int dy = mulscale30(speed, Sin(angle));
                     xvel[nSprite] += dx;
@@ -5170,13 +5151,15 @@ void actProcessSprites(void)
                                 int nObject = hit & 0x1fff;
                                 dassert(nObject >= 0 && nObject < kMaxSprites, 5970);
                                 SPRITE *pObject = &sprite[nObject];
-                                actDamageSprite(actSpriteOwnerToSpriteId(pSprite), pObject, DAMAGE_TYPE_0, 12);
+                                int nOwner = actSpriteOwnerToSpriteId(pSprite);
+                                actDamageSprite(nOwner, pObject, DAMAGE_TYPE_0, 12);
                             }
                             break;
                         case 430:
                             if ((hit&0xe000) == 0x4000)
                             {
-                                func_2A620(actSpriteOwnerToSpriteId(pSprite), pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum, 200, 1, 20, DAMAGE_TYPE_3, 6, 0);
+                                int nOwner = actSpriteOwnerToSpriteId(pSprite);
+                                func_2A620(nOwner, pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum, 200, 1, 20, DAMAGE_TYPE_3, 6, 0);
                                 evPost(pSprite->index, 3, 0, CALLBACK_ID_19);
                             }
                             else
@@ -5184,7 +5167,8 @@ void actProcessSprites(void)
                                 int nObject = hit & 0x1fff;
                                 dassert(nObject >= 0 && nObject < kMaxSprites, 6000);
                                 SPRITE *pObject = &sprite[nObject];
-                                actDamageSprite(actSpriteOwnerToSpriteId(pSprite), pObject, DAMAGE_TYPE_0, 12);
+                                int nOwner = actSpriteOwnerToSpriteId(pSprite);
+                                actDamageSprite(nOwner, pObject, DAMAGE_TYPE_0, 12);
                                 evPost(pSprite->index, 3, 0, CALLBACK_ID_19);
                             }
                             break;
@@ -5296,13 +5280,11 @@ void actProcessSprites(void)
         }
         for (int p = connecthead; p >= 0; p = connectpoint2[p])
         {
-            SPRITE *pSprite2 = gPlayer[p].pSprite;
-            int dx = (x - pSprite2->x)>>4;
-            int dy = (y - pSprite2->y)>>4;
-            int dz = (z - pSprite2->z)>>8;
+            int dx = (x - gPlayer[p].pSprite->x)>>4;
+            int dy = (y - gPlayer[p].pSprite->y)>>4;
+            int dz = (z - gPlayer[p].pSprite->z)>>8;
             int nDist = dx*dx+dy*dy+dz*dz+0x40000;
-            int t = divscale16(pXSprite->at12_0, nDist);
-            gPlayer[p].at35a += t;
+            gPlayer[p].at35a += divscale16(pXSprite->at12_0, nDist);
         }
         pXSprite->at10_0 = ClipLow(pXSprite->at10_0-4, 0);
         pXSprite->at12_0 = ClipLow(pXSprite->at12_0-4, 0);
@@ -5369,34 +5351,42 @@ void actProcessSprites(void)
                 case 240:
                 case 241:
                 case 242:
-                    actDamageSprite(actOwnerIdToSpriteId(pXSprite->at2e_0), pSprite, DAMAGE_TYPE_1, 8);
+                {
+                    int nOwner = actOwnerIdToSpriteId(pXSprite->at2e_0);
+                    actDamageSprite(nOwner, pSprite, DAMAGE_TYPE_1, 8);
                     break;
+                }
                 default:
+                {
                     pXSprite->at2c_0 = ClipLow(pXSprite->at2c_0-4, 0);
+                    int nOwner = actOwnerIdToSpriteId(pXSprite->at2e_0);
                     actDamageSprite(actOwnerIdToSpriteId(pXSprite->at2e_0), pSprite, DAMAGE_TYPE_1, 8);
                     break;
+                }
                 }
             }
-            if (pSprite->type == 227)
+            switch (pSprite->type)
             {
-                if (pXSprite->health <= 0 && seqGetStatus(3, nXSprite) < 0)
-                {
-                    pXSprite->health = dudeInfo[28].at2<<4;
-                    pSprite->type = 228;
-                    aiSetTarget(pXSprite, pXSprite->target);
-                    aiActivateDude(pSprite, pXSprite);
-                }
+                case 227:
+                    if (pXSprite->health <= 0 && seqGetStatus(3, nXSprite) < 0)
+                    {
+                        pXSprite->health = dudeInfo[28].at2<<4;
+                        pSprite->type = 228;
+                        aiSetTarget(pXSprite, pXSprite->target);
+                        aiActivateDude(pSprite, pXSprite);
+                    }
+                    break;
             }
             if (pXSprite->ate_4 && !pXSprite->atd_2)
             {
-                for (int nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nNextSprite)
+                for (nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nNextSprite)
                 {
                     nNextSprite = nextspritestat[nSprite2];
                     SPRITE *pSprite2 = &sprite[nSprite2];
                     if (pSprite2->flags&32)
                         continue;
                     XSPRITE *pXSprite2 = &xsprite[pSprite2->extra];
-                    if ((unsigned int)pXSprite2->health > 0 && pSprite2->type >= kDudePlayer1 && pSprite2->type <= kDudePlayer8)
+                    if (pXSprite2->health > 0 && pSprite2->type >= kDudePlayer1 && pSprite2->type <= kDudePlayer8)
                     {
                         if (CheckProximity(pSprite2, pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum, 128))
                         {
@@ -5435,7 +5425,7 @@ void actProcessSprites(void)
                 }
                 else if (gGameOptions.nGameType == GAMETYPE_0)
                 {
-                    if ((unsigned int)pPlayer->pXSprite->health > 0 && pPlayer->at30a >= 1200 && Chance(0x200))
+                    if (pPlayer->pXSprite->health > 0 && pPlayer->at30a >= 1200 && Chance(0x200))
                     {
                         pPlayer->at30a = -1;
                         sfxPlay3DSound(pSprite, 3100+Random(11), 0, 2);
@@ -5466,10 +5456,11 @@ void actProcessSprites(void)
         {
             int top, bottom;
             GetSpriteExtents(pSprite, &top, &bottom);
-            if (getflorzofslope(nSector, pSprite->x, pSprite->y) <= bottom)
+            int fz = getflorzofslope(nSector, pSprite->x, pSprite->y);
+            if (bottom >= fz)
             {
-                int angle = pXSector->at15_0;
                 int speed = 0;
+                int angle = pXSector->at15_0;
                 if (pXSector->at13_0 || pXSector->at1_6 || pXSector->at1_7)
                 {
                     speed = pXSector->at14_0 << 9;
@@ -5477,7 +5468,10 @@ void actProcessSprites(void)
                         speed = mulscale16(speed, pXSector->at1_7);
                 }
                 if (sector[nSector].floorstat&64)
-                    angle = (angle+GetWallAngle(sector[nSector].wallptr)+512)&2047;
+                {
+                    angle += GetWallAngle(sector[nSector].wallptr)+512;
+                    angle &= 2047;
+                }
                 int dx = mulscale30(speed, Cos(angle));
                 int dy = mulscale30(speed, Sin(angle));
                 xvel[nSprite] += dx;
@@ -5512,8 +5506,9 @@ void actProcessSprites(void)
         }
         if (pTarget->extra && (unsigned int)xsprite[pTarget->extra].health > 0)
         {
-            int x = pTarget->x+mulscale30r(Cos(pXSprite->at16_0+pTarget->ang), pTarget->clipdist*2);
-            int y = pTarget->y+mulscale30r(Sin(pXSprite->at16_0+pTarget->ang), pTarget->clipdist*2);
+            int nAngle = pXSprite->at16_0 + pTarget->ang;
+            int x = pTarget->x+mulscale30r(Cos(nAngle), pTarget->clipdist*2);
+            int y = pTarget->y+mulscale30r(Sin(nAngle), pTarget->clipdist*2);
             int z = pTarget->z+pXSprite->at28_0;
             setsprite(nSprite,x,y,z);
             xvel[nSprite] = xvel[nTarget];
@@ -5529,6 +5524,8 @@ void actProcessSprites(void)
     aiProcessDudes();
     gFX.fxProcess();
 }
+
+void hackfunc() { hackfunc(); }
 
 SPRITE *actSpawnSprite(int nSector, int x, int y, int z, int nStat, BOOL a6)
 {

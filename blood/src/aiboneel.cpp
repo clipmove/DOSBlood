@@ -361,7 +361,9 @@ static void MoveSwoop(SPRITE *pSprite, XSPRITE *pXSprite)
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
     int nTurnRange = (pDudeInfo->at44<<2)>>4;
     pSprite->ang = (pSprite->ang+ClipRange(nAng, -nTurnRange, nTurnRange))&2047;
-    int nAccel = (pDudeInfo->at38-(((4-gGameOptions.nDifficulty)<<26)/120)/120)<<2;
+    int x = gGameOptions.nDifficulty;
+    x = 4 - x;
+    int nAccel = (pDudeInfo->at38-(((x)<<26)/120)/120)<<2;
     if (klabs(nAng) > 341)
         return;
     dx = pXSprite->at20_0-pSprite->x;
@@ -391,7 +393,9 @@ static void MoveAscend(SPRITE *pSprite, XSPRITE *pXSprite)
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
     int nTurnRange = (pDudeInfo->at44<<2)>>4;
     pSprite->ang = (pSprite->ang+ClipRange(nAng, -nTurnRange, nTurnRange))&2047;
-    int nAccel = (pDudeInfo->at38-(((4-gGameOptions.nDifficulty)<<26)/120)/120)<<2;
+    int x = gGameOptions.nDifficulty;
+    x = 4 - x;
+    int nAccel = (pDudeInfo->at38-(((x)<<26)/120)/120)<<2;
     if (klabs(nAng) > 341)
         return;
     dx = pXSprite->at20_0-pSprite->x;

@@ -156,10 +156,12 @@ CWeather::Draw(char *pBuffer, int x, int y, int a4, int a5, int *pYLookup, int a
                             char *pDest = pBuffer + pYLookup[v8] + v6;
                             byte p1 = f_72de-v3;
                             byte p2 = *pDest;
+                            int ix;
                             if (f_0.f_1 == 1)
-                                *pDest = transluc[(p1<<8)+p2];
+                                ix = (p1 << 8) + p2;
                             else if (f_0.f_1 == 2)
-                                *pDest = transluc[(p2<<8)+p1];
+                                ix = (p2 << 8) + p1;
+                            *pDest = transluc[ix];
                         }
                     }
                 }

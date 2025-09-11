@@ -249,61 +249,66 @@ void func_43CF8(SPRITE *pSprite, XSPRITE *pXSprite, EVENT a3)
                 evKill(pSprite->index, 3);
             }
         }
+        actPostSprite(pSprite->index, kStatFree);
         break;
     }
     case 35:
     {
         int nTarget = pXSprite->target;
-        if (nTarget >= 0 && nTarget < kMaxSprites)
+        if (nTarget < 0 || nTarget >= kMaxSprites)
+            break;
+        if (pXSprite->at32_0 != 0)
+            break;
+        SPRITE *pTarget = &sprite[nTarget];
+        if (pTarget->statnum != 6)
+            break;
+        if (pTarget->flags & kSpriteFlag5)
+            break;
+        if (pTarget->extra <= 0 || pTarget->extra >= kMaxXSprites)
+            break;
+        int top, bottom;
+        GetSpriteExtents(pSprite, &top, &bottom);
+        int nType = pTarget->type-kDudeBase;
+        DUDEINFO *pDudeInfo = &dudeInfo[nType];
+        int z1 = (top-pSprite->z)-256;
+        int x = pTarget->x;
+        int y = pTarget->y;
+        int z = pTarget->z;
+        int dx = pTarget->x - pSprite->x;
+        int dy = pTarget->y - pSprite->y;
+        int nDist = approxDist(dx, dy);
+        if (nDist == 0)
+            break;
+        if (cansee(pSprite->x, pSprite->y, top, pSprite->sectnum, x, y, z, pTarget->sectnum))
         {
-            if (!pXSprite->at32_0)
+            int t = divscale(nDist, 0x1aaaaa, 12);
+            x += (xvel[nTarget]*t)>>12;
+            y += (yvel[nTarget]*t)>>12;
+            short angBak = pSprite->ang;
+            pSprite->ang = getangle(x-pSprite->x, y-pSprite->y);
+            int dx = Cos(pSprite->ang)>>16;
+            int dy = Sin(pSprite->ang)>>16;
+            int tz = pTarget->z - (pTarget->yrepeat * pDudeInfo->atf) * 4 - top - 256;
+            tz = divscale(tz, nDist, 10);
+            int nMissileType = pXSprite->at14_0 == 0 ? 316 : 317;
+            int t2 = 0;
+            t2 = pXSprite->at14_0 == 0 ? 120 / 10.0 : (3 * 120) / 10.0;
+            SPRITE *pMissile = actFireMissile(pSprite, 0, z1, dx, dy, tz, nMissileType);
+            if (pMissile)
             {
-                SPRITE *pTarget = &sprite[nTarget];
-                if (pTarget->statnum == 6 && !(pTarget->flags&kSpriteFlag5) && pTarget->extra > 0 && pTarget->extra < kMaxXSprites)
-                {
-                    int top, bottom;
-                    GetSpriteExtents(pSprite, &top, &bottom);
-                    int nType = pTarget->type-kDudeBase;
-                    DUDEINFO *pDudeInfo = &dudeInfo[nType];
-                    int z1 = (top-pSprite->z)-256;
-                    int x = pTarget->x;
-                    int y = pTarget->y;
-                    int z = pTarget->z;
-                    int nDist = approxDist(x - pSprite->x, y - pSprite->y);
-                    if (nDist != 0 && cansee(pSprite->x, pSprite->y, top, pSprite->sectnum, x, y, z, pTarget->sectnum))
-                    {
-                        int t = divscale(nDist, 0x1aaaaa, 12);
-                        x += (xvel[nTarget]*t)>>12;
-                        y += (yvel[nTarget]*t)>>12;
-                        int angBak = pSprite->ang;
-                        pSprite->ang = getangle(x-pSprite->x, y-pSprite->y);
-                        int dx = Cos(pSprite->ang)>>16;
-                        int dy = Sin(pSprite->ang)>>16;
-                        int tz = pTarget->z - (pTarget->yrepeat * pDudeInfo->atf) * 4;
-                        int dz = divscale(tz - top - 256, nDist, 10);
-                        int nMissileType = 316+(pXSprite->at14_0 ? 1 : 0);
-                        double t2;
-                        if (!pXSprite->at14_0)
-                            t2 = 120 / 10.0;
-                        else
-                            t2 = (3*120) / 10.0;
-                        SPRITE *pMissile = actFireMissile(pSprite, 0, z1, dx, dy, dz, nMissileType);
-                        if (pMissile)
-                        {
-                            pMissile->owner = pSprite->owner;
-                            pXSprite->at32_0 = 1;
-                            evPost(pSprite->index, 3, t2, CALLBACK_ID_20);
-                            pXSprite->at14_0 = ClipLow(pXSprite->at14_0-1, 0);
-                        }
-                        pSprite->ang = angBak;
-                    }
-                }
+                pMissile->owner = pSprite->owner;
+                pXSprite->at32_0 = 1;
+                evPost(pSprite->index, 3, t2, CALLBACK_ID_20);
+                pXSprite->at14_0 = ClipLow(pXSprite->at14_0-1, 0);
             }
+            pSprite->ang = angBak;
         }
-        return;
+        break;
     }
+    default:
+        actPostSprite(pSprite->index, kStatFree);
+        break;
     }
-    actPostSprite(pSprite->index, kStatFree);
 }
 
 static void ActivateGenerator(int);
@@ -529,8 +534,9 @@ void OperateSprite(int nSprite, XSPRITE *pXSprite, EVENT a3)
         break;
     }
     case 400:
-        if (pSprite->flags&kSpriteFlag4)
-            return;
+        if (!(pSprite->flags&kSpriteFlag4))
+            actExplodeSprite(pSprite);
+        break;
     case 418:
     case 419:
     case 420:

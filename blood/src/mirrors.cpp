@@ -186,9 +186,8 @@ void func_5571C(BOOL mode)
 
 void func_557C4(long x, long y, int interpolate)
 {
-    int nTSprite;
     int nViewSprites = spritesortcnt;
-    for (nTSprite = nViewSprites-1; nTSprite >= 0; nTSprite--)
+    for (int nTSprite = nViewSprites-1; nTSprite >= 0; nTSprite--)
     {
         SPRITE *pTSprite = &tsprite[nTSprite];
         pTSprite->xrepeat = pTSprite->yrepeat = 0;
@@ -199,8 +198,8 @@ void func_557C4(long x, long y, int interpolate)
         {
             if (mirror[i].at0 == 1 || mirror[i].at0 == 2)
             {
-                int nSector = mirror[i].at4;
                 int nSector2 = mirror[i].at14;
+                int nSector = mirror[i].at4;
                 for (int nSprite = headspritesect[nSector]; nSprite >= 0; nSprite = nextspritesect[nSprite])
                 {
                     SPRITE *pSprite = &sprite[nSprite];
@@ -212,15 +211,21 @@ void func_557C4(long x, long y, int interpolate)
                     getzsofslope(nSector, pSprite->x, pSprite->y, &zCeil, &zFloor);
                     if (pSprite->statnum == 6 && (top < zCeil || bottom > zFloor))
                     {
-                        int j;
+                        int dx, dy, dz;
                         if (mirror[i].at0 == 2)
-                            j = i + 1;
+                        {
+                            dx = mirror[i + 1].at8;
+                            dy = mirror[i + 1].atc;
+                            dz = mirror[i + 1].at10;
+                        }
                         else
-                            j = i - 1;
-                        int dx = mirror[j].at8;
-                        int dy = mirror[j].atc;
-                        int dz = mirror[j].at10;
-                        SPRITE *pTSprite = &tsprite[spritesortcnt];
+                        {
+                            dx = mirror[i - 1].at8;
+                            dy = mirror[i - 1].atc;
+                            dz = mirror[i - 1].at10;
+                        }
+                        int nTSprite = spritesortcnt;
+                        SPRITE *pTSprite = &tsprite[nTSprite];
                         memset(pTSprite, 0, sizeof(SPRITE));
                         pTSprite->type = pSprite->type;
                         pTSprite->index = pSprite->index;
@@ -242,9 +247,9 @@ void func_557C4(long x, long y, int interpolate)
                         pTSprite->extra = pSprite->extra;
                         pTSprite->flags = pSprite->flags|0x200;
                         LOCATION *pLocation = &gPrevSpriteLoc[pSprite->index];
-                        pTSprite->x = dx+interpolate16(pLocation->x, pSprite->x, interpolate);
-                        pTSprite->y = dy+interpolate16(pLocation->y, pSprite->y, interpolate);
-                        pTSprite->z = dz+interpolate16(pLocation->z, pSprite->z, interpolate);
+                        pTSprite->x = interpolate16(pLocation->x, pSprite->x, interpolate)+dx;
+                        pTSprite->y = interpolate16(pLocation->y, pSprite->y, interpolate)+dy;
+                        pTSprite->z = interpolate16(pLocation->z, pSprite->z, interpolate)+dz;
                         int delta = ((pSprite->ang-pLocation->ang+1024)&2047)-1024;
                         pTSprite->ang = pLocation->ang+mulscale16(delta, interpolate);
                         spritesortcnt++;
@@ -255,8 +260,8 @@ void func_557C4(long x, long y, int interpolate)
     }
     for (nTSprite = spritesortcnt-1; nTSprite >= nViewSprites; nTSprite--)
     {
-        SPRITE *pTSprite = &tsprite[nTSprite];
         int nAnim = 0;
+        SPRITE *pTSprite = &tsprite[nTSprite];
         switch (picanm[pTSprite->picnum].at3_4)
         {
             case 1:

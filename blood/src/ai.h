@@ -160,7 +160,7 @@ void aiNewState(SPRITE *,XSPRITE *,AISTATE *);
 
 int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE nDmgType, int nDamage);
 
-void aiPlay3DSound(SPRITE *pSprite, int a2, AI_SFX_PRIORITY a3, int a4);
+void aiPlay3DSound(SPRITE *pSprite, int a2, AI_SFX_PRIORITY a3, int a4 = -1);
 
 void aiSetTarget(XSPRITE *, int);
 void aiSetTarget(XSPRITE *, int, int, int);

@@ -35,12 +35,6 @@
 #include "player.h"
 #include "view.h"
 
-struct hackstruct {
-    int f_0;
-};
-
-const hackstruct hackvar = { 1 };
-
 CPlayerMsg gPlayerMsg;
 CCheatMgr gCheatMgr;
 
@@ -507,6 +501,9 @@ void CPlayerMsg::ProcessKeys(void)
     }
 }
 
+const unsigned long CCheatMgr::kCheatFlagsNone = 0;
+const unsigned long CCheatMgr::kCheatFlags0 = 1;
+
 CCheatMgr::CHEATINFO CCheatMgr::s_CheatInfo[] = {
     {"NQLGB", kCheat5, 0 }, // MPKFA
     {"DBQJONZBTT", kCheat6, 0 }, // CAPINMYASS
@@ -546,32 +543,30 @@ CCheatMgr::CHEATINFO CCheatMgr::s_CheatInfo[] = {
     {"TQJFMCFSH", kCheat36, 1 },
 };
 
-unsigned long kCheatFlagsNone;
-
 BOOL CCheatMgr::m_bPlayerCheated;
 
 BOOL CCheatMgr::Check(char *pzString)
 {
-    int i;
+    int i, j;
     char buffer[80];
     strcpy(buffer, pzString);
     strupr(buffer);
-    for (i = 0; i < strlen(pzString); i++)
-        buffer[i]++;
+    for (j = 0; j < strlen(pzString); j++)
+        buffer[j]++;
     for (i = 0; i < 36UL; i++)
     {
         int nCheatLen = strlen(s_CheatInfo[i].pzString);
-        if (s_CheatInfo[i].flags & 1)
+        if (s_CheatInfo[i].flags & kCheatFlags0)
         {
-            if (!strncmp(buffer, s_CheatInfo[i].pzString, nCheatLen))
+            if (strncmp(buffer, s_CheatInfo[i].pzString, nCheatLen) == 0)
             {
                 Process(s_CheatInfo[i].id, buffer+nCheatLen);
                 return 1;
             }
         }
-        if (!strcmp(buffer, s_CheatInfo[i].pzString))
+        if (strcmp(buffer, s_CheatInfo[i].pzString) == 0)
         {
-            Process(s_CheatInfo[i].id, NULL);
+            Process(s_CheatInfo[i].id);
             return 1;
         }
     }
@@ -680,6 +675,8 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
     case kCheat16:
         SetMap(!gFullMap);
         break;
+    case kCheat17:
+        break;
     case kCheat18:
         gMe->packInfo[0].at1 = 100;
         break;
@@ -703,6 +700,8 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
         break;
     case kCheat25:
         ToggleDelirium();
+        break;
+    case kCheat26:
         break;
     case kCheat27:
         return;
@@ -748,8 +747,17 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
         gMe->atbd = 0;
         gMe->atbe = 1;
         break;
+    case kCheat35:
+        break;
+    default:
+        return;
     }
     m_bPlayerCheated = 1;
+}
+
+char hackfunc4()
+{
+    return 1;
 }
 
 void CCheatMgr::func_5BCF4(void)

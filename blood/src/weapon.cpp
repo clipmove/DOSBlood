@@ -603,7 +603,6 @@ void WeaponLower(PLAYER *pPlayer)
             WeaponRaise(pPlayer);
             return;
         case 4:
-_goto1:
             pPlayer->atc3 = 1;
             StartQAV(pPlayer, 11);
             pPlayer->atc.newWeapon = 0;
@@ -616,14 +615,17 @@ _goto1:
                 StartQAV(pPlayer, 11);
                 return;
             }
-            else if (pPlayer->atc.newWeapon == 7)
+            else if (pPlayer->atc.newWeapon != 7)
             {
-                goto _goto1;
+                pPlayer->atc3 = 1;
+                StartQAV(pPlayer, 11);
             }
             else
             {
                 pPlayer->atc3 = 1;
                 StartQAV(pPlayer, 11);
+                pPlayer->atc.newWeapon = 0;
+                WeaponLower(pPlayer);
             }
             break;
         }
@@ -684,8 +686,13 @@ _goto1:
             StartQAV(pPlayer, 68);
         break;
     case 2:
-        if (powerupCheck(pPlayer, 17) && vc == 3)
-            StartQAV(pPlayer, 49);
+        if (powerupCheck(pPlayer, 17))
+        {
+            if (vc == 3)
+                StartQAV(pPlayer, 49);
+            else
+                StartQAV(pPlayer, 44);
+        }
         else
             StartQAV(pPlayer, 44);
         break;
@@ -1559,8 +1566,10 @@ BOOL gWeaponUpgrade[][13] = {
 byte WeaponUpgrade(PLAYER *pPlayer, BOOL newWeapon)
 {
     char weapon = pPlayer->atbd;
-    if (!func_4B1A4(pPlayer) && gWeaponUpgrade[pPlayer->atbd][newWeapon])
-        return newWeapon;
+    if (func_4B1A4(pPlayer))
+        return weapon;
+    if (gWeaponUpgrade[pPlayer->atbd][newWeapon])
+        weapon = newWeapon;
     return weapon;
 }
 
@@ -1907,13 +1916,14 @@ void WeaponProcess(PLAYER *pPlayer)
         char weapon;
         weapon = WeaponFindNext(pPlayer, &t, 1);
         pPlayer->atd9[weapon] = t;
-        if (pPlayer->atbd != 0)
+        if (pPlayer->atbd == 0)
+            pPlayer->atc.newWeapon = weapon;
+        else
         {
             WeaponLower(pPlayer);
             pPlayer->atbe = weapon;
             return;
         }
-        pPlayer->atc.newWeapon = weapon;
     }
     if (pPlayer->atc.keyFlags.prevWeapon)
     {
@@ -1924,13 +1934,14 @@ void WeaponProcess(PLAYER *pPlayer)
         char weapon;
         weapon = WeaponFindNext(pPlayer, &t, 0);
         pPlayer->atd9[weapon] = t;
-        if (pPlayer->atbd != 0)
+        if (pPlayer->atbd == 0)
+            pPlayer->atc.newWeapon = weapon;
+        else
         {
             WeaponLower(pPlayer);
             pPlayer->atbe = weapon;
             return;
         }
-        pPlayer->atc.newWeapon = weapon;
     }
     if (pPlayer->atc3 == -1)
     {
@@ -1939,13 +1950,14 @@ void WeaponProcess(PLAYER *pPlayer)
         char weapon;
         weapon = WeaponFindLoaded(pPlayer, &t);
         pPlayer->atd9[weapon] = t;
-        if (pPlayer->atbd != 0)
+        if (pPlayer->atbd == 0)
+            pPlayer->atc.newWeapon = weapon;
+        else
         {
             WeaponLower(pPlayer);
             pPlayer->atbe = weapon;
             return;
         }
-        pPlayer->atc.newWeapon = weapon;
     }
     if (pPlayer->atc.newWeapon)
     {
@@ -2013,13 +2025,14 @@ void WeaponProcess(PLAYER *pPlayer)
                     char weapon;
                     weapon = WeaponFindLoaded(pPlayer, &t);
                     pPlayer->atd9[weapon] = t;
-                    if (pPlayer->atbd != 0)
+                    if (pPlayer->atbd == 0)
+                        pPlayer->atc.newWeapon = weapon;
+                    else
                     {
                         WeaponLower(pPlayer);
                         pPlayer->atbe = weapon;
                         return;
                     }
-                    pPlayer->atc.newWeapon = weapon;
                 }
                 return;
             }
@@ -2031,10 +2044,10 @@ void WeaponProcess(PLAYER *pPlayer)
                 pPlayer->atc.newWeapon = 0;
                 return;
             }
-            int i = 0;
+            int j = 0;
             if (nWeapon == pPlayer->atbd)
-                i = 1;
-            for (; i <= v4c; i++)
+                j = 1;
+            for (int i = j; i <= v4c; i++)
             {
                 int v6c = (pPlayer->atd9[nWeapon]+i)%v4c;
                 int t = weaponModes[nWeapon].at4;
@@ -2329,35 +2342,37 @@ void func_51340(SPRITE *pMissile, int a2)
     int x = pMissile->x;
     int y = pMissile->y;
     int z = pMissile->z;
-    int nDist = 300;
     int nSector = pMissile->sectnum;
+    int nDist = 300;
     int nOwner = actSpriteOwnerToSpriteId(pMissile);
     gAffectedSectors[0] = -1;
     gAffectedXWalls[0] = -1;
     GetClosestSpriteSectors(nSector, x, y, nDist, gAffectedSectors, va4, gAffectedXWalls);
     BOOL v4 = 1;
     int v24 = -1;
-    actHitcodeToData(a2, &gHitInfo, &v24, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    actHitcodeToData(a2, &gHitInfo, &v24);
     if (a2 == 3 && v24 >= 0 && sprite[v24].statnum == 6)
         v4 = 0;
     for (int nSprite = headspritestat[6]; nSprite >= 0; nSprite = nextspritestat[nSprite])
     {
-        if (nSprite != nOwner || v4)
+        if (nSprite == nOwner && !v4)
+            continue;
+        SPRITE *pSprite = &sprite[nSprite];
+        if (pSprite->flags&kSpriteFlag5)
+            continue;
+        if (!TestBitString(va4, pSprite->sectnum))
+            continue;
+        if (CheckProximity(pSprite, x, y, z, nSector, nDist))
         {
-            SPRITE *pSprite = &sprite[nSprite];
-            if (pSprite->flags&kSpriteFlag5)
-                continue;
-            if (TestBitString(va4, pSprite->sectnum) && CheckProximity(pSprite, x, y, z, nSector, nDist))
-            {
-                int dx = pMissile->x-pSprite->x;
-                int dy = pMissile->y-pSprite->y;
-                int nDamage = (nDist-(ksqrt(dx*dx+dy*dy)>>4)+20)>>1;
-                if (nDamage < 0)
-                    nDamage = 10;
-                if (nSprite == nOwner)
-                    nDamage /= 2;
-                actDamageSprite(nOwner, pSprite, DAMAGE_TYPE_6, nDamage<<4);
-            }
+            int dx = pMissile->x-pSprite->x;
+            int dy = pMissile->y-pSprite->y;
+            int d2 = ksqrt(dx * dx + dy * dy) >> 4;
+            int nDamage = (nDist-d2+20)>>1;
+            if (nDamage < 0)
+                nDamage = 10;
+            if (nSprite == nOwner)
+                nDamage /= 2;
+            actDamageSprite(nOwner, pSprite, DAMAGE_TYPE_6, nDamage<<4);
         }
     }
     for (nSprite = headspritestat[4]; nSprite >= 0; nSprite = nextspritestat[nSprite])
@@ -2365,18 +2380,20 @@ void func_51340(SPRITE *pMissile, int a2)
         SPRITE *pSprite = &sprite[nSprite];
         if (pSprite->flags&kSpriteFlag5)
             continue;
-        if (TestBitString(va4, pSprite->sectnum) && CheckProximity(pSprite, x, y, z, nSector, nDist))
+        if (!TestBitString(va4, pSprite->sectnum))
+            continue;
+        if (CheckProximity(pSprite, x, y, z, nSector, nDist))
         {
             XSPRITE *pXSprite = &xsprite[pSprite->extra];
-            if (!pXSprite->at17_5)
-            {
-                int dx = pMissile->x-pSprite->x;
-                int dy = pMissile->y-pSprite->y;
-                int nDamage = nDist-(ksqrt(dx*dx+dy*dy)>>4)+20;
-                if (nDamage < 0)
-                    nDamage = 20;
-                actDamageSprite(nOwner, pSprite, DAMAGE_TYPE_6, nDamage<<4);
-            }
+            if (pXSprite->at17_5)
+                continue;
+            int dx = pMissile->x-pSprite->x;
+            int dy = pMissile->y-pSprite->y;
+            int d2 = ksqrt(dx * dx + dy * dy) >> 4;
+            int nDamage = nDist-d2+20;
+            if (nDamage < 0)
+                nDamage = 20;
+            actDamageSprite(nOwner, pSprite, DAMAGE_TYPE_6, nDamage<<4);
         }
     }
 }

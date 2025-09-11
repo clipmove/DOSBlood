@@ -111,7 +111,8 @@ public:
         kCheat36,
         kCheatMax
     };
-    static unsigned long kCheatFlagsNone;
+    static const unsigned long kCheatFlagsNone;
+    static const unsigned long kCheatFlags0;
     struct CHEATINFO
     {
         char *pzString;
@@ -122,7 +123,7 @@ public:
     CCheatMgr() {}
     void func_5BCF4(void);
     BOOL Check(char *);
-    void Process(CHEATCODE nCheatCode, char* pzArgs);
+    void Process(CHEATCODE nCheatCode, char* pzArgs = NULL);
 };
 
 extern CGameMessageMgr gGameMessageMgr;
