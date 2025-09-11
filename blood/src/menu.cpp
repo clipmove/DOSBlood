@@ -1221,7 +1221,10 @@ void QuickLoadGame(void)
     func_1EC78(2518, "Loading", "Loading Saved Game", strRestoreGameStrings[gQuickLoadSlot]);
     LoadSave::LoadGame(strLoadGameName);
     gGameMenuMgr.Deactivate();
-    gAutosaveInCurLevel = 0;
+    if (gQuickLoadSlot == 10) // if we quickloaded the autosave slot, set to true
+        gAutosaveInCurLevel = 1;
+    else
+        gAutosaveInCurLevel = 0;
 }
 
 void SetupNetLevels(CGameMenuItemZCycle *pItem)

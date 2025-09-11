@@ -896,11 +896,11 @@ void ProcessFrame(void)
             if ((gLoadSaveOnDeath == 2) && (gQuickLoadSlot != -1))
             {
                 QuickLoadGame();
-                gAutosaveInCurLevel = 0;
                 return;
             }
             else if (gLoadSaveOnDeath && gAutosaveInCurLevel && !gDemo.RecordStatus() && !gDemo.PlaybackStatus()) // load autosave
             {
+                func_1EC78(2518, "Loading", "Loading Saved Game", strRestoreGameStrings[10]);
                 LoadSave::LoadGame("GAME0010.SAV");
                 gAutosaveInCurLevel = 1;
                 return;
