@@ -278,6 +278,8 @@ void ctrlGetInput(void)
             short nSectnum = pSprite->sectnum;
             if (!(nSectnum >= 0 && nSectnum < kMaxSectors))
                 break;
+            if (gLowerLink[nSectnum] >= 0) // we have a ror sector above us, abort
+                break;
             int nX, nY, nZ, fZ, cZ, fZCurrentSect, nDiff;
             short nAng;
             nAng = pSprite->ang;
@@ -304,10 +306,12 @@ void ctrlGetInput(void)
                 nX += nStepX; // move forward
                 nY += nStepY;
                 updatesector(nX, nY, &nSectnumNew);
-                if (nSectnumNew == -1)
-                    break;
                 if (nSectnumNew == nSectnum)
                     continue;
+                if (nSectnumNew == -1) // we drilled too far sir, abort
+                    break;
+                if (gLowerLink[nSectnumNew] >= 0) // we have a ror sector above us, abort
+                    break;
                 if ((sector[nSectnumNew].ceilingpicnum >= 4080) && (sector[nSectnumNew].ceilingpicnum <= 4095)) // if sector HAS a fake ceiling (e.g. E4M4 elevator), skip
                     continue;
                 getzsofslope(nSectnumNew, nX, nY, &cZ, &fZ);
