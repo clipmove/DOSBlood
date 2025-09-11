@@ -218,4 +218,6 @@ void playerProcess(PLAYER *);
 
 void powerupInit(void);
 
+BOOL func_3A158(PLAYER *a1, SPRITE *a2 = NULL);
+
 #endif // !_PLAYER_H_

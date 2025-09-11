@@ -166,7 +166,7 @@ public:
     char *at25;
     void (*at29)(CGameMenuItemZBool *);
     CGameMenuItemZBool();
-    CGameMenuItemZBool(char *,int,int,int,int,BOOL,void (*)(CGameMenuItemZBool *),char *,char *);
+    CGameMenuItemZBool(char *a1,int a2,int a3,int a4,int a5,BOOL a6,void (*a7)(CGameMenuItemZBool *) = NULL,char *a8 = NULL,char *a9 = NULL);
     virtual void Draw(void);
     virtual BOOL Event(CGameMenuEvent &);
 };
@@ -180,7 +180,7 @@ public:
     void(*at2c)(CGameMenuItemChain *);
     int at30;
     CGameMenuItemChain();
-    CGameMenuItemChain(char *, int, int, int, int, int, CGameMenu *, int, void(*)(CGameMenuItemChain *), int);
+    CGameMenuItemChain(char *a1, int a2, int a3, int a4, int a5, int a6, CGameMenu *a7, int a8 = -1, void(*a9)(CGameMenuItemChain *) = NULL, int a10 = 0);
     virtual void Draw(void);
     virtual BOOL Event(CGameMenuEvent &);
 };
@@ -197,7 +197,7 @@ public:
     char at38[16];
     char at48[16];
     CGameMenuItem7EA1C();
-    CGameMenuItem7EA1C(char *a1, int a2, int a3, int a4, int a5, char *a6, char *a7, int a8, int a9, void(*a10)(CGameMenuItem7EA1C *), int a11);
+    CGameMenuItem7EA1C(char *a1, int a2, int a3, int a4, int a5, char *a6, char *a7, int a8, int a9 = -1, void(*a10)(CGameMenuItem7EA1C *) = NULL, int a11 = 0);
     void Setup(void);
     virtual void Draw(void);
     virtual BOOL Event(CGameMenuEvent &);
@@ -277,8 +277,8 @@ public:
     int at38;
     int at3c;
     CGameMenuItemSlider();
-    CGameMenuItemSlider(char *, int, int, int, int, int, int, int, int, void(*)(CGameMenuItemSlider *), int, int);
-    CGameMenuItemSlider(char *, int, int, int, int, int *, int, int, int, void(*)(CGameMenuItemSlider *), int, int);
+    CGameMenuItemSlider(char *a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, void(*a10)(CGameMenuItemSlider *) = NULL, int a11 = -1, int a12 = -1);
+    CGameMenuItemSlider(char *a1, int a2, int a3, int a4, int a5, int *a6, int a7, int a8, int a9, void(*a10)(CGameMenuItemSlider *) = NULL, int a11 = -1, int a12 = -1);
     void SetValue(int value)
     {
         at24 = ClipRange(value, at28, at2c);
@@ -298,7 +298,7 @@ public:
     BOOL at31;
     BOOL at32;
     CGameMenuItemZEdit();
-    CGameMenuItemZEdit(char *, int, int, int, int, char *, int, BOOL, void(*)(CGameMenuItemZEdit *, CGameMenuEvent *), int);
+    CGameMenuItemZEdit(char *a1, int a2, int a3, int a4, int a5, char *a6, int a7, BOOL a8, void(*a9)(CGameMenuItemZEdit *, CGameMenuEvent *) = NULL, int a10 = 0);
     void AddChar(char);
     void BackChar(void);
     virtual void Draw(void);
@@ -323,6 +323,7 @@ public:
     void BackChar(void);
     virtual void Draw(void);
     virtual BOOL Event(CGameMenuEvent &);
+    int getId(void) { return at28; }
 };
 
 class CGameMenuItemQAV : public CGameMenuItem
@@ -352,7 +353,7 @@ public:
     char *at34[kMaxGameCycleItems];
     void(*atb4)(CGameMenuItemZCycle *);
     CGameMenuItemZCycle();
-    CGameMenuItemZCycle(char *, int, int, int, int, int, void(*)(CGameMenuItemZCycle *), char **, int, int);
+    CGameMenuItemZCycle(char *a1, int a2, int a3, int a4, int a5, int a6, void(*a7)(CGameMenuItemZCycle *) = NULL, char **a8 = NULL, int a9 = 0, int a10 = 0);
     ~CGameMenuItemZCycle();
     virtual void Draw(void);
     virtual BOOL Event(CGameMenuEvent &);
@@ -360,7 +361,7 @@ public:
     void Next(void);
     void Prev(void);
     void Clear(void);
-    void SetTextArray(char **, int, int);
+    void SetTextArray(char **a1, int a2, int a3 = 0);
     void SetTextIndex(int);
 };
 
@@ -387,7 +388,7 @@ public:
     void(*atb0)(CGameMenuItemPicCycle *);
     int atb4;
     CGameMenuItemPicCycle();
-    CGameMenuItemPicCycle(int, int, void(*)(CGameMenuItemPicCycle *), int *, int, int);
+    CGameMenuItemPicCycle(int a1, int a2, void(*a3)(CGameMenuItemPicCycle *) = NULL, int *a4 = NULL, int a5 = 0, int a6 = 0);
     virtual void Draw(void);
     virtual BOOL Event(CGameMenuEvent &);
     void Add(int, BOOL);
