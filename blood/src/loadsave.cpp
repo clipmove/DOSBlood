@@ -432,13 +432,13 @@ void LoadSavedInfo(void)
 {
     struct find_t find;
     int nStatus = _dos_findfirst("GAME*.SAV", 0, &find);
-    int nSlot = 0;
-    while (!nStatus && nSlot < 11)
+    int nCount = 0;
+    while (!nStatus && nCount < 11)
     {
         int hFile = open(find.name, O_BINARY);
         if (hFile == -1)
             ThrowError(694)("File error #%d loading save file header.", errno);
-        int vc, v8, nSlot;
+        int vc, v8, nCount;
         ushort v4;
         vc = 0;
         v8 = 0;
@@ -466,13 +466,13 @@ void LoadSavedInfo(void)
             close(hFile);
             goto next;
         }
-        nSlot = ClipRange(atoi(&find.name[4]), 0, 10);
-        if (read(hFile, &gSaveGameOptions[nSlot], sizeof(gSaveGameOptions[0])) == -1)
+        nCount = ClipRange(atoi(&find.name[4]), 0, 10);
+        if (read(hFile, &gSaveGameOptions[nCount], sizeof(gSaveGameOptions[0])) == -1)
             ThrowError(752)("File error #%d reading save file.", errno);
         close(hFile);
-        strcpy(strRestoreGameStrings[gSaveGameOptions[nSlot].nSaveGameSlot], gSaveGameOptions[nSlot].szUserGameName);
+        strcpy(strRestoreGameStrings[gSaveGameOptions[nCount].nSaveGameSlot], gSaveGameOptions[nCount].szUserGameName);
 next:
-        nSlot++; nStatus = _dos_findnext(&find);
+        nCount++; nStatus = _dos_findnext(&find);
     }
 }
 

@@ -5434,7 +5434,7 @@ void actProcessSprites(void)
                 {
                     pXSprite->at2c_0 = ClipLow(pXSprite->at2c_0-4, 0);
                     int nOwner = actOwnerIdToSpriteId(pXSprite->at2e_0);
-                    actDamageSprite(nOwner, pSprite, kDamageBurn, 8);
+                    actDamageSprite(actOwnerIdToSpriteId(pXSprite->at2e_0), pSprite, kDamageBurn, 8);
                     break;
                 }
                 }
