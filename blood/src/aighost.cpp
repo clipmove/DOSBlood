@@ -75,24 +75,22 @@ static void SlashSeqCallback(int, int nXSprite)
     DUDEINFO *pDudeInfoT = &dudeInfo[pTarget->type-kDudeBase];
     int height = (pSprite->yrepeat*pDudeInfo->atb)<<2;
     int height2 = (pTarget->yrepeat*pDudeInfoT->atb)<<2;
-    int dz = height-height2;
     int dx = Cos(pSprite->ang)>>16;
     int dy = Sin(pSprite->ang)>>16;
-    sfxPlay3DSound(pSprite, 1406, 0, 0);
+    int dz = height - height2;
+    sfxPlay3DSound(pSprite, 1406, 0);
     actFireVector(pSprite, 0, 0, dx, dy, dz, VECTOR_TYPE_12);
-    int r1 = Random(50);
-    int r2 = Random(50);
-    actFireVector(pSprite, 0, 0, dx+r2, dy-r1, dz, VECTOR_TYPE_12);
-    r1 = Random(50);
-    r2 = Random(50);
-    actFireVector(pSprite, 0, 0, dx-r2, dy+r1, dz, VECTOR_TYPE_12);
+    actFireVector(pSprite, 0, 0, dx+Random(50), dy-Random(50), dz, VECTOR_TYPE_12);
+    actFireVector(pSprite, 0, 0, dx-Random(50), dy+Random(50), dz, VECTOR_TYPE_12);
 }
 
 static void ThrowSeqCallback(int, int nXSprite)
 {
     XSPRITE *pXSprite = &xsprite[nXSprite];
     int nSprite = pXSprite->reference;
-    actFireThing(&sprite[nSprite], 0, 0, gDudeSlope[nXSprite]-7500, 421, 0xeeeee);
+    SPRITE* pSprite = &sprite[nSprite];
+    int slope = gDudeSlope[nXSprite] - 7500;
+    actFireThing(pSprite, 0, 0, slope, 421, 0xeeeee);
 }
 
 static void BlastSeqCallback(int, int nXSprite)
@@ -100,7 +98,7 @@ static void BlastSeqCallback(int, int nXSprite)
     XSPRITE *pXSprite = &xsprite[nXSprite];
     int nSprite = pXSprite->reference;
     SPRITE *pSprite = &sprite[nSprite];
-    rand(); // ???
+    BOOL r = Chance(1234); // ???
     SPRITE *pTarget = &sprite[pXSprite->target];
     int height = (pSprite->yrepeat*dudeInfo[pSprite->type-kDudeBase].atb) << 2;
     int dx = pXSprite->at20_0-pSprite->x;
@@ -110,11 +108,11 @@ static void BlastSeqCallback(int, int nXSprite)
     int x = pSprite->x;
     int y = pSprite->y;
     int z = height;
-    TARGETTRACK tt = { 0x10000, 0x10000, 0x100, 0x55, 0x1aaaaa };
     VECTOR3D aim;
     aim.dx = Cos(pSprite->ang)>>16;
     aim.dy = Sin(pSprite->ang)>>16;
     aim.dz = gDudeSlope[nXSprite];
+    TARGETTRACK tt = { 0x10000, 0x10000, 0x100, 0x55, 0x1aaaaa };
     int nClosest = 0x7fffffff;
     for (short nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nextspritestat[nSprite2])
     {
@@ -140,46 +138,45 @@ static void BlastSeqCallback(int, int nXSprite)
         int tsr = mulscale(9460, nDist, 10);
         int top, bottom;
         GetSpriteExtents(pSprite2, &top, &bottom);
-        if (tz-tsr > bottom || tz+tsr < top)
+        if (bottom < tz-tsr || top > tz+tsr)
             continue;
-        int dx = (tx-x2)>>4;
-        int dy = (ty-y2)>>4;
-        int dz = (tz-z2)>>8;
-        int nDist2 = ksqrt(dx*dx+dy*dy+dz*dz);
-        if (nDist2 < nClosest)
+        int nDist2 = Dist3d(tx - x2, ty - y2, tz - z2);
+        if (nDist2 >= nClosest)
+            continue;
+        int nAngle = getangle(x2-x, y2-y);
+        if (klabs(((nAngle-pSprite->ang+1024)&2047)-1024) > tt.at8)
+            continue;
+        int tz2 = pSprite2->z-pSprite->z;
+        if (cansee(x, y, z, pSprite->sectnum, x2, y2, z2, pSprite2->sectnum))
         {
-            int nAngle = getangle(x2-x, y2-y);
-            int nDeltaAngle = ((nAngle-pSprite->ang+1024)&2047)-1024;
-            if (klabs(nDeltaAngle) <= tt.at8)
-            {
-                int tz = pSprite2->z-pSprite->z;
-                if (cansee(x, y, z, pSprite->sectnum, x2, y2, z2, pSprite2->sectnum))
-                {
-                    nClosest = nDist2;
-                    aim.dx = Cos(nAngle)>>16;
-                    aim.dy = Sin(nAngle)>>16;
-                    aim.dz = divscale(tz, nDist, 10);
-                    if (tz > -0x333)
-                        aim.dz = divscale(tz, nDist, 10);
-                    else if (tz < -0x333 && tz > -0xb33)
-                        aim.dz = divscale(tz, nDist, 10)+9460;
-                    else if (tz < -0xb33 && tz > -0x3000)
-                        aim.dz = divscale(tz, nDist, 10)+9460;
-                    else if (tz < -0x3000)
-                        aim.dz = divscale(tz, nDist, 10)-7500;
-                    else
-                        aim.dz = divscale(tz, nDist, 10);
-                }
-                else
-                    aim.dz = divscale(tz, nDist, 10);
-            }
+            nClosest = nDist2;
+            aim.dx = Cos(nAngle)>>16;
+            aim.dy = Sin(nAngle)>>16;
+            aim.dz = divscale(tz2, nDist, 10);
+            if (tz2 > -0x333)
+                aim.dz = divscale(tz2, nDist, 10);
+            else if (tz2 < -0x333 && tz2 > -0xb33)
+                aim.dz = divscale(tz2, nDist, 10)+9460;
+            else if (tz2 < -0xb33 && tz2 > -0x3000)
+                aim.dz = divscale(tz2, nDist, 10)+9460;
+            else if (tz2 < -0x3000)
+                aim.dz = divscale(tz2, nDist, 10)-7500;
+            else
+                aim.dz = divscale(tz2, nDist, 10);
         }
+        else
+            aim.dz = divscale(tz2, nDist, 10);
     }
     if (IsPlayerSprite(pTarget))
     {
-        sfxPlay3DSound(pSprite, 489, 0, 0);
+        sfxPlay3DSound(pSprite, 489, 0);
         actFireMissile(pSprite, 0, 0, aim.dx, aim.dy, aim.dz, 307);
     }
+}
+
+char hackfunc7()
+{
+    return 1;
 }
 
 static void thinkTarget(SPRITE *pSprite, XSPRITE *pXSprite)
@@ -197,38 +194,41 @@ static void thinkTarget(SPRITE *pSprite, XSPRITE *pXSprite)
         aiNewState(pSprite, pXSprite, &ghostTurn);
         return;
     }
-    if (Chance(pDudeInfo->at33))
+    if (!Chance(pDudeInfo->at33))
+        return;
+    for (int p = connecthead; p >= 0; p = connectpoint2[p])
     {
-        for (int p = connecthead; p >= 0; p = connectpoint2[p])
+        PLAYER *pPlayer = &gPlayer[p];
+        if (pPlayer->pXSprite->health == 0 || powerupCheck(pPlayer, 13) > 0)
+            continue;
+        int x = pPlayer->pSprite->x;
+        int y = pPlayer->pSprite->y;
+        int z = pPlayer->pSprite->z;
+        int nSector = pPlayer->pSprite->sectnum;
+        int dx = x-pSprite->x;
+        int dy = y-pSprite->y;
+        int nDist = approxDist(dx, dy);
+        if (nDist <= pDudeInfo->at17 || nDist <= pDudeInfo->at13)
         {
-            PLAYER *pPlayer = &gPlayer[p];
-            if (pPlayer->pXSprite->health == 0 || powerupCheck(pPlayer, 13) > 0)
-                continue;
-            int x = pPlayer->pSprite->x;
-            int y = pPlayer->pSprite->y;
-            int z = pPlayer->pSprite->z;
-            int nSector = pPlayer->pSprite->sectnum;
-            int dx = x-pSprite->x;
-            int dy = y-pSprite->y;
-            int nDist = approxDist(dx, dy);
-            if (nDist > pDudeInfo->at17 && nDist > pDudeInfo->at13)
-                continue;
-            if (!cansee(x, y, z, nSector, pSprite->x, pSprite->y, pSprite->z-((pDudeInfo->atb*pSprite->yrepeat)<<2), pSprite->sectnum))
-                continue;
-            int nDeltaAngle = ((getangle(dx,dy)+1024-pSprite->ang)&2047)-1024;
-            if (nDist < pDudeInfo->at17 && klabs(nDeltaAngle) <= pDudeInfo->at1b)
+            int height = (pDudeInfo->atb*pSprite->yrepeat)<<2;
+            if (cansee(x, y, z, nSector, pSprite->x, pSprite->y, pSprite->z-height, pSprite->sectnum))
             {
-                pDudeExtraE->at4 = 0;
-                aiSetTarget(pXSprite, pPlayer->at5b);
-                aiActivateDude(pSprite, pXSprite);
-                return;
-            }
-            else if (nDist < pDudeInfo->at13)
-            {
-                pDudeExtraE->at4 = 0;
-                aiSetTarget(pXSprite, x, y, z);
-                aiActivateDude(pSprite, pXSprite);
-                return;
+                int nAngle = getangle(dx, dy);
+                int nDeltaAngle = ((nAngle+1024-pSprite->ang)&2047)-1024;
+                if (nDist < pDudeInfo->at17 && klabs(nDeltaAngle) <= pDudeInfo->at1b)
+                {
+                    pDudeExtraE->at4 = 0;
+                    aiSetTarget(pXSprite, pPlayer->at5b);
+                    aiActivateDude(pSprite, pXSprite);
+                    return;
+                }
+                else if (nDist < pDudeInfo->at13)
+                {
+                    pDudeExtraE->at4 = 0;
+                    aiSetTarget(pXSprite, x, y, z);
+                    aiActivateDude(pSprite, pXSprite);
+                    return;
+                }
             }
         }
     }
@@ -242,12 +242,13 @@ static void thinkSearch(SPRITE *pSprite, XSPRITE *pXSprite)
 
 static void thinkGoto(SPRITE *pSprite, XSPRITE *pXSprite)
 {
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 410);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
-    int dx = pXSprite->at20_0-pSprite->x;
-    int dy = pXSprite->at24_0-pSprite->y;
+    dx = pXSprite->at20_0-pSprite->x;
+    dy = pXSprite->at24_0-pSprite->y;
     int nAngle = getangle(dx, dy);
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     aiChooseDirection(pSprite, pXSprite, nAngle);
     if (nDist < 512 && klabs(pSprite->ang - nAngle) < pDudeInfo->at1b)
         aiNewState(pSprite, pXSprite, &ghostSearch);
@@ -262,12 +263,10 @@ static void MoveDodgeUp(SPRITE *pSprite, XSPRITE *pXSprite)
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
     int nTurnRange = (pDudeInfo->at44<<2)>>4;
     pSprite->ang = (pSprite->ang+ClipRange(nAng, -nTurnRange, nTurnRange))&2047;
-    int nCos = Cos(pSprite->ang);
     int nSin = Sin(pSprite->ang);
-    int dx = xvel[nSprite];
-    int dy = yvel[nSprite];
-    int t1 = dmulscale30(dx, nCos, dy, nSin);
-    int t2 = dmulscale30(dx, nSin, -dy, nCos);
+    int nCos = Cos(pSprite->ang);
+    int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
+    int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
     if (pXSprite->at17_3 > 0)
         t2 += pDudeInfo->at3c;
     else
@@ -288,12 +287,10 @@ static void MoveDodgeDown(SPRITE *pSprite, XSPRITE *pXSprite)
     pSprite->ang = (pSprite->ang+ClipRange(nAng, -nTurnRange, nTurnRange))&2047;
     if (pXSprite->at17_3 == 0)
         return;
-    int nCos = Cos(pSprite->ang);
     int nSin = Sin(pSprite->ang);
-    int dx = xvel[nSprite];
-    int dy = yvel[nSprite];
-    int t1 = dmulscale30(dx, nCos, dy, nSin);
-    int t2 = dmulscale30(dx, nSin, -dy, nCos);
+    int nCos = Cos(pSprite->ang);
+    int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
+    int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
     if (pXSprite->at17_3 > 0)
         t2 += pDudeInfo->at3c;
     else
@@ -311,13 +308,14 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
         aiNewState(pSprite, pXSprite, &ghostGoto);
         return;
     }
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 623);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 626);
     SPRITE *pTarget = &sprite[pXSprite->target];
     XSPRITE *pXTarget = &xsprite[pTarget->extra];
-    int dx = pTarget->x-pSprite->x;
-    int dy = pTarget->y-pSprite->y;
+    dx = pTarget->x-pSprite->x;
+    dy = pTarget->y-pSprite->y;
     aiChooseDirection(pSprite, pXSprite, getangle(dx, dy));
     if (pXTarget->health == 0)
     {
@@ -329,10 +327,11 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
         aiNewState(pSprite, pXSprite, &ghostSearch);
         return;
     }
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (nDist <= pDudeInfo->at17)
     {
-        int nDeltaAngle = ((getangle(dx,dy)+1024-pSprite->ang)&2047)-1024;
+        int nAngle = getangle(dx, dy);
+        int nDeltaAngle = ((nAngle+1024-pSprite->ang)&2047)-1024;
         int height = (pDudeInfo->atb*pSprite->yrepeat)<<2;
         // Should be dudeInfo[pTarget->type-kDudeBase]
         int height2 = (pDudeInfo->atb*pTarget->yrepeat)<<2;
@@ -343,7 +342,10 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
             if (nDist < pDudeInfo->at17 && klabs(nDeltaAngle) <= pDudeInfo->at1b)
             {
                 aiSetTarget(pXSprite, pXSprite->target);
-                int floorZ = getflorzofslope(pSprite->sectnum, pSprite->x, pSprite->y);
+                int x = pSprite->x;
+                int y = pSprite->y;
+                int nSector = pSprite->sectnum;
+                int floorZ = getflorzofslope(nSector, x, y);
                 switch (pSprite->type)
                 {
                 case 210:
@@ -352,15 +354,15 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                         int hit = HitScan(pSprite, pSprite->z, dx, dy, 0, CLIPMASK1, 0);
                         switch (hit)
                         {
-                        case -1:
-                            aiNewState(pSprite, pXSprite, &ghostBlast);
-                            break;
                         case 0:
                         case 4:
                             break;
                         case 3:
-                            if (pSprite->type != sprite[gHitInfo.hitsprite].type && sprite[gHitInfo.hitsprite].type != 210)
+                            if (sprite[gHitInfo.hitsprite].type != pSprite->type && sprite[gHitInfo.hitsprite].type != 210)
                                 aiNewState(pSprite, pXSprite, &ghostBlast);
+                            break;
+                        case -1:
+                            aiNewState(pSprite, pXSprite, &ghostBlast);
                             break;
                         default:
                             aiNewState(pSprite, pXSprite, &ghostBlast);
@@ -372,15 +374,15 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                         int hit = HitScan(pSprite, pSprite->z, dx, dy, 0, CLIPMASK1, 0);
                         switch (hit)
                         {
-                        case -1:
-                            aiNewState(pSprite, pXSprite, &ghostSlash);
-                            break;
                         case 0:
                         case 4:
                             break;
                         case 3:
-                            if (pSprite->type != sprite[gHitInfo.hitsprite].type && sprite[gHitInfo.hitsprite].type != 210)
+                            if (sprite[gHitInfo.hitsprite].type != pSprite->type && sprite[gHitInfo.hitsprite].type != 210)
                                 aiNewState(pSprite, pXSprite, &ghostSlash);
+                            break;
+                        case -1:
+                            aiNewState(pSprite, pXSprite, &ghostSlash);
                             break;
                         default:
                             aiNewState(pSprite, pXSprite, &ghostSlash);
@@ -389,11 +391,11 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                     }
                     else if ((height2-height > 0x2000 || floorZ-bottom > 0x2000) && nDist < 0x1400 && nDist > 0x800)
                     {
-                        aiPlay3DSound(pSprite, 1600, AI_SFX_PRIORITY_1, -1);
+                        aiPlay3DSound(pSprite, 1600, AI_SFX_PRIORITY_1);
                         aiNewState(pSprite, pXSprite, &ghostSwoop);
                     }
                     else if ((height2-height < 0x2000 || floorZ-bottom < 0x2000) && klabs(nDeltaAngle) < 85)
-                        aiPlay3DSound(pSprite, 1600, AI_SFX_PRIORITY_1, -1);
+                        aiPlay3DSound(pSprite, 1600, AI_SFX_PRIORITY_1);
                     break;
                 }
             }
@@ -413,6 +415,7 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
 static void MoveForward(SPRITE *pSprite, XSPRITE *pXSprite)
 {
     int nSprite = pSprite->index;
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 780);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
@@ -423,18 +426,16 @@ static void MoveForward(SPRITE *pSprite, XSPRITE *pXSprite)
         return;
     if (pXSprite->target == -1)
         pSprite->ang = (pSprite->ang+256)&2047;
-    int dx = pXSprite->at20_0-pSprite->x;
-    int dy = pXSprite->at24_0-pSprite->y;
+    dx = pXSprite->at20_0-pSprite->x;
+    dy = pXSprite->at24_0-pSprite->y;
     int nAngle = getangle(dx, dy);
-    int nDist = approxDist(dx, dy);
-    if ((unsigned int)Random(64) < 32 && nDist <= 0x400)
+    nDist = approxDist(dx, dy);
+    if (Random(64) < 32 && nDist <= 0x400)
         return;
-    int nCos = Cos(pSprite->ang);
     int nSin = Sin(pSprite->ang);
-    int vx = xvel[nSprite];
-    int vy = yvel[nSprite];
-    int t1 = dmulscale30(vx, nCos, vy, nSin);
-    int t2 = dmulscale30(vx, nSin, -vy, nCos);
+    int nCos = Cos(pSprite->ang);
+    int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
+    int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
     if (pXSprite->target == -1)
         t1 += nAccel;
     else
@@ -446,6 +447,7 @@ static void MoveForward(SPRITE *pSprite, XSPRITE *pXSprite)
 static void MoveSlow(SPRITE *pSprite, XSPRITE *pXSprite)
 {
     int nSprite = pSprite->index;
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 843);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
@@ -454,25 +456,23 @@ static void MoveSlow(SPRITE *pSprite, XSPRITE *pXSprite)
     int nAccel = pDudeInfo->at38<<2;
     if (klabs(nAng) > 341)
     {
-        pXSprite->at16_0 = (pSprite->ang+512)&2047;
+        pXSprite->at16_0 = (short)((pSprite->ang+512)&2047);
         return;
     }
-    int dx = pXSprite->at20_0-pSprite->x;
-    int dy = pXSprite->at24_0-pSprite->y;
+    dx = pXSprite->at20_0-pSprite->x;
+    dy = pXSprite->at24_0-pSprite->y;
     int nAngle = getangle(dx, dy);
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (Chance(0x600) && nDist <= 0x400)
         return;
-    int nCos = Cos(pSprite->ang);
     int nSin = Sin(pSprite->ang);
-    int vx = xvel[nSprite];
-    int vy = yvel[nSprite];
-    int t1 = dmulscale30(vx, nCos, vy, nSin);
-    int t2 = dmulscale30(vx, nSin, -vy, nCos);
-    t1 = nAccel>>1;
-    t2 >>= 1;
-    xvel[nSprite] = dmulscale30(t1, nCos, t2, nSin);
-    yvel[nSprite] = dmulscale30(t1, nSin, -t2, nCos);
+    int nCos = Cos(pSprite->ang);
+    int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
+    int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
+    int _t1 = (nAccel >> 1);
+    int _t2 = (t2 >> 1);
+    xvel[nSprite] = dmulscale30(_t1, nCos, _t2, nSin);
+    yvel[nSprite] = dmulscale30(_t1, nSin, -_t2, nCos);
     switch (pSprite->type)
     {
     case 210:
@@ -484,6 +484,7 @@ static void MoveSlow(SPRITE *pSprite, XSPRITE *pXSprite)
 static void MoveSwoop(SPRITE *pSprite, XSPRITE *pXSprite)
 {
     int nSprite = pSprite->index;
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 914);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
@@ -492,28 +493,27 @@ static void MoveSwoop(SPRITE *pSprite, XSPRITE *pXSprite)
     int nAccel = pDudeInfo->at38<<2;
     if (klabs(nAng) > 341)
     {
-        pXSprite->at16_0 = (pSprite->ang+512)&2047;
+        pXSprite->at16_0 = (short)((pSprite->ang+512)&2047);
         return;
     }
-    int dx = pXSprite->at20_0-pSprite->x;
-    int dy = pXSprite->at24_0-pSprite->y;
+    dx = pXSprite->at20_0-pSprite->x;
+    dy = pXSprite->at24_0-pSprite->y;
     int nAngle = getangle(dx, dy);
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (Chance(0x600) && nDist <= 0x400)
         return;
-    int nCos = Cos(pSprite->ang);
     int nSin = Sin(pSprite->ang);
-    int vx = xvel[nSprite];
-    int vy = yvel[nSprite];
-    int t1 = dmulscale30(vx, nCos, vy, nSin);
-    int t2 = dmulscale30(vx, nSin, -vy, nCos);
-    t1 += nAccel>>1;
-    xvel[nSprite] = dmulscale30(t1, nCos, t2, nSin);
-    yvel[nSprite] = dmulscale30(t1, nSin, -t2, nCos);
+    int nCos = Cos(pSprite->ang);
+    int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
+    int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
+    int _t1 = t1 + (nAccel >> 1);
+    int _t2 = t2;
+    xvel[nSprite] = dmulscale30(_t1, nCos, _t2, nSin);
+    yvel[nSprite] = dmulscale30(_t1, nSin, -_t2, nCos);
     switch (pSprite->type)
     {
     case 210:
-        zvel[nSprite] = t1;
+        zvel[nSprite] = _t1;
         break;
     }
 }
@@ -521,6 +521,7 @@ static void MoveSwoop(SPRITE *pSprite, XSPRITE *pXSprite)
 static void MoveFly(SPRITE *pSprite, XSPRITE *pXSprite)
 {
     int nSprite = pSprite->index;
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 984);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
@@ -529,22 +530,20 @@ static void MoveFly(SPRITE *pSprite, XSPRITE *pXSprite)
     int nAccel = pDudeInfo->at38<<2;
     if (klabs(nAng) > 341)
     {
-        pSprite->ang = (pSprite->ang+512)&2047;
+        pSprite->ang = (short)((pSprite->ang+512)&2047);
         return;
     }
-    int dx = pXSprite->at20_0-pSprite->x;
-    int dy = pXSprite->at24_0-pSprite->y;
+    dx = pXSprite->at20_0-pSprite->x;
+    dy = pXSprite->at24_0-pSprite->y;
     int nAngle = getangle(dx, dy);
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (Chance(0x4000) && nDist <= 0x400)
         return;
-    int nCos = Cos(pSprite->ang);
     int nSin = Sin(pSprite->ang);
-    int vx = xvel[nSprite];
-    int vy = yvel[nSprite];
-    int t1 = dmulscale30(vx, nCos, vy, nSin);
-    int t2 = dmulscale30(vx, nSin, -vy, nCos);
-    t1 += nAccel>>1;
+    int nCos = Cos(pSprite->ang);
+    int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
+    int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
+    t1 += nAccel >> 1;
     xvel[nSprite] = dmulscale30(t1, nCos, t2, nSin);
     yvel[nSprite] = dmulscale30(t1, nSin, -t2, nCos);
     switch (pSprite->type)

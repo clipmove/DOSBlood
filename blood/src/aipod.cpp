@@ -127,23 +127,23 @@ static void func_70284(int, int nXSprite)
     int nSprite = pXSprite->reference;
     SPRITE *pSprite = &sprite[nSprite];
     sfxPlay3DSound(pSprite, 2502, -1, 0);
+    int dmgType;
     int nDist, nBurn;
-    DAMAGE_TYPE dmgType;
     switch (pSprite->type)
     {
-    case 222:
-    default:
-        nBurn = 0;
-        dmgType = DAMAGE_TYPE_2;
-        nDist = 50;
-        break;
     case 224:
-        nBurn = (gGameOptions.nDifficulty*120)>>2;
         dmgType = DAMAGE_TYPE_3;
+        nBurn = (gGameOptions.nDifficulty*120)>>2;
         nDist = 75;
         break;
+    case 222:
+    default:
+        dmgType = DAMAGE_TYPE_2;
+        nBurn = 0;
+        nDist = 50;
+        break;
     }
-    func_2A620(nSprite, pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum, nDist, 1, 5*(1+gGameOptions.nDifficulty), dmgType, 2, nBurn, 0, 0);
+    func_2A620(nSprite, pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum, nDist, 1, 5*(1+gGameOptions.nDifficulty), (DAMAGE_TYPE)dmgType, 2, nBurn);
 }
 
 static void func_7034C(SPRITE *pSprite, XSPRITE *pXSprite)

@@ -108,9 +108,14 @@ void tioCursorOff(void)
     tioCursorSet(0x20, 0);
 }
 
-void tioTerm(void)
+void tioCursorOn(void)
 {
     tioCursorSet(cursor.f_8, cursor.f_9);
+}
+
+void tioTerm(void)
+{
+    tioCursorOn();
 }
 
 void tioFill(int a1, int a2, int a3, int a4, byte a5, byte a6)
@@ -353,4 +358,34 @@ int tioGauge(int a1, int a2)
 
     tioPrint("");
     return 0;
+}
+
+void tioSaveWindow(char *a1, int a2, int a3, int a4, int a5)
+{
+    a4 = ClipHigh(a4, window.f_8);
+    a5 = ClipHigh(a5, window.f_c);
+
+    byte *va = tioVideoAddress(window.f_0 + a2, window.f_4 + a3);
+
+    for (int i = 0; i < a4; i++)
+    {
+        memcpy(a1, va, a5 * 2);
+        a1 += a5 * 2;
+        va += tioStride;
+    }
+}
+
+void tioRestoreWindow(char *a1, int a2, int a3, int a4, int a5)
+{
+    a4 = ClipHigh(a4, window.f_8);
+    a5 = ClipHigh(a5, window.f_c);
+
+    byte *va = tioVideoAddress(window.f_0 + a2, window.f_4 + a3);
+
+    for (int i = 0; i < a4; i++)
+    {
+        memcpy(va, a1, a5 * 2);
+        a1 += a5 * 2;
+        va += tioStride;
+    }
 }

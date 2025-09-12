@@ -69,16 +69,17 @@ static void HackSeqCallback(int, int nXSprite)
     SPRITE *pTarget = &sprite[pXSprite->target];
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type-kDudeBase];
     DUDEINFO *pDudeInfoT = &dudeInfo[pTarget->type-kDudeBase];
-    int tx = pXSprite->at20_0-pSprite->x;
-    int ty = pXSprite->at24_0-pSprite->y;
-    int nDist = approxDist(tx, ty);
-    int nAngle = getangle(tx, ty);
+    int dx = pXSprite->at20_0-pSprite->x;
+    int dy = pXSprite->at24_0-pSprite->y;
+    int dz = 0;
+    int nDist = approxDist(dx, dy);
+    int nAngle = getangle(dx, dy);
     int height = (pSprite->yrepeat*pDudeInfo->atb)<<2;
     int height2 = (pTarget->yrepeat*pDudeInfoT->atb)<<2;
-    int dz = height-height2;
-    int dx = Cos(nAngle)>>16;
-    int dy = Sin(nAngle)>>16;
-    sfxPlay3DSound(pSprite, 1101, 1, 0);
+    dx = Cos(nAngle)>>16;
+    dy = Sin(nAngle)>>16;
+    dz = height - height2;
+    sfxPlay3DSound(pSprite, 1101, 1);
     actFireVector(pSprite, 0, 0, dx, dy, dz, VECTOR_TYPE_10);
 }
 
@@ -116,28 +117,34 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
         aiNewState(pSprite, pXSprite, &zombieASearch);
         return;
     }
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 205);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 208);
     SPRITE *pTarget = &sprite[pXSprite->target];
     XSPRITE *pXTarget = &xsprite[pTarget->extra];
-    int dx = pTarget->x-pSprite->x;
-    int dy = pTarget->y-pSprite->y;
+    dx = pTarget->x-pSprite->x;
+    dy = pTarget->y-pSprite->y;
     aiChooseDirection(pSprite, pXSprite, getangle(dx, dy));
     if (pXTarget->health == 0)
     {
         aiNewState(pSprite, pXSprite, &zombieASearch);
         return;
     }
-    if (IsPlayerSprite(pTarget) && (powerupCheck(&gPlayer[pTarget->type-kDudePlayer1], 13) > 0 || powerupCheck(&gPlayer[pTarget->type-kDudePlayer1], 31) > 0))
+    if (IsPlayerSprite(pTarget))
     {
-        aiNewState(pSprite, pXSprite, &zombieAGoto);
-        return;
+        PLAYER* pPlayer = &gPlayer[pTarget->type - kDudePlayer1];
+        if (powerupCheck(pPlayer, 13) > 0 || powerupCheck(pPlayer, 31) > 0)
+        {
+            aiNewState(pSprite, pXSprite, &zombieAGoto);
+            return;
+        }
     }
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (nDist <= pDudeInfo->at17)
     {
-        int nDeltaAngle = ((getangle(dx,dy)+1024-pSprite->ang)&2047)-1024;
+        int nAngle = getangle(dx, dy);
+        int nDeltaAngle = ((nAngle+1024-pSprite->ang)&2047)-1024;
         int height = (pDudeInfo->atb*pSprite->yrepeat)<<2;
         if (cansee(pTarget->x, pTarget->y, pTarget->z, pTarget->sectnum, pSprite->x, pSprite->y, pSprite->z - height, pSprite->sectnum))
         {
@@ -162,28 +169,34 @@ static void thinkPonder(SPRITE *pSprite, XSPRITE *pXSprite)
         aiNewState(pSprite, pXSprite, &zombieASearch);
         return;
     }
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 285);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 288);
     SPRITE *pTarget = &sprite[pXSprite->target];
     XSPRITE *pXTarget = &xsprite[pTarget->extra];
-    int dx = pTarget->x-pSprite->x;
-    int dy = pTarget->y-pSprite->y;
+    dx = pTarget->x-pSprite->x;
+    dy = pTarget->y-pSprite->y;
     aiChooseDirection(pSprite, pXSprite, getangle(dx, dy));
     if (pXTarget->health == 0)
     {
         aiNewState(pSprite, pXSprite, &zombieASearch);
         return;
     }
-    if (IsPlayerSprite(pTarget) && (powerupCheck(&gPlayer[pTarget->type-kDudePlayer1], 13) > 0 || powerupCheck(&gPlayer[pTarget->type-kDudePlayer1], 31) > 0))
+    if (IsPlayerSprite(pTarget))
     {
-        aiNewState(pSprite, pXSprite, &zombieAGoto);
-        return;
+        PLAYER* pPlayer = &gPlayer[pTarget->type - kDudePlayer1];
+        if (powerupCheck(pPlayer, 13) > 0 || powerupCheck(pPlayer, 31) > 0)
+        {
+            aiNewState(pSprite, pXSprite, &zombieAGoto);
+            return;
+        }
     }
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (nDist <= pDudeInfo->at17)
     {
-        int nDeltaAngle = ((getangle(dx,dy)+1024-pSprite->ang)&2047)-1024;
+        int nAngle = getangle(dx, dy);
+        int nDeltaAngle = ((nAngle+1024-pSprite->ang)&2047)-1024;
         int height = (pDudeInfo->atb*pSprite->yrepeat)<<2;
         if (cansee(pTarget->x, pTarget->y, pTarget->z, pTarget->sectnum, pSprite->x, pSprite->y, pSprite->z - height, pSprite->sectnum))
         {
@@ -194,7 +207,7 @@ static void thinkPonder(SPRITE *pSprite, XSPRITE *pXSprite)
                 {
                     if (klabs(nDeltaAngle) < 85)
                     {
-                        sfxPlay3DSound(pSprite, 1101, 1, 0);
+                        sfxPlay3DSound(pSprite, 1101, 1);
                         aiNewState(pSprite, pXSprite, &zombieAHack);
                     }
                     return;
@@ -213,8 +226,9 @@ static void myThinkTarget(SPRITE *pSprite, XSPRITE *pXSprite)
     for (int p = connecthead; p >= 0; p = connectpoint2[p])
     {
         PLAYER *pPlayer = &gPlayer[p];
-        int nOwner = (pSprite->owner & 0x1000) ? (pSprite->owner&0xfff) : -1;
-        if (nOwner == pPlayer->at5b || pPlayer->pXSprite->health == 0 || powerupCheck(pPlayer, 13) > 0)
+        int nOwner = pSprite->owner;
+        int nOwner2 = (nOwner & 0x1000) ? (nOwner&0xfff) : -1;
+        if (nOwner2 == pPlayer->at5b || pPlayer->pXSprite->health == 0 || powerupCheck(pPlayer, 13) > 0)
             continue;
         int x = pPlayer->pSprite->x;
         int y = pPlayer->pSprite->y;
@@ -223,24 +237,27 @@ static void myThinkTarget(SPRITE *pSprite, XSPRITE *pXSprite)
         int dx = x-pSprite->x;
         int dy = y-pSprite->y;
         int nDist = approxDist(dx, dy);
-        if (nDist > pDudeInfo->at17 && nDist > pDudeInfo->at13)
-            continue;
-        if (!cansee(x, y, z, nSector, pSprite->x, pSprite->y, pSprite->z-((pDudeInfo->atb*pSprite->yrepeat)<<2), pSprite->sectnum))
-            continue;
-        int nDeltaAngle = ((getangle(dx,dy)+1024-pSprite->ang)&2047)-1024;
-        if (nDist < pDudeInfo->at17 && klabs(nDeltaAngle) <= pDudeInfo->at1b)
+        if (nDist <= pDudeInfo->at17 || nDist <= pDudeInfo->at13)
         {
-            aiSetTarget(pXSprite, pPlayer->at5b);
-            aiActivateDude(pSprite, pXSprite);
+            int height = (pDudeInfo->atb * pSprite->yrepeat) << 2;
+            if (cansee(x, y, z, nSector, pSprite->x, pSprite->y, pSprite->z - height, pSprite->sectnum))
+            {
+                int nAngle = getangle(dx, dy);
+                int nDeltaAngle = ((nAngle+1024-pSprite->ang)&2047)-1024;
+                if (nDist < pDudeInfo->at17 && klabs(nDeltaAngle) <= pDudeInfo->at1b)
+                {
+                    aiSetTarget(pXSprite, pPlayer->at5b);
+                    aiActivateDude(pSprite, pXSprite);
+                    return;
+                }
+                else if (nDist < pDudeInfo->at13)
+                {
+                    aiSetTarget(pXSprite, x, y, z);
+                    aiActivateDude(pSprite, pXSprite);
+                    return;
+                }
+            }
         }
-        else if (nDist < pDudeInfo->at13)
-        {
-            aiSetTarget(pXSprite, x, y, z);
-            aiActivateDude(pSprite, pXSprite);
-        }
-        else
-            continue;
-        break;
     }
 }
 

@@ -33,16 +33,7 @@ public:
     int f_18;
     void (*f_1c)(CChoke*, PLAYER*);
 
-    CChoke()
-    {
-        f_0 = NULL;
-        f_4 = NULL;
-        f_8 = NULL;
-        f_1c = NULL;
-        f_14 = 0;
-        f_18 = 0;
-    };
-    
+    CChoke();
     CChoke(int _x, int _y, char *a1, void(*a2)(CChoke*, PLAYER*));
     void func_83ff0(int a1, void(*a2)(CChoke*, PLAYER*));
     void func_84080(char *a1, void(*a2)(CChoke*, PLAYER*));

@@ -24,6 +24,16 @@
 #include "player.h"
 #include "resource.h"
 
+CChoke::CChoke()
+{
+    f_0 = NULL;
+    f_4 = NULL;
+    f_8 = NULL;
+    f_1c = NULL;
+    f_14 = 0;
+    f_18 = 0;
+}
+
 CChoke::CChoke(int _x, int _y, char *a1, void (*a2)(CChoke*, PLAYER*))
 {
     f_14 = _x;

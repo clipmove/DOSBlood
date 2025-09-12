@@ -64,12 +64,12 @@ void func_76FD4(void)
         int_27AA44 = (byte*)Resource::Alloc(0x186a0);
 }
 
-void LoadSave::Save(void)
+void LoadSave::Load(void)
 {
     ThrowError(66)("Pure virtual function called");
 }
 
-void LoadSave::Load(void)
+void LoadSave::Save(void)
 {
     ThrowError(72)("Pure virtual function called");
 }
@@ -194,15 +194,18 @@ public:
 
 void MyLoadSave::Load(void)
 {
+    int nNumSprites;
     int id;
+    int release;
+    int nGameClock;
+    int i;
+    ushort version;
     Read(&id, sizeof(id));
     if (id != 'DULB')
         ThrowError(291)("Old saved game found");
-    ushort version;
     Read(&version, sizeof(version));
     if (version != gGameVersion.w)
         ThrowError(296)("Incompatible version of saved game found!");
-    int release;
     Read(&release, sizeof(release));
     id = 4;
     if (release != id)
@@ -210,7 +213,6 @@ void MyLoadSave::Load(void)
     Read(&gGameOptions, sizeof(gGameOptions));
     Read(&numsectors, sizeof(numsectors));
     Read(&numwalls, sizeof(numwalls));
-    int nNumSprites;
     Read(&nNumSprites, sizeof(nNumSprites));
     memset(sector, 0, sizeof(sector));
     memset(wall, 0, sizeof(wall));
@@ -242,7 +244,6 @@ void MyLoadSave::Load(void)
     Read(&gFrameClock, sizeof(gFrameClock));
     Read(&gFrameTicks, sizeof(gFrameTicks));
     Read(&gFrame, sizeof(gFrame));
-    int nGameClock;
     Read(&nGameClock, sizeof(nGameClock));
     gGameClock = nGameClock;
     Read(&gPaused, sizeof(gPaused));
@@ -263,28 +264,35 @@ void MyLoadSave::Load(void)
     Read(nextXWall, sizeof(nextXWall));
     Read(nextXSector, sizeof(nextXSector));
     memset(xsprite, 0, sizeof(xsprite));
-    for (int nSprite = 0; nSprite < kMaxSprites; nSprite++)
+    for (i = 0; i < kMaxSprites; i++)
     {
-        if (sprite[nSprite].statnum < kMaxStatus)
+        if (sprite[i].statnum < kMaxStatus)
         {
-            int nXSprite = sprite[nSprite].extra;
+            int nXSprite = sprite[i].extra;
             if (nXSprite > 0)
-                Read(&xsprite[nXSprite], sizeof(XSPRITE));
+            {
+                XSPRITE* pXSprite = &xsprite[nXSprite];
+                Read(pXSprite, sizeof(XSPRITE));
+            }
         }
     }
     memset(xwall, 0, sizeof(xwall));
-    for (int nWall = 0; nWall < numwalls; nWall++)
+    for (i = 0; i < numwalls; i++)
     {
-        int nXWall = wall[nWall].extra;
-        if (nXWall > 0)
-            Read(&xwall[nXWall], sizeof(XWALL));
+        if (wall[i].extra > 0)
+        {
+            XWALL* pXWall = &xwall[wall[i].extra];
+            Read(pXWall, sizeof(XWALL));
+        }
     }
     memset(xsector, 0, sizeof(xsector));
-    for (int nSector = 0; nSector < numsectors; nSector++)
+    for (i = 0; i < numsectors; i++)
     {
-        int nXSector = sector[nSector].extra;
-        if (nXSector > 0)
-            Read(&xsector[nXSector], sizeof(XSECTOR));
+        if (sector[i].extra > 0)
+        {
+            XSECTOR* pXSector = &xsector[sector[i].extra];
+            Read(pXSector, sizeof(XSECTOR));
+        }
     }
     Read(xvel, nNumSprites*sizeof(xvel[0]));
     Read(yvel, nNumSprites*sizeof(yvel[0]));
@@ -304,10 +312,10 @@ void MyLoadSave::Save(void)
     Write(&version, sizeof(version));
     id = 4;
     Write(&id, sizeof(id));
-    for (int nSprite = 0; nSprite < kMaxSprites; nSprite++)
+    for (int i = 0; i < kMaxSprites; i++)
     {
-        if (sprite[nSprite].statnum < kMaxStatus && nSprite > nNumSprites)
-            nNumSprites = nSprite;
+        if (sprite[i].statnum < kMaxStatus && i > nNumSprites)
+            nNumSprites = i;
     }
     nNumSprites += 2;
     Write(&gGameOptions, sizeof(gGameOptions));
@@ -360,26 +368,32 @@ void MyLoadSave::Save(void)
     Write(nextXSprite, sizeof(nextXSprite));
     Write(nextXWall, sizeof(nextXWall));
     Write(nextXSector, sizeof(nextXSector));
-    for (nSprite = 0; nSprite < kMaxSprites; nSprite++)
+    for (i = 0; i < kMaxSprites; i++)
     {
-        if (sprite[nSprite].statnum < kMaxStatus)
+        if (sprite[i].statnum < kMaxStatus)
         {
-            int nXSprite = sprite[nSprite].extra;
-            if (nXSprite > 0)
-                Write(&xsprite[nXSprite], sizeof(XSPRITE));
+            if (sprite[i].extra > 0)
+            {
+                XSPRITE* pXSprite = &xsprite[sprite[i].extra];
+                Write(pXSprite, sizeof(XSPRITE));
+            }
         }
     }
-    for (int nWall = 0; nWall < numwalls; nWall++)
+    for (i = 0; i < numwalls; i++)
     {
-        int nXWall = wall[nWall].extra;
-        if (nXWall > 0)
-            Write(&xwall[nXWall], sizeof(XWALL));
+        if (wall[i].extra > 0)
+        {
+            XWALL* pXWall = &xwall[wall[i].extra];
+            Write(pXWall, sizeof(XWALL));
+        }
     }
-    for (int nSector = 0; nSector < numsectors; nSector++)
+    for (i = 0; i < numsectors; i++)
     {
-        int nXSector = sector[nSector].extra;
-        if (nXSector > 0)
-            Write(&xsector[nXSector], sizeof(XSECTOR));
+        if (sector[i].extra > 0)
+        {
+            XSECTOR* pXSector = &xsector[sector[i].extra];
+            Write(pXSector, sizeof(XSECTOR));
+        }
     }
     Write(xvel, nNumSprites*sizeof(xvel[0]));
     Write(yvel, nNumSprites*sizeof(yvel[0]));
@@ -408,34 +422,31 @@ void LoadSavedInfo(void)
         if (read(hFile, &vc, sizeof(vc)) == -1)
         {
             close(hFile);
-            nCount++; nStatus = _dos_findnext(&find);
-            continue;
+            goto next;
         }
         if (vc != 'DULB')
         {
             close(hFile);
-            nCount++; nStatus = _dos_findnext(&find);
-            continue;
+            goto next;
         }
         read(hFile, &v4, sizeof(v4));
         if (v4 != gGameVersion.w)
         {
             close(hFile);
-            nCount++; nStatus = _dos_findnext(&find);
-            continue;
+            goto next;
         }
         read(hFile, &v8, sizeof(v8));
         vc = 4;
         if (v8 != vc)
         {
             close(hFile);
-            nCount++; nStatus = _dos_findnext(&find);
-            continue;
+            goto next;
         }
         if (read(hFile, &gSaveGameOptions[nCount], sizeof(gSaveGameOptions[0])) == -1)
             ThrowError(752)("File error #%d reading save file.", errno);
         close(hFile);
         strcpy(strRestoreGameStrings[gSaveGameOptions[nCount].nSaveGameSlot], gSaveGameOptions[nCount].szUserGameName);
+next:
         nCount++; nStatus = _dos_findnext(&find);
     }
 }
