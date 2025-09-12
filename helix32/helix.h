@@ -63,7 +63,7 @@ struct VGT {
     void (pascal *BlitMT2V)(BYTE*, int, int, int, int, int, int, int);
     void (pascal *BlitMono)(BYTE*, int, int, int, int, int, int, int);
 
-    static inline void SetColor(int color) { gColor = color; }
+    inline void SetColor(int color) { gColor = color; }
 };
 
 struct PAGE_STRUCT {

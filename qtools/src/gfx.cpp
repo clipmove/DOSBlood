@@ -338,7 +338,7 @@ void gfxDrawText(int x, int y, int color, char* pzText, QFONT* pFont)
                     break;
                 }
             }
-            x += pFont->at11 + pChar->ox;
+            x += pChar->ox + pFont->at11;
         }
     }
 }
@@ -398,7 +398,7 @@ void gfxDrawLabel(int x, int y, int color, char* pzLabel, QFONT* pFont)
                     break;
                 }
             }
-            x += pFont->at11 + pChar->ox;
+            x += pChar->ox + pFont->at11;
         }
         v4 = FALSE;
     }

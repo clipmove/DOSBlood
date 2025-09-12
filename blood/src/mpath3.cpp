@@ -109,10 +109,11 @@ int func_83500(void)
     int vs = gGameClock + vc;
     for (int i = connecthead; i >= 0; i = connectpoint2[i])
     {
-        int va = (gNetFifoHead[myconnectindex] - gNetFifoHead[i]) / 10;
-        if (va > vc)
+        int t = myconnectindex;
+        t = (gNetFifoHead[t] - gNetFifoHead[i]) / 10;
+        if (t > vc)
         {
-            vc = va;
+            vc = t;
             if (vc > 8)
                 vc = 8;
             vs = gGameClock + vc;

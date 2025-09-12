@@ -564,13 +564,13 @@ int tileBuildHistogram(int a1)
     case 1:
         for (i = 0; i < numsectors; i++)
         {
-            tileHist[sector[i].floorpicnum]++;
+            tileHist[sector[i].ceilingpicnum]++;
         }
         break;
     case 2:
         for (i = 0; i < numsectors; i++)
         {
-            tileHist[sector[i].ceilingpicnum]++;
+            tileHist[sector[i].floorpicnum]++;
         }
         break;
     case 4:
@@ -637,7 +637,7 @@ void tileDrawTileScreen(int a1, int a2, int a3, int a4)
 
     int v54;
 
-    int v38;
+    unsigned int v3c;
 
     unsigned int v4c;
     unsigned int v60;
@@ -645,7 +645,7 @@ void tileDrawTileScreen(int a1, int a2, int a3, int a4)
     unsigned int vbp;
 
     unsigned int v50;
-    unsigned int v3c;
+    int v38;
 
     int v30;
     int v2c;
@@ -814,7 +814,7 @@ int tilePick(int nTile, int a2, int a3)
             WaitVBL();
         }
         scrNextPage();
-        gFrameTicks = totalclock - gFrameClock;
+        gFrameTicks = gGameClock - gFrameClock;
         gFrameClock += gFrameTicks;
         UpdateBlinkClock(gFrameTicks);
         key = keyGet();

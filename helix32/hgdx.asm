@@ -14,7 +14,7 @@
 ; GNU General Public License for more details.
 ;
 .386p
-.MODEL SMALL
+.MODEL FLAT
 
 VGTBEGIN SEGMENT DWORD PUBLIC USE32 'DLL'
 VGTBEGIN ENDS
@@ -353,7 +353,7 @@ ModeXSetMode PROC
 	and		al, 7Fh
 	out		dx, al
 	dec		dx
-	mov		esi, offset word_1186A9
+	mov		esi, offset word_1187B4
 	mov		ecx, 0Ah
 L4:
 	lodsw
@@ -922,7 +922,7 @@ ModeXVLineROP PROC
 	push	ebx
 	pop		ebx
 	leave
-	retn	14h
+	retn	10h
 ENDP
 
 ModeXBlitRLE2V PROC

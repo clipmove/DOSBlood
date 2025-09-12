@@ -246,11 +246,11 @@ void IniFile::AddKeyString(char *key, char *val)
     char buf[256];
     sprintf(buf, "%s=%s", key, val);
     IniNode *newNode = (IniNode*)malloc(5 + strlen(buf));
-    dassert(newNode != NULL, 375);
+    dassert(newNode != NULL, 393);
     strcpy(newNode->f_4, buf);
     newNode->next = f_9->next;
     f_9->next = newNode;
-    f_9 = newNode;
+    curNode = newNode;
 }
 
 void IniFile::ChangeKeyString(char *key, char *val)
@@ -258,7 +258,7 @@ void IniFile::ChangeKeyString(char *key, char *val)
     char buf[256];
     sprintf(buf, "%s=%s", key, val);
     IniNode *newNode = (IniNode*)realloc(curNode, 5 + strlen(buf));
-    dassert(newNode != NULL, 375);
+    dassert(newNode != NULL, 411);
     strcpy(newNode->f_4, buf);
     f_9->next = newNode;
 }

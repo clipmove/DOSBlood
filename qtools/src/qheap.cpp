@@ -54,7 +54,7 @@ QHeap::QHeap(int heapSize)
 {
     dassert(heapSize > 0, 67);
     size = heapSize;
-    void *p = malloc(0x200000);
+    void *p = malloc(0x20000);
     while (size > 0 && (heapPtr = malloc(size)) == NULL)
     {
         size -= 0x1000;

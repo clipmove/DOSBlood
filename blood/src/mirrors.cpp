@@ -72,7 +72,7 @@ void InitMirrors(void)
                         continue;
                     if (wall[j].extra > 0 && wall[j].type == 501)
                     {
-                        if (data != xwall[wall[j].extra].at4_0)
+                        if (xwall[wall[j].extra].at4_0 != data)
                             continue;
                         wall[i].hitag = j;
                         wall[j].hitag = i;
@@ -81,7 +81,7 @@ void InitMirrors(void)
                     }
                 }
                 if (j < 0)
-                    ThrowError(20)("wall[%d] has no matching wall link! (data=%d)\n", i, data);
+                    ThrowError(120)("wall[%d] has no matching wall link! (data=%d)\n", i, data);
                 mirrorcnt++;
             }
             continue;

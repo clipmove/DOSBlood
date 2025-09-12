@@ -235,10 +235,10 @@ void WeaponDraw(PLAYER *pPlayer, int a2, int a3, int a4, int a5, BOOL bQ16Precis
         v4 = pQAV->at10-pPlayer->atbf;
     pQAV->x = a3;
     pQAV->y = a4;
-    int flags = 2;
     if (bInterpolate && pPlayer->atbd == 7 && pPlayer->atc3 == 4) // do not lerp for the spray can firing animation
         bInterpolate = 0;
     int nInv = powerupCheck(pPlayer, 13);
+    int flags = 2;
     if (nInv >= 120*8 || (nInv != 0 && (gGameClock&32)))
     {
         a2 = -128;
@@ -1721,8 +1721,8 @@ BOOL func_4F0E0(PLAYER *pPlayer)
     case 6:
         if (pPlayer->atc.buttonFlags.shoot2)
         {
-            pPlayer->atc3 = 3;
             pPlayer->at1b2 = pPlayer->atbf;
+            pPlayer->atc3 = 3;
             StartQAV(pPlayer, 13, nClientDropCan);
             return 1;
         }
@@ -1760,8 +1760,8 @@ BOOL func_4F200(PLAYER *pPlayer)
     case 5:
         if (pPlayer->atc.buttonFlags.shoot2)
         {
-            pPlayer->atc3 = 1;
             pPlayer->at1b2 = pPlayer->atbf;
+            pPlayer->atc3 = 1;
             StartQAV(pPlayer, 22, nClientDropBundle, 0);
             return 1;
         }

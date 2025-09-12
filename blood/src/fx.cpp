@@ -136,7 +136,7 @@ void CFX::func_73FFC(int nSprite)
 
 SPRITE *CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned int duration)
 {
-    if (nSector < 0 || nSector >= numsectors)
+    if (nSector < 0 || nSector > numsectors)
         return NULL;
     int nSector2 = nSector;
     if (!FindSector(x, y, z, &nSector2))
@@ -182,9 +182,9 @@ SPRITE *CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned int d
     if (pFX->at15 > 0)
         pSprite->yrepeat = pFX->at15;
     if ((pFX->at4 & kFXFlag0) && Chance(0x8000))
-        pSprite->cstat |= 4;
+        pSprite->cstat ^= 4;
     if ((pFX->at4 & kFXFlag1) && Chance(0x8000))
-        pSprite->cstat |= 8;
+        pSprite->cstat ^= 8;
     if (pFX->at2 != 0)
     {
         int nXSprite = dbInsertXSprite(pSprite->index);
@@ -267,7 +267,7 @@ void CFX::fxProcess(void)
 
 void fxSpawnBlood(SPRITE *pSprite, int)
 {
-    if (pSprite->sectnum < 0 || pSprite->sectnum >= numsectors)
+    if (pSprite->sectnum < 0 || pSprite->sectnum > numsectors)
         return;
     int nSector = pSprite->sectnum;
     if (!FindSector(pSprite->x, pSprite->y, pSprite->z, &nSector))
@@ -280,14 +280,15 @@ void fxSpawnBlood(SPRITE *pSprite, int)
         pBlood->ang = 1024;
         xvel[pBlood->index] = Random2(0x6aaaa);
         yvel[pBlood->index] = Random2(0x6aaaa);
-        zvel[pBlood->index] = -Random(0x10aaaa)-100;
+        int t = -Random(0x10aaaa) - 100;
+        zvel[pBlood->index] = t;
         evPost(pBlood->index, 3, 8, CALLBACK_ID_6);
     }
 }
 
 void func_746D4(SPRITE *pSprite, int)
 {
-    if (pSprite->sectnum < 0 || pSprite->sectnum >= numsectors)
+    if (pSprite->sectnum < 0 || pSprite->sectnum > numsectors)
         return;
     int nSector = pSprite->sectnum;
     if (!FindSector(pSprite->x, pSprite->y, pSprite->z, &nSector))

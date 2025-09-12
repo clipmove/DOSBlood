@@ -143,7 +143,7 @@ static void func_70284(int, int nXSprite)
         nDist = 50;
         break;
     }
-    func_2A620(nSprite, pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum, nDist, 1, 5*(1+gGameOptions.nDifficulty), (DAMAGE_TYPE)dmgType, 2, nBurn);
+    func_2A620(nSprite, pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum, nDist, 1, 5*gGameOptions.nDifficulty+5, (DAMAGE_TYPE)dmgType, 2, nBurn);
 }
 
 static void func_7034C(SPRITE *pSprite, XSPRITE *pXSprite)
@@ -185,43 +185,53 @@ static void func_704D8(SPRITE *pSprite, XSPRITE *pXSprite)
         switch (pSprite->type)
         {
         case 221:
+            aiNewState(pSprite, pXSprite, &pod13A600);
+            break;
         case 223:
             aiNewState(pSprite, pXSprite, &pod13A600);
             break;
         case 222:
+            aiNewState(pSprite, pXSprite, &tentacle13A718);
+            break;
         case 224:
             aiNewState(pSprite, pXSprite, &tentacle13A718);
             break;
         }
         return;
     }
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 450);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 453);
     SPRITE *pTarget = &sprite[pXSprite->target];
     XSPRITE *pXTarget = &xsprite[pTarget->extra];
-    int dx = pTarget->x-pSprite->x;
-    int dy = pTarget->y-pSprite->y;
+    dx = pTarget->x-pSprite->x;
+    dy = pTarget->y-pSprite->y;
     aiChooseDirection(pSprite, pXSprite, getangle(dx, dy));
     if (pXTarget->health == 0)
     {
         switch (pSprite->type)
         {
         case 221:
+            aiNewState(pSprite, pXSprite, &podSearch);
+            break;
         case 223:
             aiNewState(pSprite, pXSprite, &podSearch);
             break;
         case 222:
+            aiNewState(pSprite, pXSprite, &tentacleSearch);
+            break;
         case 224:
             aiNewState(pSprite, pXSprite, &tentacleSearch);
             break;
         }
         return;
     }
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (nDist <= pDudeInfo->at17)
     {
-        int nDeltaAngle = ((getangle(dx,dy)+1024-pSprite->ang)&2047)-1024;
+        int nAngle = getangle(dx, dy);
+        int nDeltaAngle = ((nAngle+1024-pSprite->ang)&2047)-1024;
         int height = (pDudeInfo->atb*pSprite->yrepeat)<<2;
         if (cansee(pTarget->x, pTarget->y, pTarget->z, pTarget->sectnum, pSprite->x, pSprite->y, pSprite->z - height, pSprite->sectnum))
         {
@@ -233,10 +243,14 @@ static void func_704D8(SPRITE *pSprite, XSPRITE *pXSprite)
                     switch (pSprite->type)
                     {
                     case 221:
+                        aiNewState(pSprite, pXSprite, &pod13A638);
+                        break;
                     case 223:
                         aiNewState(pSprite, pXSprite, &pod13A638);
                         break;
                     case 222:
+                        aiNewState(pSprite, pXSprite, &tentacle13A750);
+                        break;
                     case 224:
                         aiNewState(pSprite, pXSprite, &tentacle13A750);
                         break;
@@ -250,10 +264,14 @@ static void func_704D8(SPRITE *pSprite, XSPRITE *pXSprite)
     switch (pSprite->type)
     {
     case 221:
+        aiNewState(pSprite, pXSprite, &pod13A600);
+        break;
     case 223:
         aiNewState(pSprite, pXSprite, &pod13A600);
         break;
     case 222:
+        aiNewState(pSprite, pXSprite, &tentacle13A718);
+        break;
     case 224:
         aiNewState(pSprite, pXSprite, &tentacle13A718);
         break;

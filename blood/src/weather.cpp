@@ -52,8 +52,8 @@ CWeather::~CWeather()
     f_10 = 0;
     f_14 = 0;
     memset(YLookup, 0, sizeof(YLookup));
-    f_12d8 = 0;
     f_12da = 0;
+    f_12d8 = 0;
     f_12dc = -1;
     memset(f_12de, 0, sizeof(f_12de));
     f_72de = 0;
@@ -200,7 +200,7 @@ CWeather::SetWeatherType(WEATHERTYPE a1)
         SetColorShift(2);
         break;
     default:
-        f_12d8 = 0;
+        SetCount(0);
         break;
     }
 }

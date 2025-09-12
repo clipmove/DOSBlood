@@ -35,9 +35,9 @@
 #include "map2d.h"
 #include "network.h"
 #include "player.h"
+#include "sound.h"
 #include "seq.h"
 #include "sfx.h"
-#include "sound.h"
 #include "tile.h"
 #include "trig.h"
 #include "triggers.h"
@@ -1832,7 +1832,7 @@ void playerFrag(PLAYER *pKiller, PLAYER *pVictim)
         int nMessage = Random(5);
         int nSound = gSuicide[nMessage].at4;
         char *pzMessage = gSuicide[nMessage].at0;
-        if (pVictim == gMe && gMe->at372 <= 0)
+        if (gMe == pVictim && pVictim->at372 <= 0)
         {
             sprintf(buffer, "You killed yourself!");
             if (gGameOptions.nGameType > GAMETYPE_0 && nSound >= 0)
@@ -1954,12 +1954,13 @@ int playerDamageSprite(int nSource, PLAYER *pPlayer, DAMAGE_TYPE nDamageType, in
     int nSprite = pSprite->index;
     int nXSprite = pSprite->extra;
     int nXSector = sector[pSprite->sectnum].extra;
+    int v18;
     int nType = pSprite->type - kDudeBase;
     DUDEINFO *pDudeInfo = &dudeInfo[nType];
     int nDeathSeqID = -1;
-    int v18 = -1;
+    v18 = -1;
     BOOL va = playerSeqPlaying(pPlayer, 16);
-    if (!pXSprite->health)
+    if (pXSprite->health == 0)
     {
         if (va)
         {

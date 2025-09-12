@@ -364,7 +364,7 @@ void Button::HandleEvent(GEVENT* event)
     }
     else if ((event->at0 & GEVENT_TYPE_MOUSE_MASK))
     {
-        if (event->at6.mouse.at4 == 0)
+        if (event->at6.mouse.at4)
             return;
         switch (event->at0)
         {
@@ -475,8 +475,7 @@ void EditText::Paint(int x, int y, char a3)
     if (a3 && IsBlinkOn())
     {
         Video.SetColor(gStdColor[0]);
-        y += atc / 2;
-        gfxVLine(x + gfxGetTextNLen(at24, pFont, at128) + 3, y - 4, y + 3);
+        gfxVLine(x + gfxGetTextNLen(at24, pFont, at128) + 3, y + atc / 2 - 4, y + atc / 2 + 3);
     }
 }
 
@@ -698,14 +697,14 @@ GEVENT_TYPE GetEvent(GEVENT* event)
     byte key = keyGet();
     if (key != 0)
     {
-        if (keystatus[bsc_Left])
+        if (keystatus[bsc_LShift])
             event->at6.keyboard.at2.bits.at3 = 1;
-        if (keystatus[bsc_Right])
+        if (keystatus[bsc_RShift])
             event->at6.keyboard.at2.bits.at4 = 1;
         event->at6.keyboard.at2.bits.at0 = event->at6.keyboard.at2.bits.at3 | event->at6.keyboard.at2.bits.at4;
         if (keystatus[bsc_LCtrl])
             event->at6.keyboard.at2.bits.at5 = 1;
-        if (keystatus[bsc_RShift])
+        if (keystatus[bsc_RCtrl])
             event->at6.keyboard.at2.bits.at6 = 1;
         event->at6.keyboard.at2.bits.at1 = event->at6.keyboard.at2.bits.at5 | event->at6.keyboard.at2.bits.at6;
         if (keystatus[bsc_LAlt])
@@ -819,7 +818,7 @@ MODAL_RESULT ShowModal(Container* container)
     container->at24 = 1;
     while (container->at24)
     {
-        gFrameTicks = totalclock - gFrameClock;
+        gFrameTicks = gGameClock - gFrameClock;
         gFrameClock += gFrameTicks;
         UpdateBlinkClock((int)gFrameTicks);
 

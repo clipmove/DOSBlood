@@ -184,7 +184,7 @@ void sndStartSample(ulong nSound, int nVolume, int nChannel, BOOL bLoop)
     DICTNODE *hSfx = gSoundRes.Lookup(nSound, "SFX");
     if (!hSfx)
         return;
-    SFX *pEffect = (SFX*)gSoundRes.Lock(hSfx);
+    SFX *pEffect = (SFX*)gSoundRes.Load(hSfx);
     dassert(pEffect != NULL, 242);
     SAMPLE2D *pChannel;
     if (nChannel == -1)
@@ -375,7 +375,7 @@ void InitMusicDevice(void)
         MusicDevice = 0;
     int nStatus = MUSIC_Init(MusicDevice, MidiPort);
     if (nStatus != 0)
-        ThrowError(464)(MUSIC_ErrorString(nStatus));
+        ThrowError(576)(MUSIC_ErrorString(nStatus));
     DICTNODE *hTmb = gSoundRes.Lookup("GMTIMBRE", "TMB");
     if (hTmb)
         MUSIC_RegisterTimbreBank((byte*)gSoundRes.Load(hTmb));
@@ -384,14 +384,14 @@ void InitMusicDevice(void)
 
 void TermMusicDevice(void)
 {
-    if (FXDevice == -1)
+    if (MusicDevice == -1)
         return;
     if (gUse8250 && bNetGame)
         return;
     FX_StopAllSounds();
     int nStatus = MUSIC_Shutdown();
     if (nStatus != 0)
-        ThrowError(486)(MUSIC_ErrorString(MUSIC_ErrorCode));
+        ThrowError(596)(MUSIC_ErrorString(MUSIC_ErrorCode));
 }
 
 void sndTerm(void)

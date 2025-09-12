@@ -14,7 +14,7 @@
 ; GNU General Public License for more details.
 ;
 .386p
-.MODEL SMALL
+.MODEL FLAT
 
 VGTBEGIN SEGMENT DWORD PUBLIC USE32 'DLL'
 VGTBEGIN ENDS
@@ -87,10 +87,11 @@ linecalldefine MACRO number
 ENDM
 
 linecall LABEL
-INDEX = 0
-REPT 64
+dd linecall_0
+INDEX = 63
+REPT 63
 linecalldefine %INDEX
-INDEX = INDEX + 1
+INDEX = INDEX - 1
 ENDM
 
 byte_1185D4		db 88h
@@ -309,7 +310,7 @@ MCGAHLine PROC
 	jz		short L8
 	mov		ah, al
 	cmp		ecx, 0Ch
-	jz		short L7
+	jb		short L7
 	push	ebx
 	mov		ebx, ecx
 	mov		ecx, edi
@@ -390,7 +391,7 @@ L10:
 	test	ecx, ecx
 	jz		short L12
 	cmp		ecx, 0Ch
-	jz		short L11
+	jb		short L11
 	push	ebx
 	mov		ebx, ecx
 	mov		ecx, edi
@@ -522,7 +523,7 @@ MCGAHLineROP PROC
 	add		edi, _gYLookup[eax*4]
 	add		edi, [ebp+0Ch]
 	mov		ecx, [ebp+8]
-	sub		ecx, [ebp+10h]
+	sub		ecx, [ebp+0Ch]
 	inc		ecx
 	mov		eax, _gROP
 	mov		al, byte_1185D4[eax]

@@ -1636,8 +1636,8 @@ void CGameMenuItemQAV::Draw(void)
     wx2 = windowx2;
     wy2 = windowy2;
 
-    windowx1 = 0;
     windowy1 = 0;
+    windowx1 = 0;
     windowx2 = xdim-1;
     windowy2 = ydim-1;
     at28->Draw(t2, 10, 0, 0, 0, bInterp);
@@ -1668,7 +1668,7 @@ BOOL CGameMenuItemQAV::Event(CGameMenuEvent &event)
     case 0x8000:
         if (at20)
         {
-            if (!at28)
+            if (at28 == NULL)
             {
                 at24 = gSysRes.Lookup(at20, "QAV");
                 if (!at24)
@@ -1679,13 +1679,13 @@ BOOL CGameMenuItemQAV::Event(CGameMenuEvent &event)
                 at28->Preload();
                 at2c = at28->at10;
                 at30 = totalclock;
-                break;
             }
-            gSysRes.Lock(at24);
+            else
+                gSysRes.Lock(at24);
         }
         break;
     case 0x8001:
-        if (at20 && at28)
+        if (at20 && at28 != NULL)
         {
             gSysRes.Unlock(at24);
             if (at24->lockCount == 0)

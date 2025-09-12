@@ -532,7 +532,7 @@ void SetupEpisodeMenu(void)
                 pEpisodeItem->at34 = i;
                 if (!unk || j == 0)
                 {
-                    pEpisodeItem = &itemEpisodes[j];
+                    CGameMenuItemChain7F2F0* pEpisodeItem = &itemEpisodes[j];
                     pEpisodeItem->at24 = &menuDifficulty;
                     pEpisodeItem->at28 = 3;
                 }
@@ -1011,12 +1011,11 @@ void SetTurnSpeed(CGameMenuItemSlider *pItem)
 
 void SetDifficultyAndStart(CGameMenuItemChain *pItem)
 {
-    DIFFICULTY t = (DIFFICULTY)pItem->at30;
+    DIFFICULTY t = (DIFFICULTY)pItem->GetValue();
     gSkill = gGameOptions.nDifficultyHealth = gGameOptions.nDifficultyQuantity = gGameOptions.nDifficulty = t;
     gGameOptions.nLevel = 0;
     gGameOptions.uGameFlags = 0;
-    BOOL s = gDemo.at1;
-    if (s)
+    if (gDemo.PlaybackStatus())
         gDemo.StopPlayback();
     gStartNewGame = 1;
     gCheatMgr.func_5BCF4();
@@ -1031,8 +1030,7 @@ void SetDifficultyCustomAndStart(CGameMenuItemChain *pItem)
     gSkill = ClipRange(sliderDifficultyCustomDamage.at24, DIFFICULTY_0, DIFFICULTY_4);
     gGameOptions.nLevel = 0;
     gGameOptions.uGameFlags = 0;
-    BOOL s = gDemo.at1;
-    if (s)
+    if (gDemo.PlaybackStatus())
         gDemo.StopPlayback();
     gStartNewGame = 1;
     gCheatMgr.func_5BCF4();

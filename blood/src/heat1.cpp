@@ -70,7 +70,6 @@ void func_8364C(short nDest, char *pBuffer, short nSize)
 {
     int t[6];
     heatstruct2 *va;
-    heatstruct3 *vd;
     va = (heatstruct2*)func_83928(0, 1);
     if (!va)
     {
@@ -86,17 +85,18 @@ void func_8364C(short nDest, char *pBuffer, short nSize)
             va = (heatstruct2*)func_83928(0, 1);
         }
     }
-    unsigned short s = nSize + 1;
+    unsigned short s = (ushort)(nSize + 1);
     va->f_16 = s;
-    vd = (heatstruct3*)va->f_c;
-    if (!vd || s >= va->f_14)
-        return;
-    vd->f_0 = nDest;
-    memcpy(vd->f_1, pBuffer, nSize);
-    func_83928(1, 3);
-    func_838D4();
-    short_295476 = 0;
-    func_838B0();
+    char *vd = (char*)va->f_c;
+    if (vd && s < va->f_14)
+    {
+        *vd++ = (char)nDest;
+        memcpy(vd, pBuffer, nSize);
+        func_83928(1, 3);
+        func_838D4();
+        short_295476 = 0;
+        func_838B0();
+    }
 }
 
 void func_8384C(void);

@@ -95,12 +95,12 @@ public:
 
     BOOL testXY(int x, int y)
     {
-        return x >= f_0 && x <= f_8 && y >= f_4 && y <= f_c;
+        return x >= f_0 && x < f_8 && y >= f_4 && y < f_c;
     }
 
     BOOL testRect(Rect& other)
     {
-        return other.f_0 >= f_0 && other.f_8 <= f_8 && other.f_4 <= f_4 && other.f_c >= f_c;
+        return other.f_0 >= f_0 && other.f_8 <= f_8 && other.f_4 >= f_4 && other.f_c <= f_c;
     }
 };
 
