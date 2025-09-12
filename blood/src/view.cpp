@@ -24,6 +24,7 @@
 #include "config.h"
 #include "db.h"
 #include "debug4g.h"
+#include "demo.h"
 #include "endgame.h"
 #include "error.h"
 #include "gamemenu.h"
@@ -2953,7 +2954,7 @@ void viewDrawScreen(void)
     int delta = ClipLow(gGameClock - lastUpdate, 0);
     lastUpdate = gGameClock;
     viewUpdateFov(!CGameMenuMgr::m_bActive); // always recalculate fov while menu is active
-    if (!gPaused && (!CGameMenuMgr::m_bActive || gGameOptions.nGameType != GAMETYPE_0))
+    if (!gPaused && (!CGameMenuMgr::m_bActive || gGameOptions.nGameType != GAMETYPE_0 || gDemo.PlaybackStatus()))
 #if 1 // optimized gInterpolate calculation
     {
         // blood renders at max of 120hz, and the game logic runs at 30hz - so our interpolation precision is 0-3 units before we're onto the next game tick
