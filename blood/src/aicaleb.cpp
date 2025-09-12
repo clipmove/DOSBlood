@@ -336,8 +336,8 @@ static void func_65F44(SPRITE *pSprite, XSPRITE *pXSprite)
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 733);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     SPRITE *pTarget = &sprite[pXSprite->target];
-    int z = pSprite->z + dudeInfo[pSprite->type - kDudeBase].atb;
-    int z2 = pTarget->z + dudeInfo[pTarget->type - kDudeBase].atb;
+    int z = dudeInfo[pSprite->type - kDudeBase].atb + pSprite->z;
+    int z2 = dudeInfo[pTarget->type - kDudeBase].atb + pTarget->z;
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
     int nTurnRange = (pDudeInfo->at44<<2)>>4;
     pSprite->ang = (pSprite->ang+ClipRange(nAng, -nTurnRange, nTurnRange))&2047;
@@ -371,8 +371,8 @@ static void func_661E0(SPRITE *pSprite, XSPRITE *pXSprite)
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 796);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     SPRITE *pTarget = &sprite[pXSprite->target];
-    int z = pSprite->z + dudeInfo[pSprite->type - kDudeBase].atb;
-    int z2 = pTarget->z + dudeInfo[pTarget->type - kDudeBase].atb;
+    int z = dudeInfo[pSprite->type - kDudeBase].atb + pSprite->z;
+    int z2 = dudeInfo[pTarget->type - kDudeBase].atb + pTarget->z;
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
     int nTurnRange = (pDudeInfo->at44<<2)>>4;
     pSprite->ang = (pSprite->ang+ClipRange(nAng, -nTurnRange, nTurnRange))&2047;

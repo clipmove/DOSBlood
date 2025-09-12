@@ -234,28 +234,34 @@ static void thinkSwimChase(SPRITE *pSprite, XSPRITE *pXSprite)
         aiNewState(pSprite, pXSprite, &gillBeastSwimGoto);
         return;
     }
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 478);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 481);
     SPRITE *pTarget = &sprite[pXSprite->target];
     XSPRITE *pXTarget = &xsprite[pTarget->extra];
-    int dx = pTarget->x-pSprite->x;
-    int dy = pTarget->y-pSprite->y;
+    dx = pTarget->x-pSprite->x;
+    dy = pTarget->y-pSprite->y;
     aiChooseDirection(pSprite, pXSprite, getangle(dx, dy));
     if (pXTarget->health == 0)
     {
         aiNewState(pSprite, pXSprite, &gillBeastSwimSearch);
         return;
     }
-    if (IsPlayerSprite(pTarget) && powerupCheck(&gPlayer[pTarget->type-kDudePlayer1], 13) > 0)
+    if (IsPlayerSprite(pTarget))
     {
-        aiNewState(pSprite, pXSprite, &gillBeastSwimSearch);
-        return;
+        PLAYER* pPlayer = &gPlayer[pTarget->type - kDudePlayer1];
+        if (powerupCheck(pPlayer, 13) > 0)
+        {
+            aiNewState(pSprite, pXSprite, &gillBeastSwimSearch);
+            return;
+        }
     }
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (nDist <= pDudeInfo->at17)
     {
-        int nDeltaAngle = ((getangle(dx,dy)+1024-pSprite->ang)&2047)-1024;
+        int nAngle = getangle(dx, dy);
+        int nDeltaAngle = ((nAngle+1024-pSprite->ang)&2047)-1024;
         int height = pDudeInfo->atb+pSprite->z;
         int top, bottom;
         GetSpriteExtents(pSprite, &top, &bottom);
@@ -264,7 +270,9 @@ static void thinkSwimChase(SPRITE *pSprite, XSPRITE *pXSprite)
             if (nDist < pDudeInfo->at17 && klabs(nDeltaAngle) <= pDudeInfo->at1b)
             {
                 aiSetTarget(pXSprite, pXSprite->target);
-                int floorZ = getflorzofslope(pSprite->sectnum, pSprite->x, pSprite->y);
+                int x = pSprite->x;
+                int y = pSprite->y;
+                int floorZ = getflorzofslope(pSprite->sectnum, x, y);
                 if (nDist < 0x400 && klabs(nDeltaAngle) < 85)
                     aiNewState(pSprite, pXSprite, &gillBeastSwimBite);
                 else

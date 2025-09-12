@@ -114,14 +114,13 @@ BOOL FindSector(int nX, int nY, int nZ, int* nSector)
 
 BOOL FindSector(int nX, int nY, int *nSector)
 {
-    int i;
     dassert(*nSector >= 0 && *nSector < kMaxSectors, 127);
     if (inside(nX, nY, *nSector))
     {
         return 1;
     }
     WALL *pWall = &wall[sector[*nSector].wallptr];
-    for (i = sector[*nSector].wallnum; i > 0; i--, pWall++)
+    for (int i = sector[*nSector].wallnum; i > 0; i--, pWall++)
     {
         short nOSector = pWall->nextsector;
         if (nOSector >= 0 && inside(nX, nY, nOSector))
@@ -892,9 +891,9 @@ int GetClosestSectors(int nSector, int x, int y, int nDist, short *pSectors, byt
     memset(sectbits, 0, sizeof(sectbits));
     pSectors[0] = nSector;
     SetBitString(sectbits, nSector);
+    int i = 0;
     int n = 1;
     int m = 1;
-    int i = 0;
     if (pSectBit)
     {
         memset(pSectBit, 0, (kMaxSectors+7)>>3);
@@ -939,14 +938,14 @@ int GetClosestSectors(int nSector, int x, int y, int nDist, short *pSectors, byt
 
 int GetClosestSpriteSectors(int nSector, int x, int y, int nDist, short *pSectors, byte *pSectBit, short *a8)
 {
+    dassert(pSectors != NULL, 1440);
     byte sectbits[(kMaxSectors+7)>>3];
-    dassert(pSectors != NULL, 1359);
-    int n = 0;
-    int m = 1;
     memset(sectbits, 0, sizeof(sectbits));
-    pSectors[n++] = nSector;
-    SetBitString(sectbits, nSector);
+    pSectors[0] = nSector;
     int i = 0;
+    int n = 1;
+    SetBitString(sectbits, nSector);
+    int m = 1;
     int k = 0;
     if (pSectBit)
     {

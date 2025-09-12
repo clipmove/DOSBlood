@@ -492,15 +492,15 @@ void SeqLoadSave::Load(void)
     for (i = 0; i < kMaxXWalls; i++)
     {
         siWall[i].hSeq = NULL;
-        siMasked[i].hSeq = NULL;
         siWall[i].pSequence = NULL;
+        siMasked[i].hSeq = NULL;
         siMasked[i].pSequence = NULL;
     }
     for (i = 0; i < kMaxXSectors; i++)
     {
         siCeiling[i].hSeq = NULL;
-        siFloor[i].hSeq = NULL;
         siCeiling[i].pSequence = NULL;
+        siFloor[i].hSeq = NULL;
         siFloor[i].pSequence = NULL;
     }
     for (i = 0; i < kMaxXSprites; i++)

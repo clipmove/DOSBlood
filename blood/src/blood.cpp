@@ -651,13 +651,12 @@ void LocalKeys(void)
         else if (gGameOptions.nGameType == GAMETYPE_3)
         {
             int oldViewIndex = gViewIndex;
-            PLAYER *vb = gMe;
             do
             {
                 gViewIndex = connectpoint2[gViewIndex];
                 if (gViewIndex == -1)
                     gViewIndex = connecthead;
-                if (oldViewIndex == gViewIndex || gPlayer[gViewIndex].at2ea == vb->at2ea)
+                if (oldViewIndex == gViewIndex || gPlayer[gViewIndex].at2ea == gMe->at2ea)
                     break;
             } while (oldViewIndex != gViewIndex);
             gView = &gPlayer[gViewIndex];
@@ -1332,9 +1331,7 @@ void main(void)
         {
             tioPrint("Audio track(s) found.");
             gRedBookInstalled = 1;
-            Redbook.f_1f = 0;
-            Redbook.f_1b = 0;
-            Redbook.f_1d = 0;
+            Redbook.reset();
             Redbook.cd_status();
             Redbook.func_82BB4();
             Redbook.preprocess();

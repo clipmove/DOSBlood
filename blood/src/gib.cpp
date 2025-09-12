@@ -437,7 +437,7 @@ void GibSprite(SPRITE *pSprite, GIBTYPE nGibType, CGibPosition *pPos, CGibVeloci
 {
     dassert(pSprite != NULL, 491);
     dassert(nGibType >= 0 && nGibType < kGibMax, 492);
-    if (pSprite->sectnum < 0 || pSprite->sectnum >= numsectors)
+    if (pSprite->sectnum < 0 || pSprite->sectnum > numsectors)
         return;
     GIBLIST *pGib = &gibList[nGibType];
     for (int i = 0; i < pGib->at4; i++)

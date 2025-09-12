@@ -80,7 +80,7 @@ void CChoke::func_84080(char *a1, void(*a2)(CChoke*, PLAYER*))
     {
         f_4 = gSysRes.Lookup(f_0, "QAV");
         if (!f_4)
-            ThrowError(65)("Could not load QAV %s\n", f_0);
+            ThrowError(89)("Could not load QAV %s\n", f_0);
         f_8 = (QAV*)gSysRes.Lock(f_4);
         f_8->x = f_14;
         f_8->y = f_18;

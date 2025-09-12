@@ -974,12 +974,11 @@ void dbSaveMap(char *pPath, long nX, long nY, long nZ, short nAngle, short nSect
     int nHandle;
     MAPSIGNATURE header;
     MAPHEADER mapheader;
-    byte *pData;
     int nSize;
+    byte *pData;
+    int nSpriteNum = 0;
     int i;
     ulong nCRC;
-    int nSpriteNum;
-    nSpriteNum = 0;
     gSkyCount = 1<<pskybits;
     gMapRev++;
     strcpy(sMapExt, pPath);
@@ -1058,15 +1057,15 @@ void dbSaveMap(char *pPath, long nX, long nY, long nZ, short nAngle, short nSect
     mapheader.at23 = nSpriteNum;
     if (char_1A76C7)
     {
-        dbCrypt((byte*)&mapheader, sizeof(MAPHEADER), (int)'ttam');
+        dbCrypt((byte*)&mapheader, sizeof(MAPHEADER), (int)'ttaM');
     }
     IOBuffer1.Write(&mapheader, sizeof(MAPHEADER));
     if (char_1A76C8)
     {
         strcpy(char_19AE44.at0, "Copyright 1997 Monolith Productions.  All Rights Reserved");
-        char_19AE44.at48 = sizeof(XSECTOR);
-        char_19AE44.at44 = sizeof(XWALL);
         char_19AE44.at40 = sizeof(XSPRITE);
+        char_19AE44.at44 = sizeof(XWALL);
+        char_19AE44.at48 = sizeof(XSECTOR);
         dbCrypt((byte*)&char_19AE44, sizeof(MAPHEADER2), numwalls);
         IOBuffer1.Write(&char_19AE44, sizeof(MAPHEADER2));
         dbCrypt((byte*)&char_19AE44, sizeof(MAPHEADER2), numwalls);
@@ -1100,12 +1099,12 @@ void dbSaveMap(char *pPath, long nX, long nY, long nZ, short nAngle, short nSect
     {
         if (char_1A76C8)
         {
-            dbCrypt((byte*)&wall[i], sizeof(WALL), gMapRev*sizeof(SECTOR) | (int)'ttam');
+            dbCrypt((byte*)&wall[i], sizeof(WALL), gMapRev*sizeof(SECTOR) | (int)'ttaM');
         }
         IOBuffer1.Write(&wall[i], sizeof(WALL));
         if (char_1A76C8)
         {
-            dbCrypt((byte*)&wall[i], sizeof(WALL), gMapRev*sizeof(SECTOR) | (int)'ttam');
+            dbCrypt((byte*)&wall[i], sizeof(WALL), gMapRev*sizeof(SECTOR) | (int)'ttaM');
         }
         if (wall[i].extra > 0)
         {
@@ -1118,12 +1117,12 @@ void dbSaveMap(char *pPath, long nX, long nY, long nZ, short nAngle, short nSect
         {
             if (char_1A76C8)
             {
-                dbCrypt((byte*)&sprite[i], sizeof(SPRITE), gMapRev*sizeof(SPRITE) | (int)'ttam');
+                dbCrypt((byte*)&sprite[i], sizeof(SPRITE), gMapRev*sizeof(SPRITE) | (int)'ttaM');
             }
             IOBuffer1.Write(&sprite[i], sizeof(SPRITE));
             if (char_1A76C8)
             {
-                dbCrypt((byte*)&sprite[i], sizeof(SPRITE), gMapRev*sizeof(SPRITE) | (int)'ttam');
+                dbCrypt((byte*)&sprite[i], sizeof(SPRITE), gMapRev*sizeof(SPRITE) | (int)'ttaM');
             }
             if (sprite[i].extra > 0)
             {

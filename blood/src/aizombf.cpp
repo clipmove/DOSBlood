@@ -82,14 +82,15 @@ static void PukeSeqCallback(int, int nXSprite)
     DUDEINFO *pDudeInfoT = &dudeInfo[pTarget->type-kDudeBase];
     int height = (pDudeInfo->atb*pSprite->yrepeat);
     int height2 = (pDudeInfoT->atb*pTarget->yrepeat);
-    int tx = pXSprite->at20_0-pSprite->x;
-    int ty = pXSprite->at24_0-pSprite->y;
-    int nDist = approxDist(tx, ty);
-    int nAngle = getangle(tx, ty);
-    int dx = Cos(nAngle)>>16;
-    int dy = Sin(nAngle)>>16;
-    sfxPlay3DSound(pSprite, 1203, 1, 0);
-    actFireMissile(pSprite, 0, -(height-height2), dx, dy, 0, 309);
+    int dx = pXSprite->at20_0-pSprite->x;
+    int dy = pXSprite->at24_0-pSprite->y;
+    int nDist = approxDist(dx, dy);
+    int nAngle = getangle(dx, dy);
+    dx = Cos(nAngle)>>16;
+    dy = Sin(nAngle)>>16;
+    int dz = 0;
+    sfxPlay3DSound(pSprite, 1203, 1);
+    actFireMissile(pSprite, 0, -(height-height2), dx, dy, dz, 309);
 }
 
 static void ThrowSeqCallback(int, int nXSprite)

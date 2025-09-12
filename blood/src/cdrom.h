@@ -198,6 +198,13 @@ public:
     void postprocess(void);
     int status(int);
 
+    void reset(void)
+    {
+        f_1d = 0;
+        f_1f = 0;
+        f_1b = 0;
+    }
+
     char __f_0[0xb];
 
     volumeinfo f_b;

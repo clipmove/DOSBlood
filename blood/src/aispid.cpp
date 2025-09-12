@@ -78,9 +78,10 @@ static void SpidBiteSeqCallback(int, int nXSprite)
     SPRITE *pSprite = &sprite[nSprite];
     int dx = Cos(pSprite->ang)>>16;
     int dy = Sin(pSprite->ang)>>16;
+    int dz = 0;
     dx += Random2(2000);
     dy += Random2(2000);
-    int dz = Random2(2000);
+    dz += Random2(2000);
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 142);
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 145);
     SPRITE *pTarget = &sprite[pXSprite->target];

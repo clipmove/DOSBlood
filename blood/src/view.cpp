@@ -18,8 +18,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "typedefs.h"
-#include "aihand.h"
 #include "build.h"
+#include "gameutil.h"
+#include "misc.h"
+#include "trig.h"
+#include "gfx.h"
+#include "player.h"
+#include "aihand.h"
 #include "choke.h"
 #include "config.h"
 #include "db.h"
@@ -33,9 +38,7 @@
 #include "map2d.h"
 #include "messages.h"
 #include "mirrors.h"
-#include "misc.h"
 #include "network.h"
-#include "player.h"
 #include "screen.h"
 #include "sectorfx.h"
 #include "tile.h"
@@ -45,9 +48,6 @@
 #include "weapon.h"
 #include "weather.h"
 
-#include "gameutil.h"
-#include "trig.h"
-#include "gfx.h"
 #include "actor.h"
 
 int gViewMode = 3;
@@ -631,7 +631,7 @@ static void fakeMoveDude(SPRITE *pSprite)
                 if (pWall->nextsector != -1)
                 {
                     SECTOR *pSector = &sector[pWall->nextsector];
-                    if (top >= pSector->floorz && bottom <= pSector->ceilingz)
+                    if (pSector->floorz > top || pSector->ceilingz < bottom)
                     {
                         actWallBounceVector(&predict.at5c, &predict.at60, nWall, 0);
                         break;
@@ -676,12 +676,12 @@ static void fakeMoveDude(SPRITE *pSprite)
     if (predict.at64)
         predict.at58 += predict.at64 >> 8;
 
+    long var54, var50, var4c, var48;
     SPRITE tSprite = *pSprite;
     tSprite.x = predict.at50;
     tSprite.y = predict.at54;
     tSprite.z = predict.at58;
     tSprite.sectnum = predict.at68;
-    long var54, var50, var4c, var48;
     GetZRange(&tSprite, &var54, &var50, &var4c, &var48, clipdist, 0x10001);
     GetSpriteExtents(&tSprite, &top, &bottom);
     if (predict.at73 & kSpriteFlag1)
@@ -1638,20 +1638,18 @@ SPRITE *viewAddEffect(int nTSprite, VIEW_EFFECT nViewEffect)
                 for (int i = 0; i < 16; i++)
                 {
                     SPRITE *pNSprite = viewInsertTSprite(pTSprite->sectnum, 32767, pTSprite);
-                    VECTOR3D vec;
-                    int l = 512;
                     int ang = (gFrameClock*2048)/120;
                     int nRand1 = int_172CE0[i][0];
                     int nRand2 = int_172CE0[i][1];
                     int nRand3 = int_172CE0[i][2];
-                    vec.dx = mulscale30(l, Cos(ang+nRand3));
-                    vec.dy = mulscale30(l, Sin(ang+nRand3));
-                    vec.dz = 0;
-                    RotateYZ(&vec.dx, &vec.dy, &vec.dz, nRand1);
-                    RotateXZ(&vec.dx, &vec.dy, &vec.dz, nRand2);
-                    pNSprite->x = pTSprite->x + vec.dx;
-                    pNSprite->y = pTSprite->y + vec.dy;
-                    pNSprite->z = pTSprite->z + (vec.dz<<4);
+                    long dx = mulscale30(512, Cos(ang+nRand3));
+                    long dy = mulscale30(512, Sin(ang+nRand3));
+                    long dz = 0;
+                    RotateYZ(&dx, &dy, &dz, nRand1);
+                    RotateXZ(&dx, &dy, &dz, nRand2);
+                    pNSprite->x = pTSprite->x + dx;
+                    pNSprite->y = pTSprite->y + dy;
+                    pNSprite->z = pTSprite->z + (dz<<4);
                     pNSprite->picnum = 1720;
                     pNSprite->shade = -128;
                 }
@@ -2379,8 +2377,8 @@ void viewProcessSprites(int cX, int cY, int cZ)
 
     for (nTSprite = spritesortcnt-1; nTSprite >= nViewSprites; nTSprite--)
     {
-        SPRITE *pTSprite = &tsprite[nTSprite];
         int nAnim = 0;
+        SPRITE *pTSprite = &tsprite[nTSprite];
         switch (picanm[pTSprite->picnum].at3_4)
         {
             case 1:
@@ -2444,9 +2442,9 @@ static void CalcOtherPosition(SPRITE *pSprite, long *pX, long *pY, long *pZ, int
         dX -= ksgn(vX)<<6;
         dY -= ksgn(vY)<<6;
         if (klabs(vX) > klabs(vY))
-            othercameradist = ClipHigh(divscale16(dX,vX), othercameradist);
+            othercameradist = ClipHigh(othercameradist, divscale16(dX,vX));
         else
-            othercameradist = ClipHigh(divscale16(dY,vY), othercameradist);
+            othercameradist = ClipHigh(othercameradist, divscale16(dY,vY));
     }
     *pX += mulscale16(vX, othercameradist);
     *pY += mulscale16(vY, othercameradist);
@@ -2482,9 +2480,9 @@ static void CalcPosition(SPRITE *pSprite, long *pX, long *pY, long *pZ, int *vse
         dX -= ksgn(vX)<<6;
         dY -= ksgn(vY)<<6;
         if (klabs(vX) > klabs(vY))
-            cameradist = ClipHigh(divscale16(dX,vX), cameradist);
+            cameradist = ClipHigh(cameradist, divscale16(dX,vX));
         else
-            cameradist = ClipHigh(divscale16(dY,vY), cameradist);
+            cameradist = ClipHigh(cameradist, divscale16(dY,vY));
     }
     *pX += mulscale16(vX, cameradist);
     *pY += mulscale16(vY, cameradist);

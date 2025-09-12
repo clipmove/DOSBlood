@@ -73,14 +73,16 @@ extern byte gInterpolateSector[(kMaxSectors+7)>>3];
 
 void viewAddInterpolation(void *, INTERPOLATE_TYPE);
 
-inline void viewInterpolateSector(int nSector, SECTOR *pSector)
+inline void viewBackupSpriteLoc(int nSprite, SPRITE *pSprite)
 {
-    if (!TestBitString(gInterpolateSector, nSector))
+    if (!TestBitString(gInterpolateSprite, nSprite))
     {
-        viewAddInterpolation(&pSector->floorz, INTERPOLATE_TYPE_INT);
-        viewAddInterpolation(&pSector->ceilingz, INTERPOLATE_TYPE_INT);
-        viewAddInterpolation(&pSector->floorheinum, INTERPOLATE_TYPE_SHORT);
-        SetBitString(gInterpolateSector, nSector);
+        LOCATION *pPrevLoc = &gPrevSpriteLoc[nSprite];
+        pPrevLoc->x = pSprite->x;
+        pPrevLoc->y = pSprite->y;
+        pPrevLoc->z = pSprite->z;
+        pPrevLoc->ang = pSprite->ang;
+        SetBitString(gInterpolateSprite, nSprite);
     }
 }
 
@@ -94,16 +96,14 @@ inline void viewInterpolateWall(int nWall, WALL *pWall)
     }
 }
 
-inline void viewBackupSpriteLoc(int nSprite, SPRITE *pSprite)
+inline void viewInterpolateSector(int nSector, SECTOR *pSector)
 {
-    if (!TestBitString(gInterpolateSprite, nSprite))
+    if (!TestBitString(gInterpolateSector, nSector))
     {
-        LOCATION *pPrevLoc = &gPrevSpriteLoc[nSprite];
-        pPrevLoc->x = pSprite->x;
-        pPrevLoc->y = pSprite->y;
-        pPrevLoc->z = pSprite->z;
-        pPrevLoc->ang = pSprite->ang;
-        SetBitString(gInterpolateSprite, nSprite);
+        viewAddInterpolation(&pSector->floorz, INTERPOLATE_TYPE_INT);
+        viewAddInterpolation(&pSector->ceilingz, INTERPOLATE_TYPE_INT);
+        viewAddInterpolation(&pSector->floorheinum, INTERPOLATE_TYPE_SHORT);
+        SetBitString(gInterpolateSector, nSector);
     }
 }
 

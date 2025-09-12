@@ -519,6 +519,7 @@ static void entrySStatue(SPRITE *pSprite, XSPRITE *pXSprite)
 static void MoveForward(SPRITE *pSprite, XSPRITE *pXSprite)
 {
     int nSprite = pSprite->index;
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 963);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
@@ -528,19 +529,17 @@ static void MoveForward(SPRITE *pSprite, XSPRITE *pXSprite)
     if (klabs(nAng) > 341)
         return;
     if (pXSprite->target == -1)
-        pSprite->ang = (pSprite->ang+256)&2047;
-    int dx = pXSprite->at20_0-pSprite->x;
-    int dy = pXSprite->at24_0-pSprite->y;
+        pSprite->ang = (short)((pSprite->ang+256)&2047);
+    dx = pXSprite->at20_0-pSprite->x;
+    dy = pXSprite->at24_0-pSprite->y;
     int nAngle = getangle(dx, dy);
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if ((unsigned int)Random(64) < 32 && nDist <= 0x400)
         return;
-    int nCos = Cos(pSprite->ang);
     int nSin = Sin(pSprite->ang);
-    int vx = xvel[nSprite];
-    int vy = yvel[nSprite];
-    int t1 = dmulscale30(vx, nCos, vy, nSin);
-    int t2 = dmulscale30(vx, nSin, -vy, nCos);
+    int nCos = Cos(pSprite->ang);
+    int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
+    int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
     if (pXSprite->target == -1)
         t1 += nAccel;
     else

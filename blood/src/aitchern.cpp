@@ -60,7 +60,7 @@ static void func_71A90(int, int nXSprite)
     XSPRITE *pXTarget = &xsprite[pTarget->extra];
     int nTarget = pTarget->index;
     int nOwner = actSpriteIdToOwnerId(nSprite);
-    if (pXTarget->at2c_0 == 0)
+    if (actGetBurnTime(pXTarget) == 0)
         evPost(nTarget, 3, 0, CALLBACK_ID_0);
     actBurnSprite(nOwner, pXTarget, 40);
     if (Chance(0x6000))
@@ -141,20 +141,19 @@ static void func_720AC(int, int nXSprite)
     SPRITE *pSprite = &sprite[nSprite];
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 245);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type-kDudeBase];
-    int height = pSprite->yrepeat*pDudeInfo->atb;
-    int ax, ay, az;
-    ax = Cos(pSprite->ang)>>16;
-    ay = Sin(pSprite->ang)>>16;
+    int height = pDudeInfo->atb*pSprite->yrepeat;
+    int ax = Cos(pSprite->ang)>>16;
+    int ay = Sin(pSprite->ang)>>16;
+    int az = 0;
     int x = pSprite->x;
     int y = pSprite->y;
     int z = height;
-    TARGETTRACK tt = { 0x10000, 0x10000, 0x100, 0x55, 0x100000 };
     VECTOR3D aim;
     aim.dx = ax;
     aim.dy = ay;
     aim.dz = gDudeSlope[nXSprite];
+    TARGETTRACK tt = { 0x10000, 0x10000, 0x100, 0x55, 0x100000 };
     int nClosest = 0x7fffffff;
-    az = 0;
     for (short nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nextspritestat[nSprite2])
     {
         SPRITE *pSprite2 = &sprite[nSprite2];
@@ -179,30 +178,24 @@ static void func_720AC(int, int nXSprite)
         int tsr = mulscale(9460, nDist, 10);
         int top, bottom;
         GetSpriteExtents(pSprite2, &top, &bottom);
-        if (tz-tsr > bottom || tz+tsr < top)
+        if (bottom < tz-tsr || top > tz+tsr)
             continue;
-        int dx = (tx-x2)>>4;
-        int dy = (ty-y2)>>4;
-        int dz = (tz-z2)>>8;
-        int nDist2 = ksqrt(dx*dx+dy*dy+dz*dz);
-        if (nDist2 < nClosest)
+        int nDist2 = Dist3d(tx-x2,ty-y2,tz-z2);
+        if (nDist2 >= nClosest)
+            continue;
+        int nAngle = getangle(x2-x, y2-y);
+        if (klabs(((nAngle-pSprite->ang+1024)&2047)-1024) > tt.at8)
+            continue;
+        int tz2 = pSprite2->z-pSprite->z;
+        if (cansee(x, y, z, pSprite->sectnum, x2, y2, z2, pSprite2->sectnum))
         {
-            int nAngle = getangle(x2-x, y2-y);
-            int nDeltaAngle = ((nAngle-pSprite->ang+1024)&2047)-1024;
-            if (klabs(nDeltaAngle) <= tt.at8)
-            {
-                int tz = pSprite2->z-pSprite->z;
-                if (cansee(x, y, z, pSprite->sectnum, x2, y2, z2, pSprite2->sectnum))
-                {
-                    nClosest = nDist2;
-                    aim.dx = Cos(nAngle)>>16;
-                    aim.dy = Sin(nAngle)>>16;
-                    aim.dz = divscale(tz, nDist, 10);
-                }
-                else
-                    aim.dz = tz;
-            }
+            nClosest = nDist2;
+            aim.dx = Cos(nAngle)>>16;
+            aim.dy = Sin(nAngle)>>16;
+            aim.dz = divscale(tz2, nDist, 10);
         }
+        else
+            aim.dz = tz2;
     }
     actFireMissile(pSprite, 350, 0, aim.dx, aim.dy, -aim.dz, 314);
     actFireMissile(pSprite, -350, 0, ax, ay, az, 314);
@@ -290,28 +283,34 @@ static void func_72934(SPRITE *pSprite, XSPRITE *pXSprite)
         aiNewState(pSprite, pXSprite, &tcherno13A9B8);
         return;
     }
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 484);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 487);
     SPRITE *pTarget = &sprite[pXSprite->target];
     XSPRITE *pXTarget = &xsprite[pTarget->extra];
-    int dx = pTarget->x-pSprite->x;
-    int dy = pTarget->y-pSprite->y;
+    dx = pTarget->x-pSprite->x;
+    dy = pTarget->y-pSprite->y;
     aiChooseDirection(pSprite, pXSprite, getangle(dx, dy));
     if (pXTarget->health == 0)
     {
         aiNewState(pSprite, pXSprite, &tchernobogSearch);
         return;
     }
-    if (IsPlayerSprite(pTarget) && powerupCheck(&gPlayer[pTarget->type-kDudePlayer1], 13) > 0)
+    if (IsPlayerSprite(pTarget))
     {
-        aiNewState(pSprite, pXSprite, &tchernobogSearch);
-        return;
+        PLAYER* pPlayer = &gPlayer[pTarget->type - kDudePlayer1];
+        if (powerupCheck(pPlayer, 13) > 0)
+        {
+            aiNewState(pSprite, pXSprite, &tchernobogSearch);
+            return;
+        }
     }
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (nDist <= pDudeInfo->at17)
     {
-        int nDeltaAngle = ((getangle(dx,dy)+1024-pSprite->ang)&2047)-1024;
+        int nAngle = getangle(dx, dy);
+        int nDeltaAngle = ((nAngle+1024-pSprite->ang)&2047)-1024;
         int height = (pDudeInfo->atb*pSprite->yrepeat)<<2;
         if (cansee(pTarget->x, pTarget->y, pTarget->z, pTarget->sectnum, pSprite->x, pSprite->y, pSprite->z - height, pSprite->sectnum))
         {

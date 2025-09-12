@@ -419,7 +419,7 @@ void netGetPackets(void)
             if (pInput->syncFlags.mlookChange)
                 pInput->mlook = GetPacketByte(pPacket);
             gNetFifoHead[nPlayer]++;
-            for (p = gSyncRate; p > 1; p--)
+            for (int i = gSyncRate; i > 1; i--)
             {
                 INPUT *pInput2 = &gFifoInput[gNetFifoHead[nPlayer]&255][nPlayer];
                 memcpy(pInput2, pInput, sizeof(INPUT));
@@ -554,16 +554,17 @@ void netWaitForEveryone(BOOL a1)
     PutPacketByte(pPacket, 250);
     netSendPacketAll(packet, pPacket-packet);
     gPlayerReady[myconnectindex]++;
-    int p;
-    do
+    while (1)
     {
         if (keystatus[1] && a1)
             exit(0);
         netGetPackets();
-        for (p = connecthead; p >= 0; p = connectpoint2[p])
+        for (int p = connecthead; p >= 0; p = connectpoint2[p])
             if (gPlayerReady[p] < gPlayerReady[myconnectindex])
                 break;
-    } while (p >= 0);
+        if (p < 0)
+            break;
+    }
 }
 
 int tenBloodScore(char *);

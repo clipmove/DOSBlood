@@ -107,7 +107,7 @@ void ambInit(void)
     {
         SPRITE *pSprite = &sprite[nSprite];
         int nXSprite = pSprite->extra;
-        if (nXSprite < 0 || nXSprite >= kMaxXSprites)
+        if (nXSprite <= 0 || nXSprite >= kMaxXSprites)
             continue;
         XSPRITE *pXSprite = &xsprite[nXSprite];
         if (pXSprite->at12_0 <= pXSprite->at10_0)

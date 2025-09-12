@@ -225,7 +225,7 @@ DICTNODE **Resource::Probe(char *fname, char *type)
 DICTNODE **Resource::Probe(unsigned long id, char *type)
 {
     char name[7];
-    dassert(indexName != NULL, 264);
+    dassert(indexName != NULL, 268);
     memset(name, 0, sizeof(name));
     strncpy(name, type, 3);
     *(int*)(name + 3) = id;
@@ -473,7 +473,6 @@ void Resource::Crypt(byte *p, long length, int key)
 {
     for (int i = 0; i < length; i++, key++)
     {
-        byte xr = ((ushort)key / 2);
-        p[i] ^= xr;
+        p[i] ^= (byte)((ushort)key / 2);
     }
 }

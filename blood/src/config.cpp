@@ -656,9 +656,6 @@ void CONFIG_ReadSetup( void )
       case controltype_keyboardandmouse:
          CONFIG_SetupMouse(scripthandle);
          break;
-      default:
-         CONFIG_SetupMouse(scripthandle);
-         break;
       case controltype_keyboardandjoystick:
       case controltype_keyboardandflightstick:
       case controltype_keyboardandthrustmaster:
@@ -706,7 +703,7 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutNumber( scripthandle, "Screen Setup", "Gamma",gGamma,false,false);
    SCRIPT_PutNumber( scripthandle, "Sound Setup", "FXVolume",FXVolume,false,false);
    SCRIPT_PutNumber( scripthandle, "Sound Setup", "MusicVolume",MusicVolume,false,false);
-   SCRIPT_PutNumber( scripthandle, "Sound Setup", "CDVolume",MusicVolume,false,false);
+   SCRIPT_PutNumber( scripthandle, "Sound Setup", "CDVolume",CDVolume,false,false);
 
    switch (ControllerType)
       {

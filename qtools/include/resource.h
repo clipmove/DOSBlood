@@ -36,7 +36,7 @@ struct CACHENODE
     void* ptr;
     CACHENODE* prev;
     CACHENODE* next;
-    int lockCount;
+    unsigned int lockCount;
 };
 
 struct DICTNODE : CACHENODE

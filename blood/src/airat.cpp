@@ -50,11 +50,15 @@ static void BiteSeqCallback(int, int nXSprite)
     SPRITE *pSprite = &sprite[nSprite];
     int dx = Cos(pSprite->ang)>>16;
     int dy = Sin(pSprite->ang)>>16;
+    int dz = 0;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 88);
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 91);
     SPRITE *pTarget = &sprite[pXSprite->target];
     if (IsPlayerSprite(pTarget))
-        actFireVector(pSprite, 0, 0, dx, dy, pTarget->z-pSprite->z, VECTOR_TYPE_16);
+    {
+        dz = pTarget->z - pSprite->z;
+        actFireVector(pSprite, 0, 0, dx, dy, dz, VECTOR_TYPE_16);
+    }
 }
 
 static void thinkSearch(SPRITE *pSprite, XSPRITE *pXSprite)

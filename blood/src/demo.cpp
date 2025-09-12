@@ -336,20 +336,35 @@ void CDemo::StopPlayback(void)
 void CDemo::LoadDemoInfo(void)
 {
     struct find_t find;
+    int hFile;
     at59ef = 0;
     int status = _dos_findfirst("BLOOD*.DEM", 0, &find);
     while (!status && at59ef < 5)
     {
-        int hFile2 = open(find.name, O_BINARY);
-        if (hFile2 == -1)
+        int v1;
+        hFile = open(find.name, O_BINARY);
+        if (hFile == -1)
             ThrowError(510)("File error #%d loading demo file header.", errno);
-        read(hFile2, &atf, sizeof(atf));
-        close(hFile2);
-        if (atf.signature == '\x1aMED' && (atf.nVersion.w == gGameVersion.w || gGameVersion.w != 0x10b || atf.nVersion.w == 0x10a) && atf.nBuild == int_28F380)
+        read(hFile, &atf, sizeof(atf));
+        close(hFile);
+        if (atf.signature != '\x1aMED')
         {
-            strcpy(at59aa[at59ef], find.name);
-            at59ef++;
+            goto next;
         }
+        v1 = gGameVersion.w;
+        hFile = atf.nVersion.w;
+        if (hFile != v1)
+        {
+            if (v1 == 0x10b && hFile != 0x10a)
+                goto next;
+        }
+        if (atf.nBuild != int_28F380)
+        {
+            goto next;
+        }
+        strcpy(at59aa[at59ef], find.name);
+        at59ef++;
+next:
         status = _dos_findnext(&find);
     }
 }

@@ -147,7 +147,7 @@ static void ThrowSeqCallback(int, int nXSprite)
     if (gGameOptions.nDifficulty > DIFFICULTY_2)
         nMissile = 419;
     char v4 = Chance(0x6000);
-    sfxPlay3DSound(pSprite, 455, -1, 0);
+    sfxPlay3DSound(pSprite, 455);
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 249);
     SPRITE *pTarget = &sprite[pXSprite->target];
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 253);
@@ -162,7 +162,7 @@ static void ThrowSeqCallback(int, int nXSprite)
     if (v4)
         xsprite[pMissile->extra].ate_0 = 1;
     else
-        evPost(pMissile->index, 3, 120*(1+Random(2)), COMMAND_ID_1);
+        evPost(pMissile->index, 3, 120+120*Random(2), COMMAND_ID_1);
 }
 
 static void func_68170(int, int nXSprite)

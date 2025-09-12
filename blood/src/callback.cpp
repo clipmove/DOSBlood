@@ -575,6 +575,7 @@ void func_76A08(SPRITE *pSprite, SPRITE *pSprite2, PLAYER *pPlayer)
 
 static void func_76B78(int nSprite)
 {
+    int nSprite2, nNextSprite;
     SPRITE *pSprite = &sprite[nSprite];
     int nOwner = actSpriteOwnerToSpriteId(pSprite);
     if (nOwner < 0 || nOwner >= kMaxSprites)
@@ -593,110 +594,141 @@ static void func_76B78(int nSprite)
     int dy = pOwner->y - pSprite->y;
     pSprite->ang = getangle(dx, dy);
     int nXSprite = pSprite->extra;
-    if (nXSprite > 0)
+    if (nXSprite <= 0)
+        return;
+    XSPRITE *pXSprite = &xsprite[nXSprite];
+    if (pXSprite->at10_0 == 0)
     {
-        XSPRITE *pXSprite = &xsprite[nXSprite];
-        if (pXSprite->at10_0 == 0)
+        evPost(nSprite, 3, 0, CALLBACK_ID_1);
+        return;
+    }
+    for (nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nNextSprite)
+    {
+        nNextSprite = nextspritestat[nSprite2];
+        if (nOwner == nSprite2)
+            continue;
+        SPRITE *pSprite2 = &sprite[nSprite2];
+        int nXSprite2 = pSprite2->extra;
+        if (nXSprite2 <= 0 || nXSprite2 >= kMaxXSprites)
+            continue;
+        if (pSprite2->flags & kSpriteFlag5)
+            continue;
+        XSPRITE *pXSprite2 = &xsprite[nXSprite2];
+        PLAYER *pPlayer2 = IsPlayerSprite(pSprite2) ? &gPlayer[pSprite2->type-kDudeBase] : NULL;
+        if (pXSprite2->health > 0 && (pPlayer2 || pXSprite2->atd_3 == 0))
         {
-            evPost(nSprite, 3, 0, CALLBACK_ID_1);
-            return;
-        }
-        int nSprite2, nNextSprite;
-        for (nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nNextSprite)
-        {
-            nNextSprite = nextspritestat[nSprite2];
-            if (nOwner == nSprite2)
-                continue;
-            SPRITE *pSprite2 = &sprite[nSprite2];
-            int nXSprite2 = pSprite2->extra;
-            if (nXSprite2 <= 0 || nXSprite2 >= kMaxXSprites)
-                continue;
-            if (pSprite2->flags & kSpriteFlag5)
-                continue;
-            XSPRITE *pXSprite2 = &xsprite[nXSprite2];
-            PLAYER *pPlayer2 = IsPlayerSprite(pSprite2) ? &gPlayer[pSprite2->type-kDudeBase] : NULL;
-            if (pXSprite2->health > 0 && (pPlayer2 || pXSprite2->atd_3 == 0))
+            if (pPlayer2)
             {
-                if (pPlayer2)
+                if (gGameOptions.nGameType == GAMETYPE_1)
+                    continue;
+                if (gGameOptions.nGameType == GAMETYPE_3 && pPlayer->at2ea == pPlayer2->at2ea)
+                    continue;
+                int vd = 0x8000 / ClipLow(gNetPlayers - 1, 1);
+                if (!powerupCheck(pPlayer2, 14))
+                    vd += ((3200-pPlayer2->at33e[2])<<15)/3200;
+                if (Chance(vd) || nNextSprite < 0)
                 {
-                    if (gGameOptions.nGameType == GAMETYPE_1)
-                        continue;
-                    if (gGameOptions.nGameType == GAMETYPE_3 && pPlayer->at2ea == pPlayer2->at2ea)
-                        continue;
-                    int x = gNetPlayers - 1;
-                    if (x < 1)
-                        x = 1;
-                    int t = 0x8000/x;
-                    if (!powerupCheck(pPlayer2, 14))
-                        t += ((3200-pPlayer2->at33e[2])<<15)/3200;
-                    if (Chance(t) || nNextSprite < 0)
-                    {
-                        int nDmg = actDamageSprite(nOwner, pSprite2, DAMAGE_TYPE_5, pXSprite->at10_0<<4);
-                        pXSprite->at10_0 = ClipLow(pXSprite->at10_0-nDmg, 0);
-                        func_76A08(pSprite2, pSprite, pPlayer2);
-                        evPost(nSprite, 3, 0, CALLBACK_ID_1);
-                        return;
-                    }
+                    int nDmg = actDamageSprite(nOwner, pSprite2, DAMAGE_TYPE_5, pXSprite->at10_0<<4);
+                    pXSprite->at10_0 = ClipLow(pXSprite->at10_0-nDmg, 0);
+                    func_76A08(pSprite2, pSprite, pPlayer2);
+                    evPost(nSprite, 3, 0, CALLBACK_ID_1);
+                    return;
                 }
-                else
+            }
+            else
+            {
+                int vd = 0x2666;
+                switch (pSprite2->type)
                 {
-                    int vd = 0x2666;
-                    switch (pSprite2->type)
-                    {
-                    case 218:
-                    case 219:
-                    case 220:
-                    case 250:
-                    case 251:
-                        vd = 0x147;
-                        break;
-                    case 227:
-                    case 228:
-                        vd = 0;
-                        break;
-                    case 252:
-                    case 253:
-                        vd = 0;
-                        break;
-                    case 239:
-                    case 240:
-                    case 241:
-                    case 242:
-                    case 243:
-                    case 244:
-                    case 245:
-                        vd = 0;
-                        break;
-                    case 205:
-                    case 221:
-                    case 222:
-                    case 223:
-                    case 224:
-                    case 225:
-                    case 226:
-                    case 229:
-                        vd = 0;
-                        break;
-                    case 200:
-                    case 201:
-                    case 202:
-                    case 203:
-                    case 204:
-                    case 217:
-                        break;
-                    }
-                    if (vd && (Chance(vd) || nNextSprite < 0))
-                    {
-                        func_76A08(pSprite2, pSprite, NULL);
-                        evPost(nSprite, 3, 0, CALLBACK_ID_1);
-                        return;
-                    }
+                case 201:
+                case 202:
+                case 203:
+                case 204:
+                    vd = 0x2666;;
+                    break;
+                case 205:
+                    vd = 0;
+                    break;
+                case 206:
+                case 207:
+                case 208:
+                case 209:
+                case 210:
+                case 211:
+                case 212:
+                case 213:
+                case 214:
+                case 215:
+                case 216:
+                case 217:
+                    vd = 0x2666;
+                    break;
+                case 218:
+                case 219:
+                case 220:
+                    vd = 0x147;
+                    break;
+                case 221:
+                case 222:
+                case 223:
+                case 224:
+                case 225:
+                case 226:
+                    vd = 0;
+                    break;
+                case 227:
+                case 228:
+                    vd = 0;
+                    break;
+                case 229:
+                    vd = 0;
+                    break;
+                case 230:
+                case 231:
+                case 232:
+                case 233:
+                case 234:
+                case 235:
+                case 236:
+                case 237:
+                case 238:
+                    vd = 0x2666;
+                    break;
+                case 239:
+                case 240:
+                case 241:
+                case 242:
+                case 243:
+                case 244:
+                case 245:
+                    vd = 0;
+                    break;
+                case 246:
+                case 247:
+                case 248:
+                case 249:
+                    vd = 0x2666;
+                    break;
+                case 250:
+                case 251:
+                    vd = 0x147;
+                    break;
+                case 252:
+                case 253:
+                    vd = 0;
+                    break;
+                }
+                if (vd && (Chance(vd) || nNextSprite < 0))
+                {
+                    func_76A08(pSprite2, pSprite, NULL);
+                    evPost(nSprite, 3, 0, CALLBACK_ID_1);
+                    return;
                 }
             }
         }
-        pXSprite->at10_0 = ClipLow(pXSprite->at10_0-1, 0);
-        evPost(pSprite->index, 3, 10, CALLBACK_ID_21);
     }
+    pXSprite->at10_0 = ClipLow(pXSprite->at10_0-1, 0);
+    evPost(pSprite->index, 3, 10, CALLBACK_ID_21);
 }
 
 

@@ -183,6 +183,7 @@ public:
     CGameMenuItemChain(char *a1, int a2, int a3, int a4, int a5, int a6, CGameMenu *a7, int a8 = -1, void(*a9)(CGameMenuItemChain *) = NULL, int a10 = 0);
     virtual void Draw(void);
     virtual BOOL Event(CGameMenuEvent &);
+    int GetValue() { return at30; }
 };
 
 class CGameMenuItem7EA1C : public CGameMenuItem

@@ -47,6 +47,11 @@ inline int Max(int a, int b)
         return a;
 }
 
+inline byte TestBitString(byte *pArray, int nIndex)
+{
+    return pArray[nIndex>>3] & (1<<(nIndex&7));
+}
+
 inline void SetBitString(byte *pArray, int nIndex)
 {
     pArray[nIndex>>3] |= 1<<(nIndex&7);
@@ -55,11 +60,6 @@ inline void SetBitString(byte *pArray, int nIndex)
 inline void ClearBitString(byte *pArray, int nIndex)
 {
     pArray[nIndex >> 3] &= ~(1 << (nIndex & 7));
-}
-
-inline byte TestBitString(byte *pArray, int nIndex)
-{
-    return pArray[nIndex>>3] & (1<<(nIndex&7));
 }
 
 inline int scale(int a1, int a2, int a3, int a4, int a5)
@@ -241,7 +241,7 @@ int mulscale28(int, int);
 "imul edx" \
 "shrd eax,edx,28" \
 parm nomemory [eax] [edx] \
-modify nomemory exact [eax edx]
+modify exact [eax edx]
 
 int mulscale30(int, int);
 #pragma aux mulscale30 = \
@@ -432,11 +432,6 @@ inline int QRandom2(int n)
     return mulscale(qrand(), n, 14) - n;
 }
 
-inline BOOL Chance(int a1)
-{
-    return rand() < (a1>>1);
-}
-
 inline uint Random(int a1)
 {
     return mulscale(rand(), a1, 15);
@@ -450,6 +445,11 @@ inline int Random2(int a1)
 inline int Random3(int a1)
 {
     return mulscale(rand()+rand(), a1, 15) - a1;
+}
+
+inline BOOL Chance(int a1)
+{
+    return rand() < (a1>>1);
 }
 
 #endif // !_MISC_H_

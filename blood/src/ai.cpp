@@ -129,11 +129,11 @@ BOOL CanMove(SPRITE *pSprite, int a2, int nAngle, int nRange)
         return 0;
     int floorZ = getflorzofslope(nSector, x, y);
     int ceilZ = getceilzofslope(nSector, x, y);
+    int nXSector = sector[nSector].extra;
     BOOL vdl = 0; // Depth
-    BOOL vdh = 0; // Damage
     BOOL vbl = 0; // Underwater
     BOOL vbh = 0; // Warp
-    int nXSector = sector[nSector].extra;
+    BOOL vdh = 0; // Damage
     if (nXSector > 0)
     {
         XSECTOR *pXSector = &xsector[nXSector];
@@ -864,6 +864,7 @@ void aiSetTarget(XSPRITE *pXSprite, int nTarget)
 
 int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE nDmgType, int nDamage)
 {
+    SPRITE* pSource;
     dassert(nSource < kMaxSprites, 1372);
     if (pXSprite->health == 0)
         return 0;
@@ -873,7 +874,7 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
     int nSprite = pXSprite->reference;
     if (nSource >= 0)
     {
-        SPRITE *pSource = &sprite[nSource];
+        pSource = &sprite[nSource];
         if (pSource == pSprite)
             return 0;
         if (pXSprite->target == -1)
@@ -885,7 +886,7 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
         {
             int t = nDamage;
 
-            if (pSprite->type == pSource->type)
+            if (pSource->type == pSprite->type)
                 t *= pDudeInfo->at2f;
             else
                 t *= pDudeInfo->at2b;
@@ -916,23 +917,23 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
                 else if (aiSeqPlaying(pSprite, 13) && (pXSprite->at17_6 == 1 || pXSprite->at17_6 == 2))
                     aiNewState(pSprite, pXSprite, &cultistSwimDodge);
             }
-            else if (nDmgType == DAMAGE_TYPE_1 && pXSprite->health <= (unsigned int)pDudeInfo->at23 && (pXSprite->at17_6 != 1 || pXSprite->at17_6 != 2))
+            else if (nDmgType == DAMAGE_TYPE_1 && pXSprite->health <= pDudeInfo->at23 && (pXSprite->at17_6 != 1 || pXSprite->at17_6 != 2))
             {
                 pSprite->type = 240;
                 aiNewState(pSprite, pXSprite, &cultistBurnGoto);
-                aiPlay3DSound(pSprite, 361, AI_SFX_PRIORITY_0, -1);
-                aiPlay3DSound(pSprite, 1031+Random(2), AI_SFX_PRIORITY_2, -1);
+                aiPlay3DSound(pSprite, 361, AI_SFX_PRIORITY_0);
+                aiPlay3DSound(pSprite, 1031+Random(2), AI_SFX_PRIORITY_2);
                 gDudeExtra[pSprite->extra].at0 = gFrameClock+360;
                 actHealDude(pXSprite, dudeInfo[40].at2, dudeInfo[40].at2);
                 evKill(nSprite, 3, CALLBACK_ID_0);
             }
             break;
         case 245:
-            if (nDmgType == DAMAGE_TYPE_1 && pXSprite->health <= (unsigned int)pDudeInfo->at23 && (pXSprite->at17_6 != 1 || pXSprite->at17_6 != 2))
+            if (nDmgType == DAMAGE_TYPE_1 && pXSprite->health <= pDudeInfo->at23 && (pXSprite->at17_6 != 1 || pXSprite->at17_6 != 2))
             {
                 pSprite->type = 239;
                 aiNewState(pSprite, pXSprite, &cultistBurnGoto);
-                aiPlay3DSound(pSprite, 361, AI_SFX_PRIORITY_0, -1);
+                aiPlay3DSound(pSprite, 361, AI_SFX_PRIORITY_0);
                 gDudeExtra[pSprite->extra].at0 = gFrameClock+360;
                 actHealDude(pXSprite, dudeInfo[39].at2, dudeInfo[39].at2);
                 evKill(nSprite, 3, CALLBACK_ID_0);
@@ -941,7 +942,7 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
         case 240:
             if (Chance(0x4000) && gFrameClock > gDudeExtra[pSprite->extra].at0)
             {
-                aiPlay3DSound(pSprite, 1031+Random(2), AI_SFX_PRIORITY_2, -1);
+                aiPlay3DSound(pSprite, 1031+Random(2), AI_SFX_PRIORITY_2);
                 gDudeExtra[pSprite->extra].at0 = gFrameClock+360;
             }
             if (Chance(0x600) && (pXSprite->at17_6 == 1 || pXSprite->at17_6 == 2))
@@ -961,10 +962,10 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
             aiNewState(pSprite, pXSprite, &gargoyleFChase);
             break;
         case 204:
-            if (nDmgType == DAMAGE_TYPE_1 && pXSprite->health <= (unsigned int)pDudeInfo->at23)
+            if (nDmgType == DAMAGE_TYPE_1 && pXSprite->health <= pDudeInfo->at23)
             {
-                aiPlay3DSound(pSprite, 361, AI_SFX_PRIORITY_0, -1);
-                aiPlay3DSound(pSprite, 1202, AI_SFX_PRIORITY_2, -1);
+                aiPlay3DSound(pSprite, 361, AI_SFX_PRIORITY_0);
+                aiPlay3DSound(pSprite, 1202, AI_SFX_PRIORITY_2);
                 pSprite->type = 242;
                 aiNewState(pSprite, pXSprite, &zombieFBurnGoto);
                 actHealDude(pXSprite, dudeInfo[42].at2, dudeInfo[42].at2);
@@ -972,31 +973,31 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
             }
             break;
         case 250:
-            if (nDmgType == DAMAGE_TYPE_1 && pXSprite->health <= (unsigned int)pDudeInfo->at23 && (pXSprite->at17_6 != 1 || pXSprite->at17_6 != 2))
+            if (nDmgType == DAMAGE_TYPE_1 && pXSprite->health <= pDudeInfo->at23 && (pXSprite->at17_6 != 1 || pXSprite->at17_6 != 2))
             {
                 pSprite->type = 239;
                 aiNewState(pSprite, pXSprite, &cultistBurnGoto);
-                aiPlay3DSound(pSprite, 361, AI_SFX_PRIORITY_0, -1);
+                aiPlay3DSound(pSprite, 361, AI_SFX_PRIORITY_0);
                 gDudeExtra[pSprite->extra].at0 = gFrameClock+360;
                 actHealDude(pXSprite, dudeInfo[39].at2, dudeInfo[39].at2);
                 evKill(nSprite, 3, CALLBACK_ID_0);
             }
             break;
         case 249:
-            if (pXSprite->health <= (unsigned int)pDudeInfo->at23)
+            if (pXSprite->health <= pDudeInfo->at23)
             {
                 pSprite->type = 251;
-                aiPlay3DSound(pSprite, 9008, AI_SFX_PRIORITY_1, -1);
+                aiPlay3DSound(pSprite, 9008, AI_SFX_PRIORITY_1);
                 aiNewState(pSprite, pXSprite, &beastMorphFromCultist);
                 actHealDude(pXSprite, dudeInfo[51].at2, dudeInfo[51].at2);
             }
             break;
         case 203:
         case 205:
-            if (nDmgType == DAMAGE_TYPE_1 && pXSprite->health <= (unsigned int)pDudeInfo->at23)
+            if (nDmgType == DAMAGE_TYPE_1 && pXSprite->health <= pDudeInfo->at23)
             {
-                aiPlay3DSound(pSprite, 361, AI_SFX_PRIORITY_0, -1);
-                aiPlay3DSound(pSprite, 1106, AI_SFX_PRIORITY_2, -1);
+                aiPlay3DSound(pSprite, 361, AI_SFX_PRIORITY_0);
+                aiPlay3DSound(pSprite, 1106, AI_SFX_PRIORITY_2);
                 pSprite->type = 241;
                 aiNewState(pSprite, pXSprite, &zombieABurnGoto);
                 actHealDude(pXSprite, dudeInfo[41].at2, dudeInfo[41].at2);
@@ -1011,7 +1012,8 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
 void RecoilDude(SPRITE *pSprite, XSPRITE *pXSprite)
 {
     BOOL v4 = Chance(0x8000);
-    DUDEEXTRA *pDudeExtra = &gDudeExtra[pSprite->extra];
+    int nXSprite = pSprite->extra;
+    DUDEEXTRA *pDudeExtra = &gDudeExtra[nXSprite];
     if (pSprite->statnum == 6 && pSprite->type >= kDudeBase && pSprite->type < kDudeMax)
     {
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type-kDudeBase];
@@ -1301,35 +1303,33 @@ void func_5F15C(SPRITE *pSprite, XSPRITE *pXSprite)
             }
         }
     }
-    if (pXSprite->at1_6)
+    if (!pXSprite->at1_6)
+        return;
+    int x = pSprite->x;
+    int y = pSprite->y;
+    int nSector = pSprite->sectnum;
+    gAffectedSectors[0] = -1;
+    gAffectedXWalls[0] = -1;
+    byte va4[(kMaxSectors+7)>>3];
+    GetClosestSpriteSectors(nSector, x, y, 400, gAffectedSectors, va4, gAffectedXWalls);
+    for (int nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nextspritestat[nSprite2])
     {
-        byte va4[(kMaxSectors+7)>>3];
-        int x = pSprite->x;
-        int y = pSprite->z;
-        int nSector = pSprite->sectnum;
-        gAffectedSectors[0] = -1;
-        gAffectedXWalls[0] = -1;
-        GetClosestSpriteSectors(nSector, x, y, 400, gAffectedSectors, va4, gAffectedXWalls);
-        for (int nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nextspritestat[nSprite2])
+        SPRITE* pSprite2 = &sprite[nSprite2];
+        int x = pSprite2->x;
+        int y = pSprite2->y;
+        int dx = x - pSprite->x;
+        int dy = y - pSprite->y;
+        int nDist = approxDist(dx, dy);
+        if (pSprite2->type != 245)
+            continue;
+        DUDEINFO* pDudeInfo = &dudeInfo[pSprite2->type - kDudeBase];
+        if (nDist <= pDudeInfo->at17 || nDist <= pDudeInfo->at13)
         {
-            SPRITE* pSprite2 = &sprite[nSprite2];
-            int x = pSprite2->x;
-            int y = pSprite2->y;
-            int dx = x - pSprite->x;
-            int dy = y - pSprite->y;
-            int nDist = approxDist(dx, dy);
-            if (pSprite2->type == 245)
-            {
-                DUDEINFO* pDudeInfo = &dudeInfo[pSprite2->type - kDudeBase];
-                if (nDist <= pDudeInfo->at17 || nDist <= pDudeInfo->at13)
-                {
-                    int nAngle = getangle(dx, dy);
-                    int nDeltaAngle = ((1024+nAngle-pSprite->ang)&2047)-1024;
-                    aiSetTarget(pXSprite, pSprite2->index);
-                    aiActivateDude(pSprite, pXSprite);
-                    return;
-                }
-            }
+            int nAngle = getangle(dx, dy);
+            int nDeltaAngle = ((1024+nAngle-pSprite->ang)&2047)-1024;
+            aiSetTarget(pXSprite, pSprite2->index);
+            aiActivateDude(pSprite, pXSprite);
+            return;
         }
     }
 }
@@ -1379,13 +1379,13 @@ void aiInit(void)
 
 void aiInitSprite(SPRITE *pSprite)
 {
-    int nXSprite = pSprite->extra;
-    XSPRITE *pXSprite = &xsprite[nXSprite];
+    XSPRITE* pXSprite = &xsprite[pSprite->extra];
     int nSector = pSprite->sectnum;
     XSECTOR *pXSector = NULL;
     if (sector[nSector].extra > 0)
         pXSector = &xsector[sector[nSector].extra];
-    DUDEEXTRA *pDudeExtra = &gDudeExtra[pSprite->extra];
+    int nXSprite = pSprite->extra;
+    DUDEEXTRA *pDudeExtra = &gDudeExtra[nXSprite];
     pDudeExtra->at4 = 0;
     pDudeExtra->at0 = 0;
     switch (pSprite->type)
