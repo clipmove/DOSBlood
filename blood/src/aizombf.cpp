@@ -63,10 +63,13 @@ static void HackSeqCallback(int, int nXSprite)
         return;
     SPRITE *pTarget = &sprite[pXSprite->target];
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type-kDudeBase];
-    int height = (pDudeInfo->atb*pSprite->yrepeat);
     DUDEINFO *pDudeInfoT = &dudeInfo[pTarget->type-kDudeBase];
+    int height = (pDudeInfo->atb*pSprite->yrepeat);
     int height2 = (pDudeInfoT->atb*pTarget->yrepeat);
-    actFireVector(pSprite, 0, 0, Cos(pSprite->ang)>>16, Sin(pSprite->ang)>>16, height-height2, kVectorButcherHack);
+    int dx = Cos(pSprite->ang) >> 16;
+    int dy = Sin(pSprite->ang) >> 16;
+    int dz = height - height2;
+    actFireVector(pSprite, 0, 0, dx, dy, dz, kVectorButcherHack);
 }
 
 static void PukeSeqCallback(int, int nXSprite)
@@ -94,7 +97,11 @@ static void ThrowSeqCallback(int, int nXSprite)
     XSPRITE *pXSprite = &xsprite[nXSprite];
     int nSprite = pXSprite->reference;
     SPRITE *pSprite = &sprite[nSprite];
-    actFireMissile(pSprite, 0, -dudeInfo[pSprite->type-kDudeBase].atb, Cos(pSprite->ang)>>16, Sin(pSprite->ang)>>16, 0, 300);
+    int dx = Cos(pSprite->ang) >> 16;
+    int dy = Sin(pSprite->ang) >> 16;
+    int dz = 0;
+    int h = dudeInfo[pSprite->type - kDudeBase].atb;
+    actFireMissile(pSprite, 0, -h, dx, dy, dz, 300);
 }
 
 static void thinkSearch(SPRITE *pSprite, XSPRITE *pXSprite)
@@ -124,28 +131,34 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
         aiNewState(pSprite, pXSprite, &zombieFGoto);
         return;
     }
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 245);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 248);
     SPRITE *pTarget = &sprite[pXSprite->target];
     XSPRITE *pXTarget = &xsprite[pTarget->extra];
-    int dx = pTarget->x-pSprite->x;
-    int dy = pTarget->y-pSprite->y;
+    dx = pTarget->x-pSprite->x;
+    dy = pTarget->y-pSprite->y;
     aiChooseDirection(pSprite, pXSprite, getangle(dx, dy));
     if (pXTarget->health == 0)
     {
         aiNewState(pSprite, pXSprite, &zombieFSearch);
         return;
     }
-    if (IsPlayerSprite(pTarget) && (powerupCheck(&gPlayer[pTarget->type-kDudePlayer1], 13) > 0 || powerupCheck(&gPlayer[pTarget->type-kDudePlayer1], 31) > 0))
+    if (IsPlayerSprite(pTarget))
     {
-        aiNewState(pSprite, pXSprite, &zombieFSearch);
-        return;
+        PLAYER* pPlayer = &gPlayer[pTarget->type - kDudePlayer1];
+        if (powerupCheck(pPlayer, 13) > 0 || powerupCheck(pPlayer, 31) > 0)
+        {
+            aiNewState(pSprite, pXSprite, &zombieFSearch);
+            return;
+        }
     }
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (nDist <= pDudeInfo->at17)
     {
-        int nDeltaAngle = ((getangle(dx,dy)+1024-pSprite->ang)&2047)-1024;
+        int nAngle = getangle(dx, dy);
+        int nDeltaAngle = ((nAngle+1024-pSprite->ang)&2047)-1024;
         int height = (pDudeInfo->atb*pSprite->yrepeat)<<2;
         if (cansee(pTarget->x, pTarget->y, pTarget->z, pTarget->sectnum, pSprite->x, pSprite->y, pSprite->z - height, pSprite->sectnum))
         {
@@ -161,7 +174,7 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                         aiNewState(pSprite, pXSprite, &zombieFThrow);
                         break;
                     case 3:
-                        if (pSprite->type != sprite[gHitInfo.hitsprite].type)
+                        if (sprite[gHitInfo.hitsprite].type != pSprite->type)
                             aiNewState(pSprite, pXSprite, &zombieFThrow);
                         else
                             aiNewState(pSprite, pXSprite, &zombieFDodge);
@@ -180,7 +193,7 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                         aiNewState(pSprite, pXSprite, &zombieFPuke);
                         break;
                     case 3:
-                        if (pSprite->type != sprite[gHitInfo.hitsprite].type)
+                        if (sprite[gHitInfo.hitsprite].type != pSprite->type)
                             aiNewState(pSprite, pXSprite, &zombieFPuke);
                         else
                             aiNewState(pSprite, pXSprite, &zombieFDodge);
@@ -199,7 +212,7 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                         aiNewState(pSprite, pXSprite, &zombieFHack);
                         break;
                     case 3:
-                        if (pSprite->type != sprite[gHitInfo.hitsprite].type)
+                        if (sprite[gHitInfo.hitsprite].type != pSprite->type)
                             aiNewState(pSprite, pXSprite, &zombieFHack);
                         else
                             aiNewState(pSprite, pXSprite, &zombieFDodge);

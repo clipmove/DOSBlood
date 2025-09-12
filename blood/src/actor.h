@@ -245,7 +245,7 @@ int actSpriteOwnerToSpriteId(SPRITE *);
 
 int actGetRespawnTime(SPRITE *);
 
-SPRITE *actSpawnDude(SPRITE *pSource, short nType, int a3, int a4);
+SPRITE *actSpawnDude(SPRITE *pSource, short nType, int a3, int a4 = 0);
 
 SPRITE *actFireMissile(SPRITE *, int, int, int, int, int, int);
 

@@ -69,7 +69,7 @@ public:
         f_c = 0;
     }
 
-    tenWParcel(tenWParcel &a1) {
+    tenWParcel(tenWParcel const &a1) {
         f_0 = new char[a1.f_4];
         f_4 = a1.f_4;
         f_c = a1.f_c;
@@ -90,7 +90,7 @@ public:
     int f_10;
     tenRParcel(void*, unsigned int, int);
 
-    tenRParcel(tenRParcel &a1) {
+    tenRParcel(tenRParcel const &a1) {
         f_0 = new char[a1.f_4];
         f_4 = a1.f_4;
         f_8 = a1.f_8;

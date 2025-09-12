@@ -137,9 +137,10 @@ static void SpidJumpSeqCallback(int, int nXSprite)
     SPRITE *pSprite = &sprite[nSprite];
     int dx = Cos(pSprite->ang)>>16;
     int dy = Sin(pSprite->ang)>>16;
+    int dz = 0;
     dx += Random2(200);
     dy += Random2(200);
-    int dz = Random2(200);
+    dz += Random2(200);
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 245);
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 248);
     SPRITE *pTarget = &sprite[pXSprite->target];
@@ -151,12 +152,16 @@ static void SpidJumpSeqCallback(int, int nXSprite)
             switch (pSprite->type)
             {
             case 213:
-            case 215:
                 xvel[nSprite] = dx << 16;
                 yvel[nSprite] = dy << 16;
                 zvel[nSprite] = dz << 16;
                 break;
             case 214:
+                break;
+            case 215:
+                xvel[nSprite] = dx << 16;
+                yvel[nSprite] = dy << 16;
+                zvel[nSprite] = dz << 16;
                 break;
             }
         }
@@ -173,25 +178,25 @@ static void func_71370(int, int nXSprite)
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 299);
     SPRITE *pTarget = &sprite[pXSprite->target];
     DUDEEXTRA_SPIDER *pDudeExtraE = &gDudeExtra[pSprite->extra].at6.spider;
+    SPRITE* pSpawn = NULL;
     int dx = pXSprite->at20_0-pSprite->x;
     int dy = pXSprite->at24_0-pSprite->y;
     int nAngle = getangle(dx, dy);
     int nDist = approxDist(dx, dy);
-    SPRITE *pSpawn = NULL;
     if (IsPlayerSprite(pTarget) && pDudeExtraE->at4 < 10)
     {
         if (nDist < 0x1a00 && nDist > 0x1400 && klabs(pSprite->ang-nAngle) < pDudeInfo->at1b)
-            pSpawn = actSpawnDude(pSprite, 214, pSprite->clipdist, 0);
+            pSpawn = actSpawnDude(pSprite, 214, pSprite->clipdist);
         else if (nDist < 0x1400 && nDist > 0xc00 && klabs(pSprite->ang-nAngle) < pDudeInfo->at1b)
-            pSpawn = actSpawnDude(pSprite, 213, pSprite->clipdist, 0);
+            pSpawn = actSpawnDude(pSprite, 213, pSprite->clipdist);
         else if (nDist < 0xc00 && klabs(pSprite->ang - nAngle) < pDudeInfo->at1b)
-            pSpawn = actSpawnDude(pSprite, 213, pSprite->clipdist, 0);
-        if (pSpawn)
-        {
-            pDudeExtraE->at4++;
-            pSpawn->owner = nSprite;
-            gKillMgr.AddCount(pSpawn);
-        }
+            pSpawn = actSpawnDude(pSprite, 213, pSprite->clipdist);
+    }
+    if (pSpawn)
+    {
+        pDudeExtraE->at4++;
+        pSpawn->owner = nSprite;
+        gKillMgr.AddCount(pSpawn);
     }
 }
 
@@ -222,28 +227,34 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
         aiNewState(pSprite, pXSprite, &spidGoto);
         return;
     }
+    int dx, dy, nDist;
     dassert(pSprite->type >= kDudeBase && pSprite->type < kDudeMax, 391);
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type - kDudeBase];
     dassert(pXSprite->target >= 0 && pXSprite->target < kMaxSprites, 394);
     SPRITE *pTarget = &sprite[pXSprite->target];
     XSPRITE *pXTarget = &xsprite[pTarget->extra];
-    int dx = pTarget->x-pSprite->x;
-    int dy = pTarget->y-pSprite->y;
+    dx = pTarget->x-pSprite->x;
+    dy = pTarget->y-pSprite->y;
     aiChooseDirection(pSprite, pXSprite, getangle(dx, dy));
     if (pXTarget->health == 0)
     {
         aiNewState(pSprite, pXSprite, &spidSearch);
         return;
     }
-    if (IsPlayerSprite(pTarget) && powerupCheck(&gPlayer[pTarget->type-kDudePlayer1], 13) > 0)
+    if (IsPlayerSprite(pTarget))
     {
-        aiNewState(pSprite, pXSprite, &spidSearch);
-        return;
+        PLAYER *pPlayer = &gPlayer[pTarget->type - kDudePlayer1];
+        if (powerupCheck(pPlayer, 13) > 0)
+        {
+            aiNewState(pSprite, pXSprite, &spidSearch);
+            return;
+        }
     }
-    int nDist = approxDist(dx, dy);
+    nDist = approxDist(dx, dy);
     if (nDist <= pDudeInfo->at17)
     {
-        int nDeltaAngle = ((getangle(dx,dy)+1024-pSprite->ang)&2047)-1024;
+        int nAngle = getangle(dx, dy);
+        int nDeltaAngle = ((nAngle+1024-pSprite->ang)&2047)-1024;
         int height = (pDudeInfo->atb*pSprite->yrepeat)<<2;
         if (cansee(pTarget->x, pTarget->y, pTarget->z, pTarget->sectnum, pSprite->x, pSprite->y, pSprite->z - height, pSprite->sectnum))
         {
