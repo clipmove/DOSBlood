@@ -1233,12 +1233,11 @@ void main(void)
     CONFIG_ReadSetup();
     if (bCustomName)
         strcpy(PlayerName, zCustomName);
-    ulong memoryAvailable = func_A8B50();
-    ulong allocMemory;
-    if (memoryAvailable > gMaxAlloc)
+    ulong allocMemory = func_A8B50();
+    if (allocMemory > gMaxAlloc)
         allocMemory = gMaxAlloc;
     else
-        allocMemory = memoryAvailable-0x20000;
+        allocMemory = allocMemory -0x20000;
     Resource::heap = new QHeap(allocMemory);
 
     strcpy(buffer, UserPath);

@@ -202,21 +202,10 @@ BOOL CheckProximityPoint(int nX1, int nY1, int nZ1, int nX2, int nY2, int nZ2, i
 
 BOOL CheckProximityWall(int nWall, int x, int y, int nDist)
 {
-    int y1;
-    int x1;
-    int y2;
-    int x2;
-
-    int dx;
-    int dy;
-    int px;
-    int py;
-
-
-    x1 = wall[nWall].x;
-    y1 = wall[nWall].y;
-    x2 = wall[wall[nWall].point2].x;
-    y2 = wall[wall[nWall].point2].y;
+    int x1 = wall[nWall].x;
+    int y1 = wall[nWall].y;
+    int x2 = wall[wall[nWall].point2].x;
+    int y2 = wall[wall[nWall].point2].y;
     nDist <<= 4;
     if (x1 < x2)
     {
@@ -235,13 +224,14 @@ BOOL CheckProximityWall(int nWall, int x, int y, int nDist)
                 {
                     return 0;
                 }
+                int sq = nDist * nDist;
                 if (y < y1)
                 {
-                    return (x - x1) * (x - x1) + (y - y1) * (y - y1) < nDist* nDist;
+                    return (x - x1) * (x - x1) + (y - y1) * (y - y1) < sq;
                 }
                 if (y > y2)
                 {
-                    return (x - x2) * (x - x2) + (y - y2) * (y - y2) < nDist* nDist;
+                    return (x - x2) * (x - x2) + (y - y2) * (y - y2) < sq;
                 }
             }
             else
@@ -250,13 +240,14 @@ BOOL CheckProximityWall(int nWall, int x, int y, int nDist)
                 {
                     return 0;
                 }
+                int sq = nDist * nDist;
                 if (y < y2)
                 {
-                    return (x - x2) * (x - x2) + (y - y2) * (y - y2) < nDist* nDist;
+                    return (x - x2) * (x - x2) + (y - y2) * (y - y2) < sq;
                 }
                 if (y > y1)
                 {
-                    return (x - x1) * (x - x1) + (y - y1) * (y - y1) < nDist* nDist;
+                    return (x - x1) * (x - x1) + (y - y1) * (y - y1) < sq;
                 }
             }
             return 1;
@@ -283,13 +274,14 @@ BOOL CheckProximityWall(int nWall, int x, int y, int nDist)
                 {
                     return 0;
                 }
+                int sq = nDist * nDist;
                 if (x < x1)
                 {
-                    return (x - x1) * (x - x1) + (y - y1) * (y - y1) < nDist * nDist;
+                    return (x - x1) * (x - x1) + (y - y1) * (y - y1) < sq;
                 }
                 if (x > x2)
                 {
-                    return (x - x2) * (x - x2) + (y - y2) * (y - y2) < nDist * nDist;
+                    return (x - x2) * (x - x2) + (y - y2) * (y - y2) < sq;
                 }
             }
             else
@@ -298,37 +290,38 @@ BOOL CheckProximityWall(int nWall, int x, int y, int nDist)
                 {
                     return 0;
                 }
+                int sq = nDist * nDist;
                 if (x < x2)
                 {
-                    return (x - x2) * (x - x2) + (y - y2) * (y - y2) < nDist * nDist;
+                    return (x - x2) * (x - x2) + (y - y2) * (y - y2) < sq;
                 }
                 if (x > x1)
                 {
-                    return (x - x1) * (x - x1) + (y - y1) * (y - y1) < nDist * nDist;
+                    return (x - x1) * (x - x1) + (y - y1) * (y - y1) < sq;
                 }
             }
         }
     }
 
-    nDist = nDist * nDist;
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+    int px = x - x2;
+    int py = y - y2;
 
-    dx = x2 - x1;
-    dy = y2 - y1;
-    px = x - x2;
-    py = y - y2;
-    if (dx * px + dy * py >= 0)
+    int sq = nDist * nDist;
+    if (px * dx + py * dy >= 0)
     {
-        return px * px + py * py < nDist;
+        return px * px + py * py < sq;
     }
     px = x - x1;
     py = y - y1;
-    if (dx * px + dy * py <= 0)
+    if (px * dx + py * dy <= 0)
     {
-        return px * px + py * py < nDist;
+        return px * px + py * py < sq;
     }
-    //int check1 = dy * px - dx * py;
+    int check1 = px * dy - py * dx;
     //int check2 = dx * dx + dy * dy;
-    return (dy * px - dx * py) * (dy * px - dx * py) < (dx* dx + dy * dy) * nDist;
+    return check1 * check1 < (dx* dx + dy * dy) * sq;
 }
 
 int GetWallAngle(int nWall)

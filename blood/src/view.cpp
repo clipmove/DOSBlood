@@ -2581,7 +2581,7 @@ static void UpdateDacs(int nPalette)
 {
     static RGB newDAC[256];
     static int oldPalette;
-    if (oldPalette != nPalette)
+    if (nPalette != oldPalette)
     {
         scrSetPalette(nPalette);
         oldPalette = nPalette;
@@ -2627,7 +2627,7 @@ void viewDrawScreen(void)
     int arg = 0;
     int delta = ClipLow(gGameClock - lastUpdate, 0);
     lastUpdate = gGameClock;
-    if (!gPaused && (!CGameMenuMgr::m_bActive || gGameOptions.nGameType != GAMETYPE_0))
+    if (!gPaused && (!CGameMenuMgr::Active() || gGameOptions.nGameType != GAMETYPE_0))
     {
         gInterpolate = divscale16(gGameClock-gNetFifoClock+4, 4);
     }
@@ -2761,8 +2761,8 @@ void viewDrawScreen(void)
             {
                 nAng = 512-nAng;
             }
-            int nScale = dmulscale32(Cos(nAng), 256000, Sin(nAng), 160000);
-            setaspect(nScale, yxaspect);
+            nAng = dmulscale32(Cos(nAng), 256000, Sin(nAng), 160000);
+            setaspect(nAng, yxaspect);
         }
         else
         {
@@ -2926,8 +2926,8 @@ void viewDrawScreen(void)
             {
                 nAng = 512 - nAng;
             }
-            int nScale = dmulscale32(Cos(nAng), 256000, Sin(nAng), 160000);
-            rotatesprite(160<<16, 100<<16, nScale, v78+512, TILTBUFFER, 0, 0, vrc, gViewX0, gViewY0, gViewX1, gViewY1);
+            nAng = dmulscale32(Cos(nAng), 256000, Sin(nAng), 160000);
+            rotatesprite(160<<16, 100<<16, nAng, v78+512, TILTBUFFER, 0, 0, vrc, gViewX0, gViewY0, gViewX1, gViewY1);
         }
         long vf4, vf0, vec, ve8;
         GetZRange(gView->pSprite, &vf4, &vf0, &vec, &ve8, gView->pSprite->clipdist<<2, 0);
@@ -3035,11 +3035,12 @@ void viewDrawScreen(void)
     }
     viewDrawInterface(delta);
     int zDelta = gView->at6f-gView->at67-(12<<8);
-    int zn = 220+(zDelta>>7);
+    int cx = 160;
+    int cy = 220+(zDelta>>7);
     PLAYER *pPSprite = &gPlayer[gMe->pSprite->type-kDudePlayer1];
     if (pPSprite->at376 == 1)
     {
-        gChoke.func_84110(160, zn);
+        gChoke.func_84110(cx, cy);
         if ((gGameClock % 5) == 0)
         {
             gChoke.f_1c(&gChoke, pPSprite);

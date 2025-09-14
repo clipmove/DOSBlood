@@ -221,7 +221,7 @@ CGameMenuItemZBool boolMsgOther("OTHER PICKUP:", 3, 66, 130, 180, 0);
 CGameMenuItemZBool boolMsgRespawn("RESPAWN:", 3, 66, 140, 180, 0);
 
 CGameMenuItemTitle itemKeysTitle("KEY SETUP", 1, 160, 20, 2038);
-CGameMenuItemKeyList itemKeyList("", 3, 56, 40, 200, 16, 54, 0);
+CGameMenuItemKeyList itemKeyList("", 3, 56, 40, 200, 16, 54);
 
 CGameMenuItemTitle itemSaveTitle("Save Game", 1, 160, 20, 2038);
 CGameMenuItemZEditBitmap itemSaveGame1(NULL, 3, 20, 60, 320, strRestoreGameStrings[0], 16, 1, SaveGame, 0);
@@ -250,13 +250,13 @@ CGameMenuItemZEditBitmap itemLoadGame10(NULL, 3, 20, 150, 320, strRestoreGameStr
 CGameMenuItemBitmapLS itemLoadGamePic(NULL, 3, 0, 0, 2518);
 
 CGameMenuItemTitle itemNetStartTitle("NETWORK GAME", 1, 160, 20, 2038);
-CGameMenuItemZCycle itemNetStart1("GAME", 1, 20, 35, 280, 0, 0, zNetGameTypes, 3, 0);
-CGameMenuItemZCycle itemNetStart2("EPISODE", 1, 20, 50, 280, 0, SetupNetLevels, NULL, 0, 0);
-CGameMenuItemZCycle itemNetStart3("LEVEL", 1, 20, 65, 280, 0);
-CGameMenuItemZCycle itemNetStart4("DIFFICULTY", 1, 20, 80, 280, 0, 0, zDiffStrings, 5, 0);
-CGameMenuItemZCycle itemNetStart5("MONSTERS", 1, 20, 95, 280, 0, 0, zMonsterStrings, 3, 0);
-CGameMenuItemZCycle itemNetStart6("WEAPONS", 1, 20, 110, 280, 0, 0, zWeaponStrings, 4, 0);
-CGameMenuItemZCycle itemNetStart7("ITEMS", 1, 20, 125, 280, 0, 0, zItemStrings, 3, 0);
+CGameMenuItemZCycle itemNetStart1("GAME", 1, 20, 35, 280, 0, 0, zNetGameTypes, 3);
+CGameMenuItemZCycle itemNetStart2("EPISODE", 1, 20, 50, 280, 0, SetupNetLevels);
+CGameMenuItemZCycle itemNetStart3("LEVEL", 1, 20, 65, 280, 0, 0);
+CGameMenuItemZCycle itemNetStart4("DIFFICULTY", 1, 20, 80, 280, 0, 0, zDiffStrings, 5);
+CGameMenuItemZCycle itemNetStart5("MONSTERS", 1, 20, 95, 280, 0, 0, zMonsterStrings, 3);
+CGameMenuItemZCycle itemNetStart6("WEAPONS", 1, 20, 110, 280, 0, 0, zWeaponStrings, 4);
+CGameMenuItemZCycle itemNetStart7("ITEMS", 1, 20, 125, 280, 0, 0, zItemStrings, 3);
 CGameMenuItemZEdit itemNetStart9("USER MAP:", 1, 20, 155, 280, zUserMapName, 13, 0);
 CGameMenuItemChain itemNetStart10("START GAME", 1, 20, 170, 280, 0, 0, -1, StartNetGame);
 
@@ -983,19 +983,19 @@ void SetupNetLevels(CGameMenuItemZCycle *pItem)
 
 void StartNetGame(CGameMenuItemChain *pItem)
 {
-    gPacketStartGame.gameType = itemNetStart1.at24+1;
+    gPacketStartGame.gameType = itemNetStart1.getId() + 1;
     if (gPacketStartGame.gameType == 0)
         gPacketStartGame.gameType = 2;
-    gPacketStartGame.episodeId = itemNetStart2.at24;
-    gPacketStartGame.levelId = itemNetStart3.at24;
-    gPacketStartGame.difficulty = itemNetStart4.at24;
-    gPacketStartGame.monsterSettings = itemNetStart5.at24;
-    gPacketStartGame.weaponSettings = itemNetStart6.at24;
-    gPacketStartGame.itemSettings = itemNetStart7.at24;
+    gPacketStartGame.episodeId = itemNetStart2.getId();
+    gPacketStartGame.levelId = itemNetStart3.getId();
+    gPacketStartGame.difficulty = itemNetStart4.getId();
+    gPacketStartGame.monsterSettings = itemNetStart5.getId();
+    gPacketStartGame.weaponSettings = itemNetStart6.getId();
+    gPacketStartGame.itemSettings = itemNetStart7.getId();
     gPacketStartGame.respawnSettings = 0;
     gPacketStartGame.unk = 0;
     gPacketStartGame.userMapName[0] = 0;
-    strncpy(gPacketStartGame.userMapName, zUserMapName, 13);
+    strncpy(gPacketStartGame.userMapName, itemNetStart9.getId(), 13);
     gPacketStartGame.userMapName[12] = 0;
     if (gPacketStartGame.userMapName[0])
         gPacketStartGame.userMap = 1;
@@ -1005,14 +1005,6 @@ void StartNetGame(CGameMenuItemChain *pItem)
     netBroadcastNewGame();
     gStartNewGame = 1;
     gGameMenuMgr.Deactivate();
-}
-
-void hackfunc3()
-{
-    hackfunc3();
-    hackfunc3();
-    hackfunc3();
-    hackfunc3();
 }
 
 void Quit(CGameMenuItemChain *pItem)

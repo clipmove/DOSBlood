@@ -260,7 +260,7 @@ public:
     int at34;
     BOOL at38;
     CGameMenuItemKeyList();
-    CGameMenuItemKeyList(char * a1, int a2, int a3, int a4, int a5, int a6, int a7, void(*a8)(CGameMenuItemKeyList *));
+    CGameMenuItemKeyList(char * a1, int a2, int a3, int a4, int a5, int a6, int a7, void(*a8)(CGameMenuItemKeyList *) = NULL);
     void Scan(void);
     virtual void Draw(void);
     virtual BOOL Event(CGameMenuEvent &);
@@ -304,6 +304,7 @@ public:
     void BackChar(void);
     virtual void Draw(void);
     virtual BOOL Event(CGameMenuEvent &);
+    char* getId() { return at20; }
 };
 
 class CGameMenuItemZEditBitmap : public CGameMenuItem
@@ -363,6 +364,7 @@ public:
     void Clear(void);
     void SetTextArray(char **a1, int a2, int a3 = 0);
     void SetTextIndex(int);
+    int getId(void) { return at24; }
 };
 
 class CGameMenuItemYesNoQuit : public CGameMenuItem

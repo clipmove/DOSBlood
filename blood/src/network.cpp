@@ -199,7 +199,6 @@ byte func_86760(byte *);
 
 void netCheckSync(void)
 {
-    int p;
     char v4;
     char buffer[80];
     if (gGameOptions.nGameType == GAMETYPE_0)
@@ -210,7 +209,7 @@ void netCheckSync(void)
         return;
     while (1)
     {
-        for (p = connecthead; p >= 0; p = connectpoint2[p])
+        for (int p = connecthead; p >= 0; p = connectpoint2[p])
         {
             if (gCheckHead[p] <= gCheckTail)
                 return;

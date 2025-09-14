@@ -289,24 +289,25 @@ _DEMOPLAYBACK:
                         nSize = sizeof(at1aa);
                     read(at7, at1aa, nSize);
                 }
-                memcpy(&gFifoInput[gNetFifoHead[p]&255][p], &at1aa[v4&1023], sizeof(INPUT));
+                int i = gNetFifoHead[p]&255;
+                memcpy(&gFifoInput[i][p], &at1aa[v4&1023], sizeof(INPUT));
                 gNetFifoHead[p]++;
                 v4++;
                 if (v4 >= atf.nInputCount)
                 {
                     ready2send = 0;
-                    if (DemoCount() != 1)
+                    if (DemoCount() == 1)
+                    {
+                        lseek(at7, sizeof(DEMOHEADER), SEEK_SET);
+                        v4 = 0;
+                    }
+                    else
                     {
                         v4 = 0;
                         Close();
                         NextDemo();
                         gNetFifoClock = gGameClock;
                         goto _DEMOPLAYBACK;
-                    }
-                    else
-                    {
-                        lseek(at7, sizeof(DEMOHEADER), SEEK_SET);
-                        v4 = 0;
                     }
                 }
             }

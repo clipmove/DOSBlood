@@ -106,13 +106,14 @@ static void BlastSSeqCallback(int, int nXSprite)
     SPRITE *pSprite = &sprite[nSprite];
     BOOL hackvar = Chance(1234);
     SPRITE *pTarget = &sprite[pXSprite->target];
+    XSPRITE* pXTarget = &xsprite[pTarget->extra];
     int height = (dudeInfo[pSprite->type-kDudeBase].atb*pSprite->yrepeat) << 2;
-
+    int height2 = (dudeInfo[pTarget->type-kDudeBase].atb*pTarget->yrepeat) << 2;
     int dx = pXSprite->at20_0-pSprite->x;
     int dy = pXSprite->at24_0-pSprite->y;
-    int nDist = approxDist(dx, dy);
+    int nDist = approxDist(pXSprite->at20_0 - pSprite->x, pXSprite->at24_0 - pSprite->y);
     int nAngle = getangle(dx, dy);
-
+    int nAng = ((nAngle+1024-pSprite->ang)&2047)-1024;
     int x = pSprite->x;
     int y = pSprite->y;
     int z = height;
@@ -182,11 +183,6 @@ static void BlastSSeqCallback(int, int nXSprite)
         actFireMissile(pSprite, -120, 0, aim.dx, aim.dy, aim.dz, 311);
         actFireMissile(pSprite, 120, 0, aim.dx, aim.dy, aim.dz, 311);
     }
-}
-
-int hackfunc5(int x)
-{
-    return x;
 }
 
 static void ThrowSSeqCallback(int, int nXSprite)
@@ -573,6 +569,12 @@ static void MoveSlow(SPRITE *pSprite, XSPRITE *pXSprite)
     int nCos = Cos(pSprite->ang);
     int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
     int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
+
+    SPRITE* pSprite2 = &sprite[pXSprite->target];
+    XSPRITE* pXSprite2 = &xsprite[pSprite2->extra];
+    int h1 = dudeInfo[pSprite->type - kDudeBase].atb;
+    int h2 = dudeInfo[pSprite2->type - kDudeBase].atb;
+
     t1 = nAccel>>1;
     t2 = t2 >> 1;
     xvel[nSprite] = dmulscale30(t1, nCos, t2, nSin);
@@ -613,6 +615,12 @@ static void MoveSwoop(SPRITE *pSprite, XSPRITE *pXSprite)
     int nCos = Cos(pSprite->ang);
     int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
     int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
+
+    SPRITE* pSprite2 = &sprite[pXSprite->target];
+    XSPRITE* pXSprite2 = &xsprite[pSprite2->extra];
+    int h1 = dudeInfo[pSprite->type - kDudeBase].atb;
+    int h2 = dudeInfo[pSprite2->type - kDudeBase].atb;
+
     t1 += nAccel>>1;
     xvel[nSprite] = dmulscale30(t1, nCos, t2, nSin);
     yvel[nSprite] = dmulscale30(t1, nSin, -t2, nCos);
@@ -652,6 +660,12 @@ static void MoveFly(SPRITE *pSprite, XSPRITE *pXSprite)
     int nCos = Cos(pSprite->ang);
     int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
     int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
+
+    SPRITE* pSprite2 = &sprite[pXSprite->target];
+    XSPRITE* pXSprite2 = &xsprite[pSprite2->extra];
+    int h1 = dudeInfo[pSprite->type - kDudeBase].atb;
+    int h2 = dudeInfo[pSprite2->type - kDudeBase].atb;
+
     t1 += nAccel>>1;
     xvel[nSprite] = dmulscale30(t1, nCos, t2, nSin);
     yvel[nSprite] = dmulscale30(t1, nSin, -t2, nCos);
@@ -667,11 +681,6 @@ static void MoveFly(SPRITE *pSprite, XSPRITE *pXSprite)
     if (klabs(zvel[nSprite]) > 1234)
     {
     }
-}
-
-char hackvar6()
-{
-    return 2;
 }
 
 

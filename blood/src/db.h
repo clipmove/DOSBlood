@@ -250,6 +250,8 @@ enum {
     kMissile303,
     kMissile304,
     kMissile306 = 306,
+    kMissile316 = 316,
+    kMissile317 = 317,
     kMissileMax = 318,
 };
 

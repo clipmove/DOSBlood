@@ -123,45 +123,49 @@ CWeather::Draw(char *pBuffer, int x, int y, int a4, int a5, int *pYLookup, int a
     dassert(nCount > 0 && nCount < kMaxVectors, 124);
     dassert(nTile == kNoTile || (nTile >= 0 && nTile < kMaxTiles), 125);
     pBuffer += pYLookup[y]+x;
+
+    int i;
+    int v2;
+    int v1;
+    int v3;
+    int v4;
+    int v6;
+    int v7;
+    int v8;
+
+
     int nCos = Cos(a10)>>16;
     int nSin = Sin(a10)>>16;
-    for (int i = 0; i < nCount; i++)
+    for (i = 0; i < nCount; i++)
     {
-        int v1 = ((f_12de[i][1]-a7*2)&0x3fff)-0x2000;
-        int v2 = ((f_12de[i][0]-a8*2)&0x3fff)-0x2000;
-        int v3 = (v1*nCos+v2*nSin)>>14;
+        v2 = ((f_12de[i][0]-a8*2)&0x3fff)-0x2000;
+        v1 = ((f_12de[i][1]-a7*2)&0x3fff)-0x2000;
+        v3 = (v1*nCos+v2*nSin)>>14;
         if (v3 > 4)
         {
-            int v4 = (v2*nCos-v1*nSin)>>14;
-            if (v3*v3+v4*v4 < 0x4000000)
+            v4 = (v2*nCos-v1*nSin)>>14;
+            if (v4*v4+v3*v3 < 0x4000000)
             {
                 int v5 = (a4<<15)/v3;
-                unsigned int v6 = (((v4*v5)>>16)+(a4>>1));
+                v6 = (((v4*v5)>>16)+(a4>>1));
                 if (v6 < (unsigned int) a4)
                 {
-                    int v7 = (((a9>>3)-f_12de[i][2])&0x3fff)-0x2000;
-                    unsigned int v8 = a11+((v5*v7)>>16);
+                    v7 = ((f_12de[i][2]-(a9>>3))&0x3fff)-0x2000;
+                    v8 = a11+((v5*v7)>>16);
                     if (v8 < (unsigned int) a5 && nTile == kNoTile)
                     {
                         if (f_0.f_1 == 0)
                         {
-                            v3 >>= f_72df+8;
-                            v3 = f_72de-v3;
-                            char *pDest = pBuffer + pYLookup[v8] + v6;
-                            *pDest = v3;
+                            pBuffer[pYLookup[v8] + v6] = f_72de - (v3 >> (f_72df+8));
                         }
                         else
                         {
-                            v3 >>= f_72df+8;
-                            char *pDest = pBuffer + pYLookup[v8] + v6;
-                            byte p1 = f_72de-v3;
-                            byte p2 = *pDest;
-                            int ix;
+                            byte p2 = pBuffer[pYLookup[v8] + v6];
+                            byte p1 = f_72de-(v3 >> (f_72df+8));
                             if (f_0.f_1 == 1)
-                                ix = (p1 << 8) + p2;
+                                pBuffer[pYLookup[v8] + v6] = transluc[(p1 << 8) + p2];
                             else if (f_0.f_1 == 2)
-                                ix = (p2 << 8) + p1;
-                            *pDest = transluc[ix];
+                                pBuffer[pYLookup[v8] + v6] = transluc[(p2 << 8) + p1];
                         }
                     }
                 }
@@ -173,8 +177,7 @@ CWeather::Draw(char *pBuffer, int x, int y, int a4, int a5, int *pYLookup, int a
 
 CWeather::Draw(int a1, int a2, int a3, int a4, int a5, int a6)
 {
-    if (a6 == -1)
-        a6 = f_12d8;
+    a6 = a6 == -1 ? f_12d8 : a6;
     if (Status() && a6 > 0)
         Draw(f_4, f_10, f_14, f_8, f_c, YLookup, a1, a2, a3, a4, a5, a6, f_12dc);
 }

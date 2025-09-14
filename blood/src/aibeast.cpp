@@ -88,12 +88,12 @@ static void SlashSeqCallback(int, int nXSprite)
 
 static void StompSeqCallback(int, int nXSprite)
 {
-    byte vb8[(kMaxSectors+7)>>3];
     XSPRITE *pXSprite = &xsprite[nXSprite];
-    SPRITE *pSprite = &sprite[pXSprite->reference];
     int nSprite = pXSprite->reference;
+    SPRITE *pSprite = &sprite[nSprite];
     int dx = Cos(pSprite->ang)>>16;
     int dy = Sin(pSprite->ang)>>16;
+    byte vb8[(kMaxSectors+7)>>3];
     int x = pSprite->x;
     int y = pSprite->y;
     int z = pSprite->z;
@@ -101,6 +101,7 @@ static void StompSeqCallback(int, int nXSprite)
     int vc = 400;
     int v1c = 5+2*gGameOptions.nDifficulty;
     int v10 = 25+30*gGameOptions.nDifficulty;
+    int nSprite_ = nSprite;
     gAffectedSectors[0] = -1;
     gAffectedXWalls[0] = -1;
     GetClosestSpriteSectors(nSector, x, y, vc, gAffectedSectors, vb8, gAffectedXWalls);
@@ -116,7 +117,7 @@ static void StompSeqCallback(int, int nXSprite)
     vc <<= 4;
     for (int nSprite2 = headspritestat[6]; nSprite2 >= 0; nSprite2 = nextspritestat[nSprite2])
     {
-        if (nSprite2 == nSprite && !v4)
+        if (nSprite2 == nSprite_ && !v4)
             continue;
         SPRITE *pSprite2 = &sprite[nSprite2];
         if (pSprite2->extra <= 0 || pSprite2->extra >= kMaxXSprites)
@@ -138,10 +139,14 @@ static void StompSeqCallback(int, int nXSprite)
                 int nDist2 = ksqrt(dx*dx + dy*dy);
                 if (nDist2 <= vc)
                 {
-                    int nDamage = nDist2 == 0 ? v1c + v10 : v1c + ((vc-nDist2)*v10)/vc;
+                    int nDamage;
+                    if (nDist2 == 0)
+                        nDamage = v1c + v10;
+                    else
+                        nDamage = v1c + ((vc-nDist2)*v10)/vc;
                     if (IsPlayerSprite(pSprite2))
                         gPlayer[pSprite2->type-kDudePlayer1].at37f += nDamage*4;
-                    actDamageSprite(nSprite, pSprite2, DAMAGE_TYPE_0, nDamage<<4);
+                    actDamageSprite(nSprite_, pSprite2, DAMAGE_TYPE_0, nDamage<<4);
                 }
             }
         }
@@ -163,8 +168,12 @@ static void StompSeqCallback(int, int nXSprite)
             int nDist2 = ksqrt(dx*dx + dy*dy);
             if (nDist2 <= vc)
             {
-                int nDamage = nDist2 == 0 ? v1c + v10 : v1c + ((vc-nDist2)*v10)/vc;
-                actDamageSprite(nSprite, pSprite2, DAMAGE_TYPE_0, nDamage<<4);
+                int nDamage;
+                if (nDist2 == 0)
+                    nDamage = v1c + v10;
+                else
+                    nDamage = v1c + ((vc-nDist2)*v10)/vc;
+                actDamageSprite(nSprite_, pSprite2, DAMAGE_TYPE_0, nDamage<<4);
             }
         }
     }

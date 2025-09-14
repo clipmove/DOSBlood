@@ -361,9 +361,7 @@ static void MoveSwoop(SPRITE *pSprite, XSPRITE *pXSprite)
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
     int nTurnRange = (pDudeInfo->at44<<2)>>4;
     pSprite->ang = (pSprite->ang+ClipRange(nAng, -nTurnRange, nTurnRange))&2047;
-    int x = gGameOptions.nDifficulty;
-    x = 4 - x;
-    int nAccel = (pDudeInfo->at38-(((x)<<26)/120)/120)<<2;
+    int nAccel = (pDudeInfo->at38-(((4-gGameOptions.nDifficulty)<<26)/120)/120)<<2;
     if (klabs(nAng) > 341)
         return;
     dx = pXSprite->at20_0-pSprite->x;
@@ -376,6 +374,11 @@ static void MoveSwoop(SPRITE *pSprite, XSPRITE *pXSprite)
     int nCos = Cos(pSprite->ang);
     int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
     int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
+
+    SPRITE* pSprite2 = &sprite[pXSprite->target];
+    XSPRITE* pXSprite2 = &xsprite[pSprite2->extra];
+    int h1 = dudeInfo[pSprite->type - kDudeBase].atb;
+    int h2 = dudeInfo[pSprite2->type - kDudeBase].atb;
 
     t1 += nAccel>>1;
 
@@ -393,9 +396,7 @@ static void MoveAscend(SPRITE *pSprite, XSPRITE *pXSprite)
     int nAng = ((pXSprite->at16_0+1024-pSprite->ang)&2047)-1024;
     int nTurnRange = (pDudeInfo->at44<<2)>>4;
     pSprite->ang = (pSprite->ang+ClipRange(nAng, -nTurnRange, nTurnRange))&2047;
-    int x = gGameOptions.nDifficulty;
-    x = 4 - x;
-    int nAccel = (pDudeInfo->at38-(((x)<<26)/120)/120)<<2;
+    int nAccel = (pDudeInfo->at38-(((4-gGameOptions.nDifficulty)<<26)/120)/120)<<2;
     if (klabs(nAng) > 341)
         return;
     dx = pXSprite->at20_0-pSprite->x;
@@ -408,6 +409,11 @@ static void MoveAscend(SPRITE *pSprite, XSPRITE *pXSprite)
     int nCos = Cos(pSprite->ang);
     int t1 = dmulscale30(xvel[nSprite], nCos, yvel[nSprite], nSin);
     int t2 = dmulscale30(xvel[nSprite], nSin, -yvel[nSprite], nCos);
+
+    SPRITE* pSprite2 = &sprite[pXSprite->target];
+    XSPRITE* pXSprite2 = &xsprite[pSprite2->extra];
+    int h1 = dudeInfo[pSprite->type - kDudeBase].atb;
+    int h2 = dudeInfo[pSprite2->type - kDudeBase].atb;
 
     t1 += nAccel>>1;
 

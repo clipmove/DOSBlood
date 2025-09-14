@@ -49,8 +49,10 @@ BOOL gUse8250;
 char *gVersionString;
 char gVersionStringBuf[16];
 
-char gBuildDate[] = __DATE__;
-char gBuildTime[] = __TIME__;
+//char gBuildDate[] = __DATE__;
+//char gBuildTime[] = __TIME__;
+char gBuildDate[] = "Jul 15 1998";
+char gBuildTime[] = "14:37:44";
 
 const BLOODVERSION gGameVersion = { 21, 1 };
 
