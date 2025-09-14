@@ -81,7 +81,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * This is only for retail English version 1.21 (One Unit Whole Blood)
 
 ### Build instructions
-Watcom 10.6, MASM 5.10 and TASM 3.2 are required to build
+Watcom 10.6, MASM 5.10 and TASM 3.1 are required to build
 
 1) Build helix32, qtools and build (i.e. `cd helix32` and then `wmake`)
 2) Build blood (i.e. `cd blood` and then `wmake`)
