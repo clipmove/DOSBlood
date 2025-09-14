@@ -280,7 +280,7 @@ void LifeLeechOperate(SPRITE *pSprite, XSPRITE *pXSprite, EVENT a3)
                     break;
                 if (cansee(pSprite->x, pSprite->y, top, pSprite->sectnum, x, y, z, pTarget->sectnum))
                 {
-                    int t = divscale(nDist, 0x1aaaaa, 12);
+                    int t = divscale12(nDist, 0x1aaaaa);
                     x += (xvel[nTarget]*t)>>12;
                     y += (yvel[nTarget]*t)>>12;
                     z += (zvel[nTarget]*t)>>8;
@@ -289,7 +289,7 @@ void LifeLeechOperate(SPRITE *pSprite, XSPRITE *pXSprite, EVENT a3)
                     int dx = Cos(pSprite->ang)>>16;
                     int dy = Sin(pSprite->ang)>>16;
                     int tz = pTarget->z - (pTarget->yrepeat * pDudeInfo->atf) * 4 - top - 256;
-                    tz = divscale(tz, nDist, 10);
+                    tz = divscale10(tz, nDist);
                     int nMissileType = pXSprite->at14_0 == 0 ? kMissile316 : kMissile317;
                     int t2 = pXSprite->at14_0 == 0 ? 120 / 10.0 : (3 * 120) / 10.0;
                     SPRITE *pMissile = actFireMissile(pSprite, 0, z1, dx, dy, tz, nMissileType);

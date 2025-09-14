@@ -1508,8 +1508,8 @@ static void ProcessInput(PLAYER *pPlayer)
             pSprite2->ang = (pPlayer->pSprite->ang+1024)&2047;
             int x = Cos(pPlayer->pSprite->ang)>>16;
             int y = Sin(pPlayer->pSprite->ang)>>16;
-            xvel[pSprite2->index] = xvel[nSprite] + mulscale(0x155555, x, 14);
-            yvel[pSprite2->index] = yvel[nSprite] + mulscale(0x155555, y, 14);
+            xvel[pSprite2->index] = xvel[nSprite] + mulscale14(0x155555, x);
+            yvel[pSprite2->index] = yvel[nSprite] + mulscale14(0x155555, y);
             zvel[pSprite2->index] = zvel[nSprite];
             pPlayer->at376 = 0;
         }
