@@ -99,6 +99,7 @@ enum {
     kSpriteStat0 = 1,
     kSpriteStat3 = 8,
     kSpriteStat5 = 32,
+    kSpriteStat6 = 64,
     kSpriteStat7 = 128,
     kSpriteStat8 = 256,
     kSpriteStat13 = 8192,

@@ -83,8 +83,8 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 ### Build instructions
 Watcom 10.6, MASM 5.10 and TASM 3.2 are required to build
 
-1) Build helix32, qtools and build (e.g. `cd helix32` and then `wmake`)
-2) Build blood (e.g. `cd blood` and then `wmake`)
+1) Build helix32, qtools and build (i.e. `cd helix32` and then `wmake`)
+2) Build blood (i.e. `cd blood` and then `wmake`)
    
 Note: The Build Engine (by Ken Silverman) code has been effortlessly recreated by the [gamesrc-ver-recreation project](https://bitbucket.org/gamesrc-ver-recreation/build/src/master/), and compiles close enough that DOSBlood can playback 11 hours of demo files without desyncronizing. If you prefer to use the original objects file, run `clean.bat` and then `origlib.bat` in the build directory
 

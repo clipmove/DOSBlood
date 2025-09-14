@@ -31,11 +31,12 @@ VGTEND ENDS
 
 .DATA
 
+EXTRN _gColor:DWORD
+EXTRN _gROP:DWORD
+EXTRN _gError:DWORD
 EXTRN _gPages:DWORD
 EXTRN _gPageTable:DWORD
 EXTRN _gYLookup:DWORD
-EXTRN _gColor:DWORD
-EXTRN _gROP:DWORD
 
 ModeWDriver	dd offset ModeXValid
 			dd offset ModeWName
@@ -64,21 +65,21 @@ ModeWPageTable	dd 1
 				dd 360
 				dd 270
 				dd 90
-				dd 0, 0
+				dd ?, ?
 				dd 1
 				dd 0A5EECh
 				dd 5EECh
 				dd 360
 				dd 270
 				dd 90
-				dd 0, 0
+				dd ?, ?
 				dd 0
 				dd 0ABDD8h
 				dd 4218h
 				dd 360
 				dd 180
 				dd 90
-				dd 0, 0
+				dd ?, ?
 word_1186A9		dw 6B00h, 5901h, 5A02h, 8E03h, 5E04h, 8A05h, 4006h, 0F007h
 				dw 6109h, 2410h, 0AA11h, 1B12h, 2D13h, 14h, 1B15h, 3A16h, 0E317h
 
@@ -109,28 +110,28 @@ ModeXPageTable	dd 1
 				dd 320
 				dd 240
 				dd 80
-				dd 0, 0
+				dd ?, ?
 				dd 1
 				dd 0A4B00h
 				dd 4B00h
 				dd 320
 				dd 240
 				dd 80
-				dd 0, 0
+				dd ?, ?
 				dd 1
 				dd 0A9600h
 				dd 4B00h
 				dd 320
 				dd 240
 				dd 80
-				dd 0, 0
+				dd ?, ?
 				dd 0
 				dd 0AE100h
 				dd 1EF0h
 				dd 320
 				dd 99
 				dd 80
-				dd 0, 0
+				dd ?, ?
 word_1187B4		dw 0D06h, 3E07h, 4109h, 0EA10h, 0AC11h, 0DF12h, 14h, 0E715h, 616h, 0E317h
 
 ModeYDriver	dd offset ModeXValid
@@ -160,21 +161,21 @@ ModeYPageTable	dd 1
 				dd 320
 				dd 400
 				dd 80
-				dd 0, 0
+				dd ?, ?
 				dd 1
 				dd 0A7D00h
 				dd 7D00h
 				dd 320
 				dd 400
 				dd 80
-				dd 0, 0
+				dd ?, ?
 				dd 0
 				dd 0AFA00h
 				dd 5F0h
 				dd 320
 				dd 19
 				dd 80
-				dd 0, 0
+				dd ?, ?
 word_118891		dw 4009h, 14h, 0E317h
 
 ModeZDriver	dd offset ModeXValid
@@ -204,14 +205,14 @@ ModeZPageTable	dd 1
 				dd 360
 				dd 480
 				dd 90
-				dd 0, 0
+				dd ?, ?
 				dd 0
 				dd 0AA8C0h
 				dd 5730h
 				dd 360
 				dd 248
 				dd 90
-				dd 0, 0
+				dd ?, ?
 
 word_118940		dw 6B00h, 5901h, 5A02h, 8E03h, 5E04h, 8A05h, 0D06h, 3E07h
 				dw 4009h, 0EA10h, 0AC11h, 0DF12h, 2D13h, 14h, 0E715h, 616h, 0E317h

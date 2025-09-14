@@ -899,6 +899,7 @@ BOOL func_3A158(PLAYER *a1, SPRITE *a2)
 
 static BOOL PickupItem(PLAYER *pPlayer, SPRITE *pItem)
 {
+    char buffer[80];
     SPRITE *pSprite = pPlayer->pSprite;
     XSPRITE *pXSprite = pPlayer->pXSprite;
     int pickupSnd = 775;
@@ -908,7 +909,6 @@ static BOOL PickupItem(PLAYER *pPlayer, SPRITE *pItem)
     case 145:
     case 146:
     {
-        char buffer[80];
         if (gGameOptions.nGameType != GAMETYPE_3)
             return 0;
         if (pItem->extra > 0)
@@ -1049,6 +1049,13 @@ static BOOL PickupItem(PLAYER *pPlayer, SPRITE *pItem)
         if (gGameOptions.nGameType == GAMETYPE_0 || !packAddItem(pPlayer, gItemData[nType].at8))
             return 0;
         break;
+    case 107:
+    case 115:
+    case 118:
+    case 125:
+        if (!packAddItem(pPlayer, gItemData[nType].at8))
+            return 0;
+        break;
     case 100:
     case 101:
     case 102:
@@ -1058,8 +1065,8 @@ static BOOL PickupItem(PLAYER *pPlayer, SPRITE *pItem)
     case 106:
         if (pPlayer->at88[pItem->type-99])
             return 0;
-        pickupSnd = 781;
         pPlayer->at88[pItem->type-99] = 1;
+        pickupSnd = 781;
         break;
     case 111:
     case 108:
@@ -1068,13 +1075,6 @@ static BOOL PickupItem(PLAYER *pPlayer, SPRITE *pItem)
         if (!actHealDude(pXSprite, gPowerUpInfo[nType].at3, gPowerUpInfo[nType].at7))
             return 0;
         return 1;
-    case 107:
-    case 115:
-    case 118:
-    case 125:
-        if (!packAddItem(pPlayer, gItemData[nType].at8))
-            return 0;
-        break;
     default:
         if (!powerupActivate(pPlayer, nType))
             return 0;
@@ -1128,7 +1128,7 @@ static BOOL PickupWeapon(PLAYER *pPlayer, SPRITE *pWeapon)
         return 0;
     pPlayer->at181[nAmmoType] = ClipHigh(pPlayer->at181[nAmmoType]+pWeaponItemData->atc, gAmmoInfo[nAmmoType].at0);
     SPRITE *pSprite = pPlayer->pSprite;
-    sfxPlay3DSound(pPlayer->pSprite, 777);
+    sfxPlay3DSound(pSprite, 777);
     return 1;
 }
 
@@ -1177,22 +1177,21 @@ static void CheckPickUp(PLAYER *pPlayer)
     int nSector = pSprite->sectnum;
     int nSprite;
     int nNextSprite;
-    int dx, dy, dz;
     for (nSprite = headspritestat[3]; nSprite >= 0; nSprite = nNextSprite)
     {
         nNextSprite = nextspritestat[nSprite];
         SPRITE *pItem = &sprite[nSprite];
         if (pItem->flags&kSpriteFlag5)
             continue;
-        dx = klabs(x-pItem->x)>>4;
+        int dx = klabs(x-pItem->x)>>4;
         if (dx > 48)
             continue;
-        dy = klabs(y-pItem->y)>>4;
+        int dy = klabs(y-pItem->y)>>4;
         if (dy > 48)
             continue;
         int top, bottom;
         GetSpriteExtents(pSprite, &top, &bottom);
-        dz = 0;
+        int dz = 0;
         if (pItem->z < top)
             dz = (top-pItem->z)>>8;
         else if (pItem->z > bottom)
@@ -1245,7 +1244,7 @@ static int ActionScan(PLAYER *pPlayer, int *a2, int *a3)
                 SPRITE *pSprite = &sprite[*a2];
                 XSPRITE *pXSprite = &xsprite[*a3];
                 int nMass = dudeInfo[pSprite->type-kDudeBase].at4;
-                if (nMass)
+                if (nMass > 0)
                 {
                     int t2 = divscale8(0xccccc, nMass);
                     xvel[*a2] += mulscale16(x, t2);
@@ -1289,8 +1288,8 @@ static int ActionScan(PLAYER *pPlayer, int *a2, int *a3)
 static void ProcessInput(PLAYER *pPlayer)
 {
     SPRITE *pSprite = pPlayer->pSprite;
-    XSPRITE *pXSprite = pPlayer->pXSprite;
     int nSprite = pPlayer->at5b;
+    XSPRITE *pXSprite = pPlayer->pXSprite;
     POSTURE *pPosture = &gPosture[pPlayer->at5f][pPlayer->at2f];
     INPUT *pInput = &pPlayer->atc;
     pPlayer->at2e = VanillaMode() ? pInput->syncFlags.run : 0;
@@ -1308,9 +1307,9 @@ static void ProcessInput(PLAYER *pPlayer)
         BOOL bSeqStat = playerSeqPlaying(pPlayer, 16);
         if (pPlayer->at2ee != -1)
         {
-            int dx = sprite[pPlayer->at2ee].x-pSprite->x;
-            int dy = sprite[pPlayer->at2ee].y-pSprite->y;
-            pSprite->ang = getangle(dx, dy);
+            int dx = sprite[pPlayer->at2ee].x-pPlayer->pSprite->x;
+            int dy = sprite[pPlayer->at2ee].y-pPlayer->pSprite->y;
+            pPlayer->pSprite->ang = getangle(dx, dy);
         }
         pPlayer->at1fe += 4;
         if (!bSeqStat)
@@ -1509,8 +1508,8 @@ static void ProcessInput(PLAYER *pPlayer)
             pSprite2->ang = (pPlayer->pSprite->ang+1024)&2047;
             int x = Cos(pPlayer->pSprite->ang)>>16;
             int y = Sin(pPlayer->pSprite->ang)>>16;
-            xvel[pSprite2->index] = xvel[nSprite] + mulscale14(0x155555, x);
-            yvel[pSprite2->index] = yvel[nSprite] + mulscale14(0x155555, y);
+            xvel[pSprite2->index] = xvel[nSprite] + mulscale(0x155555, x, 14);
+            yvel[pSprite2->index] = yvel[nSprite] + mulscale(0x155555, y, 14);
             zvel[pSprite2->index] = zvel[nSprite];
             pPlayer->at376 = 0;
         }
@@ -1670,7 +1669,7 @@ void playerProcess(PLAYER *pPlayer)
             if (nSector == -1)
             {
                 nSector = pSprite->sectnum;
-                actDamageSprite(nSprite, pSprite, kDamageFall, 500<<4);
+                actDamageSprite(pSprite->index, pSprite, kDamageFall, 500<<4);
             }
             dassert(nSector >= 0 && nSector < kMaxSectors, 2481);
             ChangeSpriteSect(nSprite, nSector);
@@ -1737,8 +1736,8 @@ void playerProcess(PLAYER *pPlayer)
     pPlayer->at366 = ClipLow(pPlayer->at366-4, 0);
     pPlayer->at36a = ClipLow(pPlayer->at36a-4, 0);
     pPlayer->at377 = ClipLow(pPlayer->at377-4, 0);
-    if (pPlayer == gMe && gMe->pXSprite->health == 0)
-        pPlayer->at376 = 0;
+    if (gMe == pPlayer && gMe->pXSprite->health == 0)
+        gMe->at376 = 0;
     if (!pXSprite->health)
         return;
     pPlayer->at87 = 0;
@@ -1779,17 +1778,6 @@ void playerProcess(PLAYER *pPlayer)
             seqSpawn(dudeInfo[nType].seqStartID+8, 3, nXSprite);
         break;
     }
-}
-
-int hackfunc1(int x)
-{
-    int j = 1;
-    for (int i = 0; i < x; i++)
-    {
-        j /= i;
-        j += i;
-    }
-    return j;
 }
 
 SPRITE *playerFireMissile(PLAYER *pPlayer, int a2, long a3, long a4, long a5, int a6)

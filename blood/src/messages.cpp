@@ -154,13 +154,13 @@ static void SetArmor(BOOL stat)
     int nAmount;
     if (stat)
     {
-        viewSetMessage("You have full armor.");
         nAmount = 3200;
+        viewSetMessage("You have full armor.");
     }
     else
     {
-        viewSetMessage("You have no armor.");
         nAmount = 0;
+        viewSetMessage("You have no armor.");
     }
     for (int i = 0; i < 3; i++)
         gMe->at33e[i] = nAmount;
@@ -659,8 +659,7 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
 {
     dassert(nCheatCode > kCheatNone && nCheatCode < kCheatMax, 886);
 
-    BOOL t = gDemo.at0;
-    if (t) return;
+    if (gDemo.RecordStatus()) return;
     if (nCheatCode == kCheat27)
     {
         gShowFrameRate = !gShowFrameRate;
@@ -737,7 +736,7 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
         break;
     }
     case kCheat13:
-        gMe->at36a = 250;
+        gMe->at36a = 240;
         break;
     case kCheat14: // quake (causing a little flicker), not used by any cheat code (dead code)
         gMe->at35a = 360;
@@ -784,8 +783,6 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
         break;
     case kCheat26:
         break;
-    case kCheat27: // show FPS, handled before (dead code), leave here for safety
-        return;
     case kCheat37: // calgon
         if (!VanillaMode())
         {
@@ -846,11 +843,6 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
         return;
     }
     m_bPlayerCheated = 1;
-}
-
-char hackfunc4()
-{
-    return 1;
 }
 
 void CCheatMgr::func_5BCF4(void)

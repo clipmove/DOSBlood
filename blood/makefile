@@ -98,7 +98,7 @@ blood.exe: $(OBJS) tenblood.obj
 blood.lnk: makefile
 	%create $^@
 	%append $^@ opt map
-	%append $^@ opt stack=65536
+	%append $^@ opt stack=8192
 	%append $^@ opt static
 	%append $^@ debug all
 	%append $^@ name blood
@@ -109,7 +109,6 @@ blood.lnk: makefile
 	%append $^@ library ..\audiolib\audio_wf.lib
 	%append $^@ library ..\smacker\smack.lib
 	%append $^@ library ..\ten\lib\sdkboxr.lib
-	%append $^@ system dos4g
     for %i in ($(OBJS)) do %append $^@ file $(OBJ_DIR)\%i
 	%append $^@ file ..\helix32\hgd13.obj
 	%append $^@ file ..\helix32\hgdx.obj

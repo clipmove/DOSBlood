@@ -28,11 +28,12 @@ VGTEND ENDS
 
 .DATA
 
+EXTRN _gColor:DWORD
+EXTRN _gROP:DWORD
+EXTRN _gError:DWORD
 EXTRN _gPages:DWORD
 EXTRN _gPageTable:DWORD
 EXTRN _gYLookup:DWORD
-EXTRN _gColor:DWORD
-EXTRN _gROP:DWORD
 
 MCGADriver	dd offset MCGAValid
 			dd offset MCGAName
@@ -65,21 +66,21 @@ MCGAPageTable	dd 1
 				dd 320
 				dd 200
 				dd 320
-				dd 0, 0
+				dd ?, ?
 				dd 0
 				dd 0AFA00h
 				dd 500h
 				dd 320
 				dd 4
 				dd 320
-				dd 0, 0
+				dd ?, ?
 MCGAPage		dd 0
 
 				db 90h
 
 LINEVAR1		dd 0
 				dd 0
-LINEVAR2		dd 0
+LINEVAR2		dd ?
 				dd 0
 
 linecalldefine MACRO number
@@ -709,7 +710,7 @@ MCGABlitV2M PROC
 	sub		[ebp-4], eax
 	sub		[ebp-8], eax
 	mov		edx, [ebp-0Ch]
-	xchg	ebx, ebx
+ALIGN 4
 L32:
 	mov		ecx, [ebp-10h]
 	cmp		ecx, 0Ch
@@ -804,7 +805,6 @@ MCGABlitMT2V PROC
 	mov		edx, [ebp+14h]
 	mov		esi, [ebp+24h]
 	mov		ah, [ebp+20h]
-	xchg	ebx, ebx
 ALIGN 4
 L38:
 	mov		ecx, [ebp+18h]
@@ -850,7 +850,7 @@ MCGABlitMono PROC
 	mov		al, byte ptr _gColor
 	mov		byte ptr ds:(OFFSET L43 + 2), al
 	jmp		short $+2
-	xchg	ebx, ebx
+ALIGN 4
 L41:
 	mov		ecx, [ebp+18h]
 L42:

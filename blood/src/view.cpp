@@ -1377,7 +1377,7 @@ void viewDrawPowerUps(PLAYER* pPlayer)
 
 void viewDrawMapTitle(void)
 {
-    if (CGameMenuMgr::m_bActive)
+    if (CGameMenuMgr::Active())
         return;
 
     int const kFadeStartTic = (int)(1.25f * 120.f);
@@ -2904,7 +2904,7 @@ static void UpdateDacs(int nPalette)
 {
     static RGB newDAC[256];
     static int oldPalette;
-    if (oldPalette != nPalette)
+    if (nPalette != oldPalette)
     {
         scrSetPalette(nPalette);
         oldPalette = nPalette;
@@ -2951,8 +2951,8 @@ void viewDrawScreen(void)
     const int defaultHoriz = gCenterHoriz ? 100 : 90;
     int delta = ClipLow(gGameClock - lastUpdate, 0);
     lastUpdate = gGameClock;
-    viewUpdateFov(!CGameMenuMgr::m_bActive); // always recalculate fov while menu is active
-    if (!gPaused && (!CGameMenuMgr::m_bActive || gGameOptions.nGameType != GAMETYPE_0 || gDemo.PlaybackStatus()))
+    viewUpdateFov(!CGameMenuMgr::Active()); // always recalculate fov while menu is active
+    if (!gPaused && (!CGameMenuMgr::Active() || gGameOptions.nGameType != GAMETYPE_0 || gDemo.PlaybackStatus()))
 #if 1 // optimized gInterpolate calculation
     {
         // blood renders at max of 120hz, and the game logic runs at 30hz - so our interpolation precision is 0-3 units before we're onto the next game tick
@@ -3104,8 +3104,10 @@ void viewDrawScreen(void)
             {
                 nAng = 512-nAng;
             }
-            int nScale = dmulscale32(Cos(nAng), 256000, Sin(nAng), 160000);
-            setaspect(gFovAspect, yxaspect);
+            nAng = dmulscale32(Cos(nAng), 256000, Sin(nAng), 160000);
+            if (gFov != 60)
+                nAng = mulscale16(nAng, gFovAspect);
+            setaspect(nAng, yxaspect);
         }
         else
         {
@@ -3279,8 +3281,8 @@ void viewDrawScreen(void)
             {
                 nAng = 512 - nAng;
             }
-            int nScale = dmulscale32(Cos(nAng), 256000, Sin(nAng), 160000);
-            rotatesprite(160<<16, 100<<16, nScale, v78+512, TILTBUFFER, 0, 0, vrc, gViewX0, gViewY0, gViewX1, gViewY1);
+            nAng = dmulscale32(Cos(nAng), 256000, Sin(nAng), 160000);
+            rotatesprite(160<<16, 100<<16, nAng, v78+512, TILTBUFFER, 0, 0, vrc, gViewX0, gViewY0, gViewX1, gViewY1);
         }
         long vf4, vf0, vec, ve8;
         GetZRange(gView->pSprite, &vf4, &vf0, &vec, &ve8, gView->pSprite->clipdist<<2, 0);
@@ -3332,7 +3334,7 @@ void viewDrawScreen(void)
                     nPalette = pSector->floorpal;
                 }
             }
-            WeaponDraw(gView, nShade, cX, cY, nPalette, gWeaponSmoothing >= 1, gWeaponSmoothing == 2 && !CGameMenuMgr::m_bActive);
+            WeaponDraw(gView, nShade, cX, cY, nPalette, gWeaponSmoothing >= 1, gWeaponSmoothing == 2 && !CGameMenuMgr::Active());
         }
         if (gViewPos == VIEWPOS_0 && actGetBurnTime(gView->pXSprite) > 60)
         {
