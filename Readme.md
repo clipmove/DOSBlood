@@ -1,7 +1,7 @@
 # DOSBlood
-DOSBlood is a (inactive) fork of the [Blood reconstruction by nukeykt](https://github.com/nukeykt/Blood-RE)
+DOSBlood is a fork of the [Blood reconstruction by nukeykt](https://github.com/nukeykt/Blood-RE)
 
-DOSBlood's provides quality-of-life features while retaining Blood 1.21 demo compatibility
+DOSBlood's provides quality-of-life features while retaining Blood 1.21 demo and network compatibility
 
 ### Downloads
 Download can be found on [https://github.com/clipmove/DOSBlood/releases](https://github.com/clipmove/DOSBlood/releases)
@@ -73,7 +73,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix shadows and flare glow effects rendering on room-over-room surfaces
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 * Cheogh blasting/attacking can now hit prone players (only for well done and above difficulties)
-* Fix interpolated sprite interpolation resetting when traisitoning through room-over-room sectors
+* Fix interpolated sprite interpolation resetting when transitioning through room-over-room sectors
 
 ### Notes
 * You must already have an installed copy of Blood.
@@ -85,7 +85,7 @@ Watcom 10.6, MASM 5.10 and TASM 3.1 are required to build
 
 1) Build helix32, qtools and build (i.e. `cd helix32` and then `wmake`)
 2) Build blood (i.e. `cd blood` and then `wmake`)
-   
+
 Note: The Build Engine (by Ken Silverman) code has been effortlessly recreated by the [gamesrc-ver-recreation project](https://bitbucket.org/gamesrc-ver-recreation/build/src/master/), and compiles close enough that DOSBlood can playback 11 hours of demo files without desyncronizing. If you prefer to use the original objects file, run `clean.bat` and then `origlib.bat` in the build directory
 
 Special thanks to nukeykt, NY00123, Hendricks266, sirlemonhead and Maxi Clouds.
