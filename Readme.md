@@ -17,6 +17,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Show map title on level start
 * Add key icons to small HUD size
 * BloodGDX style difficulty options
+* Add autoaim toggle in options menu
 * Texture panning interpolation support
 * New 'KRAVITZ' cheat code for fly mode
 * Improved aim vector response by 33ms

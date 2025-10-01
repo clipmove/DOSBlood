@@ -689,6 +689,7 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetNumber( scripthandle, "Options","Detail",&gDetail);
    SCRIPT_GetNumber( scripthandle, "Options","Fov",&gFov);
    SCRIPT_GetBool( scripthandle, "Options","MouseAim",&gMouseAim);
+   SCRIPT_GetBool( scripthandle, "Options","AutoAim",&gAutoAim);
    SCRIPT_GetBool( scripthandle, "Options","AutoRun",&gAutoRun);
    SCRIPT_GetBool( scripthandle, "Options","AutosaveOnLevelStart",&gAutosaveOnLevelStart);
       SCRIPT_GetBool( scripthandle, "Options","Interpolation",&gViewInterpolate);
@@ -747,6 +748,7 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutNumber( scripthandle, "Options","Detail", gDetail,false,false);
    SCRIPT_PutNumber( scripthandle, "Options","Fov", gFov,false,false);
    SCRIPT_PutBoolean( scripthandle, "Options","MouseAim", gMouseAim);
+   SCRIPT_PutBoolean( scripthandle, "Options","AutoAim", gAutoAim);
    SCRIPT_PutBoolean( scripthandle, "Options","AutoRun", gAutoRun);
    SCRIPT_PutBoolean( scripthandle, "Options","AutosaveOnLevelStart", gAutosaveOnLevelStart);
    SCRIPT_PutBoolean( scripthandle, "Options","Interpolation", gViewInterpolate);

@@ -89,6 +89,7 @@ BOOL char_148EED;
 char char_148ef0[13];
 BOOL bCustomName;
 char zCustomName[12];
+BOOL bDisableAutoAim = FALSE;
 
 PLAYER gPlayerTemp[kMaxPlayers];
 int gHealthTemp[kMaxPlayers];
@@ -1164,7 +1165,7 @@ void ParseOptions(void)
                 gGameOptions.nGameType = GAMETYPE_2;
             break;
         case 14:
-            gAutoAim = 0;
+            bDisableAutoAim = TRUE;
             break;
         case 22:
             bNoResend = 0;
@@ -1403,6 +1404,10 @@ void main(void)
     if (MusicDevice != -1 && gUse8250 && numplayers > 1)
         Banner8250();
     ctrlClearAllInput();
+    if(bDisableAutoAim) // given -noaim argument, force off
+        gAutoAim = FALSE;
+    else if(numplayers > 1) // always force on for multiplayer
+        gAutoAim = TRUE;
     netBroadcastPlayerInfo(myconnectindex);
     netBroadcastVersion();
     tioPrint("Waiting for network players!");

@@ -31,6 +31,7 @@
 #include "menu.h"
 #include "messages.h"
 #include "network.h"
+#include "player.h"
 #include "resource.h"
 #include "screen.h"
 #include "sound.h"
@@ -53,6 +54,7 @@ void SetShowWeapons(CGameMenuItemZBool *);
 void SetShowPowerUps(CGameMenuItemZCycle *);
 void SetLevelStats(CGameMenuItemZCycle *);
 void SetCenterHorizon(CGameMenuItemZBool *);
+void SetAutoAim(CGameMenuItemZBool *);
 void SetSlopeTilting(CGameMenuItemZBool *);
 void SetViewBobbing(CGameMenuItemZBool *);
 void SetViewSwaying(CGameMenuItemZBool *);
@@ -267,12 +269,13 @@ CGameMenuItem7EE34 itemVideoMode("VIDEO MODE...", 3, 0, 178, 320, 1);
 CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 187, 320, 1, &menuParentalLock);
 
 CGameMenuItemTitle itemOptionsExtraTitle("EXTRAS", 1, 160, 20, 2038);
-CGameMenuItemZBool boolCenterHorizon("CENTER HORIZON LINE:", 1, 10, 45, 300, gCenterHoriz, SetCenterHorizon);
-CGameMenuItemZCycle cycleLevelStats("LEVEL STATS:", 1, 10, 65, 300, 0, SetLevelStats, zLevelStatsStrings, 3, 0);
-CGameMenuItemZCycle cycleShowPowerUps("SHOW POWERUPS:", 1, 10, 85, 300, 0, SetShowPowerUps, zShowPowerUpsStrings, 3, 0);
-CGameMenuItemZCycle cycleWeaponSmoothing("WEAPON SMOOTHING:", 1, 10, 105, 300, 0, SetWeaponSmoothing, zWeaponSmoothingStrings, 3, 0);
-CGameMenuItemZBool boolAutosaveOnLevelStart("AUTOSAVE ON LEVEL START:", 1, 10, 125, 300, gAutosaveOnLevelStart, SetAutosaveOnLevelStart);
-CGameMenuItemZCycle cycleLoadSaveOnDeath("LOAD SAVE ON DEATH:", 1, 10, 145, 300, 0, SetLoadSaveOnDeath, zLoadSaveOnDeathStrings, 3, 0);
+CGameMenuItemZBool boolCenterHorizon("CENTER HORIZON LINE:", 1, 10, 40, 300, gCenterHoriz, SetCenterHorizon);
+CGameMenuItemZBool boolAutoAim("AUTOAIM:", 1, 10, 60, 300, gAutoAim, SetAutoAim);
+CGameMenuItemZCycle cycleLevelStats("LEVEL STATS:", 1, 10, 80, 300, 0, SetLevelStats, zLevelStatsStrings, 3, 0);
+CGameMenuItemZCycle cycleShowPowerUps("SHOW POWERUPS:", 1, 10, 100, 300, 0, SetShowPowerUps, zShowPowerUpsStrings, 3, 0);
+CGameMenuItemZCycle cycleWeaponSmoothing("WEAPON SMOOTHING:", 1, 10, 120, 300, 0, SetWeaponSmoothing, zWeaponSmoothingStrings, 3, 0);
+CGameMenuItemZBool boolAutosaveOnLevelStart("AUTOSAVE ON LEVEL START:", 1, 10, 140, 300, gAutosaveOnLevelStart, SetAutosaveOnLevelStart);
+CGameMenuItemZCycle cycleLoadSaveOnDeath("LOAD SAVE ON DEATH:", 1, 10, 160, 300, 0, SetLoadSaveOnDeath, zLoadSaveOnDeathStrings, 3, 0);
 
 CGameMenuItemTitle itemControlsTitle("CONTROLS", 1, 160, 20, 2038);
 CGameMenuItemSlider sliderMouseSpeed("Mouse Sensitivity:", 1, 10, 50, 300, gMouseSensitivity, 0, 0x20000, 0x1000, SetMouseSensitivity);
@@ -464,6 +467,7 @@ void SetupOptionsMenu(void)
 void SetupOptionsExtraMenu(void)
 {
     boolCenterHorizon.at20 = gCenterHoriz;
+    boolAutoAim.at20 = gAutoAim;
     cycleLevelStats.at24 = ClipRange(gLevelStats, 0, cycleLevelStats.at2c);
     cycleShowPowerUps.at24 = ClipRange(gShowPowerUps, 0, cycleShowPowerUps.at2c);
     cycleWeaponSmoothing.at24 = ClipRange(gWeaponSmoothing, 0, cycleWeaponSmoothing.at2c);
@@ -472,12 +476,16 @@ void SetupOptionsExtraMenu(void)
 
     menuOptionsExtra.Add(&itemOptionsExtraTitle, 0);
     menuOptionsExtra.Add(&boolCenterHorizon, 1);
+    menuOptionsExtra.Add(&boolAutoAim, 0);
     menuOptionsExtra.Add(&cycleLevelStats, 0);
     menuOptionsExtra.Add(&cycleShowPowerUps, 0);
     menuOptionsExtra.Add(&cycleWeaponSmoothing, 0);
     menuOptionsExtra.Add(&boolAutosaveOnLevelStart, 0);
     menuOptionsExtra.Add(&cycleLoadSaveOnDeath, 0);
     menuOptionsExtra.Add(&itemBloodQAV, 0);
+
+    if(numplayers > 1)
+        boolAutoAim.Clear1(); // don't allow autoaim slot to be selected for multiplayer
 }
 
 void SetupDifficultyMenu(void)
@@ -903,6 +911,15 @@ void SetLevelStats(CGameMenuItemZCycle *pItem)
 void SetCenterHorizon(CGameMenuItemZBool *pItem)
 {
     gCenterHoriz = pItem->at20;
+}
+
+void SetAutoAim(CGameMenuItemZBool *pItem)
+{
+    gAutoAim = pItem->at20;
+    if (gGameOptions.nGameType > GAMETYPE_0 || numplayers > 1 || gDemo.RecordStatus() || gDemo.PlaybackStatus())
+        return;
+    for (int i = connecthead; i >= 0; i = connectpoint2[i])
+        gProfile[i].at0 = gAutoAim;
 }
 
 void SetSlopeTilting(CGameMenuItemZBool *pItem)
