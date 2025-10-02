@@ -186,6 +186,7 @@ void func_5571C(BOOL mode)
 
 void func_557C4(long x, long y, int interpolate)
 {
+    if (spritesortcnt == 0) return;
     int nViewSprites = spritesortcnt;
     for (int nTSprite = nViewSprites-1; nTSprite >= 0; nTSprite--)
     {
@@ -380,12 +381,23 @@ void DrawMirrors(long x, long y, long z, int a, long horiz, int iViewPlayer)
                 case 2:
                 {
                     int nSector = mirror[i].at4;
+                    int bakCstat;
+                    if (iViewPlayer >= 0)
+                    {
+                        bakCstat = gPlayer[iViewPlayer].pSprite->cstat;
+                        if (gViewPos == VIEWPOS_0)
+                            gPlayer[iViewPlayer].pSprite->cstat |= 0x8000;
+                        else
+                            gPlayer[iViewPlayer].pSprite->cstat |= 0x200 | 0x2;
+                    }
                     drawrooms(x+mirror[i].at8, y+mirror[i].atc, z+mirror[i].at10, a, horiz, nSector|kMaxSectors);
                     viewProcessSprites(x+mirror[i].at8, y+mirror[i].atc, z+mirror[i].at10);
                     short cstat = sector[nSector].ceilingstat;
                     sector[nSector].ceilingstat |= 1;
                     drawmasks();
                     sector[nSector].ceilingstat = cstat;
+                    if (iViewPlayer >= 0)
+                        gPlayer[iViewPlayer].pSprite->cstat = bakCstat;
                     return;
                 }
             }
