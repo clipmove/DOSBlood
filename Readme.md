@@ -12,6 +12,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 ### Features
 * Auto crouch
 * Field of view slider
+* Add last weapon button
 * Autosave on level start
 * Center horizon line option
 * Show map title on level start
@@ -53,6 +54,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fixed underwater issue with hitscan weapons
 * Allow cheat phrases to be said in multiplayer
 * Reset view bob/view sway inertia on level start
+* Fix weapon state not resetting on weapon change
 * Fix fall scream triggering after player has died
 * Fix choking hands to run at a constant framerate
 * Fix secrets for maps with glitched secret triggers
@@ -72,6 +74,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Limit impulse damage when shooting enemies downward at point-blank
 * Correct ear velocity when transitioning through room-over-room sectors
 * Fix shadows and flare glow effects rendering on room-over-room surfaces
+* Fix next/previous weapon buttons not skipping TNT/spray can while underwater
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 * Cheogh blasting/attacking can now hit prone players (only for well done and above difficulties)
 * Fix interpolated sprite interpolation resetting when transitioning through room-over-room sectors

@@ -134,7 +134,7 @@ struct PLAYER {
     int at2fa;
     int at2fe;
     int at302;
-    int at306;
+    int lastWeapon;
     int at30a;
     int at30e;
     int at312;

@@ -580,6 +580,7 @@ void StartLevel(GAMEOPTIONS *gameOptions)
             pPlayer->at1b1 = gPlayerTemp[i].at1b1;
             pPlayer->atbf = gPlayerTemp[i].atbf;
             pPlayer->atbe = gPlayerTemp[i].atbe;
+            pPlayer->lastWeapon = gPlayerTemp[i].lastWeapon;
         }
     }
     gameOptions->uGameFlags &= ~3;

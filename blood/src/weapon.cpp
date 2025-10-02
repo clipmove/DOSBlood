@@ -480,6 +480,8 @@ void WeaponRaise(PLAYER *pPlayer)
     case 6: // dynamite
         if (gInfiniteAmmo || func_4B2C8(pPlayer, 5))
         {
+            if ((pPlayer->atc3 == 2) && (prevWeapon == 0) && !VanillaMode()) // if quickly switching from tnt to spray can and back, don't put away lighter
+                prevWeapon = 7;
             pPlayer->atc3 = 3;
             if (prevWeapon == 7)
                 StartQAV(pPlayer, 16);
@@ -637,10 +639,26 @@ void WeaponLower(PLAYER *pPlayer)
             WeaponRaise(pPlayer);
             return;
         case 4:
+            if (pPlayer->atc.newWeapon == 6 && !VanillaMode())
+            {
+                pPlayer->atc3 = 2;
+                StartQAV(pPlayer, 11);
+                return;
+            }
             pPlayer->atc3 = 1;
             StartQAV(pPlayer, 11);
-            pPlayer->atc.newWeapon = 0;
+            if (VanillaMode())
+                pPlayer->atc.newWeapon = 0;
             WeaponLower(pPlayer);
+            break;
+        case 0:
+            if ((pPlayer->atc.newWeapon == 6) && !VanillaMode()) // if switched to tnt before lighter is ignited, don't execute spray can equip qav
+            {
+                pPlayer->atc3 = 3;
+                StartQAV(pPlayer, 16);
+                WeaponRaise(pPlayer);
+                return;
+            }
             break;
         case 3:
             if (pPlayer->atc.newWeapon == 6)
@@ -1608,6 +1626,23 @@ static void FireBeast(int nTrigger, PLAYER * pPlayer)
     actFireVector(pPlayer->pSprite, 0, pPlayer->at6f-pPlayer->pSprite->z, pPlayer->at1be.dx+r1, pPlayer->at1be.dy+r2, pPlayer->at1be.dz+r3, kVectorFireBeast);
 }
 
+char WeaponIsEquipable(PLAYER *pPlayer, int nWeapon, char checkUnderwater = true)
+{
+    if (!(nWeapon >= 1 && nWeapon <= 12)) // invalid weapon
+        return 0;
+    if (checkUnderwater && pPlayer->at87 && BannedUnderwater(nWeapon))
+        return 0;
+    if (pPlayer->atcb[nWeapon])
+    {
+        for (int j = 0; j < weaponModes[nWeapon].at0; j++)
+        {
+            if (func_4B1FC(pPlayer, nWeapon, weaponModes[nWeapon].at4))
+                return 1;
+        }
+    }
+    return 0;
+}
+
 BOOL gWeaponUpgrade[][13] = {
     { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
     { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
@@ -1712,14 +1747,15 @@ byte WeaponFindLoaded(PLAYER *pPlayer, int *a2)
 
 BOOL func_4F0E0(PLAYER *pPlayer)
 {
+    const char bUseShootAsThrow = !VanillaMode() && pPlayer->atc.buttonFlags.shoot;
     switch (pPlayer->atc3)
     {
     case 5:
-        if (!pPlayer->atc.buttonFlags.shoot2)
+        if (!pPlayer->atc.buttonFlags.shoot2 || bUseShootAsThrow)
             pPlayer->atc3 = 6;
         return 1;
     case 6:
-        if (pPlayer->atc.buttonFlags.shoot2)
+        if (pPlayer->atc.buttonFlags.shoot2 && !bUseShootAsThrow)
         {
             pPlayer->at1b2 = pPlayer->atbf;
             pPlayer->atc3 = 3;
@@ -1751,14 +1787,15 @@ BOOL func_4F0E0(PLAYER *pPlayer)
 
 BOOL func_4F200(PLAYER *pPlayer)
 {
+    const char bUseShootAsThrow = !VanillaMode() && pPlayer->atc.buttonFlags.shoot;
     switch (pPlayer->atc3)
     {
     case 4:
-        if (!pPlayer->atc.buttonFlags.shoot2)
+        if (!pPlayer->atc.buttonFlags.shoot2 || bUseShootAsThrow)
             pPlayer->atc3 = 5;
         return 1;
     case 5:
-        if (pPlayer->atc.buttonFlags.shoot2)
+        if (pPlayer->atc.buttonFlags.shoot2 && !bUseShootAsThrow)
         {
             pPlayer->at1b2 = pPlayer->atbf;
             pPlayer->atc3 = 1;
@@ -1882,6 +1919,8 @@ inline int VoodooAnim(int *a)
 void WeaponProcess(PLAYER *pPlayer)
 {
     if (pPlayer->at37b > 0) pPlayer->at37b--;
+    char bAlreadySetLastWeapon = 0;
+    char bTNTRemoteProxyCycling = 1;
     if (pPlayer->pXSprite->health == 0)
     {
         pPlayer->at1b1 = 0;
@@ -1889,6 +1928,7 @@ void WeaponProcess(PLAYER *pPlayer)
     }
     if (pPlayer->at87 && BannedUnderwater(pPlayer->atbd))
     {
+        const int prevWeapon = pPlayer->atbd;
         if (checkLitSprayOrTNT(pPlayer))
         {
             if (pPlayer->atbd == 7)
@@ -1906,6 +1946,30 @@ void WeaponProcess(PLAYER *pPlayer)
         }
         WeaponLower(pPlayer);
         pPlayer->at1ba = 0;
+        if (!VanillaMode()) // if not in vanilla mode, find next weapon to switch to
+        {
+            if (WeaponIsEquipable(pPlayer, pPlayer->lastWeapon)) // switch to last weapon if available
+            {
+                pPlayer->atbe = pPlayer->lastWeapon;
+            }
+            else // find a suitable next weapon
+            {
+                int t;
+                const char weapon = WeaponFindLoaded(pPlayer, &t);
+                if (WeaponIsEquipable(pPlayer, weapon))
+                {
+                    pPlayer->atd9[weapon] = t;
+                    pPlayer->atbe = weapon;
+                }
+                else // couldn't find anything, use pitchfork
+                {
+                    pPlayer->atbe = 1;
+                }
+            }
+            pPlayer->lastWeapon = prevWeapon;
+            bAlreadySetLastWeapon = 1;
+            bTNTRemoteProxyCycling = 0;
+        }
     }
     WeaponPlay(pPlayer);
     UpdateAimVector(pPlayer);
@@ -1961,48 +2025,97 @@ void WeaponProcess(PLAYER *pPlayer)
             return;
         break;
     }
-    if (pPlayer->atbe)
+    if (pPlayer->atbe && VanillaMode())
     {
         sfxKill3DSound(pPlayer->pSprite, -1, 441);
         pPlayer->atc3 = 0;
         pPlayer->atc.newWeapon = pPlayer->atbe;
         pPlayer->atbe = 0;
     }
+    if ((pPlayer->atbd == 0) && (pPlayer->atc.newWeapon != 0) && !VanillaMode()) // if player is switching weapon (and not holstered), clear next/prev keyflags
+    {
+        pPlayer->atc.keyFlags.nextWeapon = 0;
+        pPlayer->atc.keyFlags.prevWeapon = 0;
+        pPlayer->atc.keyFlags.lastWeapon = 0;
+    }
+    KEYFLAGS oldKeyFlags = pPlayer->atc.keyFlags; // used to fix next/prev weapon issue for banned weapons
+    if (pPlayer->atc.keyFlags.lastWeapon)
+    {
+        pPlayer->atc.keyFlags.lastWeapon = 0;
+        if (!VanillaMode())
+        {
+            int weapon = pPlayer->atbd;
+            if (weapon && (weapon != pPlayer->lastWeapon)) // if current weapon is different to last weapon
+            {
+                if (WeaponIsEquipable(pPlayer, pPlayer->lastWeapon)) // if last weapon can be switched to
+                {
+                    pPlayer->atc.keyFlags.nextWeapon = 0;
+                    pPlayer->atc.keyFlags.prevWeapon = 0;
+                    pPlayer->atbe = 0;
+                    pPlayer->atd9[pPlayer->lastWeapon] = 0;
+                    pPlayer->atc.newWeapon = pPlayer->lastWeapon;
+                    pPlayer->lastWeapon = weapon;
+                    bAlreadySetLastWeapon = 1;
+                    bTNTRemoteProxyCycling = 0;
+                }
+            }
+        }
+    }
     if (pPlayer->atc.keyFlags.nextWeapon)
     {
-        pPlayer->atc3 = 0;
         pPlayer->atc.keyFlags.nextWeapon = 0;
+        if(VanillaMode())
+            pPlayer->atc3 = 0;
         pPlayer->atbe = 0;
         int t;
         char weapon;
         weapon = WeaponFindNext(pPlayer, &t, 1);
         pPlayer->atd9[weapon] = t;
-        if (pPlayer->atbd == 0)
-            pPlayer->atc.newWeapon = weapon;
+        if (VanillaMode())
+        {
+            if (pPlayer->atbd)
+            {
+                WeaponLower(pPlayer);
+                pPlayer->atbe = weapon;
+                return;
+            }
+        }
         else
         {
-            WeaponLower(pPlayer);
-            pPlayer->atbe = weapon;
-            return;
+            bTNTRemoteProxyCycling = 0; // next weapon should bypass tnt cycling logic
         }
+        pPlayer->atc.newWeapon = weapon;
     }
     if (pPlayer->atc.keyFlags.prevWeapon)
     {
-        pPlayer->atc3 = 0;
         pPlayer->atc.keyFlags.prevWeapon = 0;
+        if(VanillaMode())
+            pPlayer->atc3 = 0;
         pPlayer->atbe = 0;
         int t;
         char weapon;
         weapon = WeaponFindNext(pPlayer, &t, 0);
         pPlayer->atd9[weapon] = t;
-        if (pPlayer->atbd == 0)
-            pPlayer->atc.newWeapon = weapon;
+        if (VanillaMode())
+        {
+            if (pPlayer->atbd)
+            {
+                WeaponLower(pPlayer);
+                pPlayer->atbe = weapon;
+                return;
+            }
+        }
         else
         {
-            WeaponLower(pPlayer);
-            pPlayer->atbe = weapon;
-            return;
+            bTNTRemoteProxyCycling = 0; // prev weapon should bypass tnt cycling logic
         }
+        pPlayer->atc.newWeapon = weapon;
+    }
+    if (pPlayer->atbe && !VanillaMode())
+    {
+        sfxKill3DSound(pPlayer->pSprite, -1, 441);
+        pPlayer->atc.newWeapon = pPlayer->atbe;
+        pPlayer->atbe = 0;
     }
     if (pPlayer->atc3 == -1)
     {
@@ -2011,18 +2124,38 @@ void WeaponProcess(PLAYER *pPlayer)
         char weapon;
         weapon = WeaponFindLoaded(pPlayer, &t);
         pPlayer->atd9[weapon] = t;
-        if (pPlayer->atbd == 0)
-            pPlayer->atc.newWeapon = weapon;
-        else
+        if (pPlayer->atbd)
         {
+            if (!VanillaMode())
+                pPlayer->lastWeapon = pPlayer->atbd;
             WeaponLower(pPlayer);
             pPlayer->atbe = weapon;
             return;
         }
+        pPlayer->atc.newWeapon = weapon;
     }
     if (pPlayer->atc.newWeapon)
     {
-        if (pPlayer->atc.newWeapon == 6)
+        if (pPlayer->at87 && BannedUnderwater(pPlayer->atc.newWeapon) && !checkLitSprayOrTNT(pPlayer) && !VanillaMode()) // skip banned weapons when underwater and using next/prev weapon key inputs
+        {
+            if (oldKeyFlags.nextWeapon || oldKeyFlags.prevWeapon) // if player switched weapons
+            {
+                const char oldWeapon = pPlayer->atbd;
+                pPlayer->atbd = pPlayer->atc.newWeapon; // set current banned weapon to curweapon so WeaponFindNext() can find the next weapon
+                for (int i = 0; i < 3; i++) // attempt to find a non-banned weapon
+                {
+                    pPlayer->atbd = WeaponFindNext(pPlayer, NULL, (char)(oldKeyFlags.nextWeapon == 1));
+                    if (!BannedUnderwater(pPlayer->atbd)) // if new weapon is not a banned weapon, set to new current weapon
+                    {
+                        pPlayer->atc.newWeapon = pPlayer->atbd;
+                        pPlayer->atd9[pPlayer->atc.newWeapon] = 0;
+                        break;
+                    }
+                }
+                pPlayer->atbd = oldWeapon;
+            }
+        }
+        if (bTNTRemoteProxyCycling && pPlayer->atc.newWeapon == 6)
         {
             if (pPlayer->atbd == 6)
             {
@@ -2064,6 +2197,14 @@ void WeaponProcess(PLAYER *pPlayer)
                 return;
             }
         }
+        if ((pPlayer->pXSprite->health > 0) && !pPlayer->atcb[pPlayer->atc.newWeapon] && !pPlayer->atbd  && !VanillaMode()) // if trying to switch to missing/out of ammo weapon, switch to loaded weapon instead of holstering
+        {
+            int t;
+            char weapon = WeaponFindLoaded(pPlayer, &t);
+            pPlayer->atd9[weapon] = t;
+            pPlayer->atc.newWeapon = weapon;
+            return;
+        }
         if (pPlayer->pXSprite->health == 0 || !pPlayer->atcb[pPlayer->atc.newWeapon])
         {
             pPlayer->atc.newWeapon = 0;
@@ -2095,14 +2236,13 @@ void WeaponProcess(PLAYER *pPlayer)
                     char weapon;
                     weapon = WeaponFindLoaded(pPlayer, &t);
                     pPlayer->atd9[weapon] = t;
-                    if (pPlayer->atbd == 0)
-                        pPlayer->atc.newWeapon = weapon;
-                    else
+                    if (pPlayer->atbd)
                     {
                         WeaponLower(pPlayer);
                         pPlayer->atbe = weapon;
                         return;
                     }
+                    pPlayer->atc.newWeapon = weapon;
                 }
                 return;
             }
@@ -2123,6 +2263,8 @@ void WeaponProcess(PLAYER *pPlayer)
                 int t = weaponModes[nWeapon].at4;
                 if (func_4B1FC(pPlayer, nWeapon, t))
                 {
+                    if (!bAlreadySetLastWeapon && !VanillaMode()) // set new weapon to last weapon slot
+                        pPlayer->lastWeapon = pPlayer->atbd;
                     WeaponLower(pPlayer);
                     pPlayer->atd9[nWeapon] = v6c;
                     return;

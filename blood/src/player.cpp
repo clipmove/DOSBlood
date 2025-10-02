@@ -754,7 +754,6 @@ void playerStart(int nPlayer)
     pPlayer->at2fa = 0;
     pPlayer->at2fe = 0;
     pPlayer->at302 = 0;
-    pPlayer->at306 = 0;
     pPlayer->at30a = 0;
     pPlayer->at30e = 0;
     pPlayer->at312 = 0;
@@ -784,6 +783,7 @@ void playerStart(int nPlayer)
     pPlayer->at1ba = 0;
     pPlayer->at1fe = 0;
     pPlayer->atbe = 0;
+    pPlayer->lastWeapon = !VanillaMode() ? 1 : 0;
     xvel[pSprite->index] = yvel[pSprite->index] = zvel[pSprite->index] = 0;
     pInput->forward = 0;
     pInput->strafe = 0;
@@ -844,6 +844,8 @@ void playerReset(PLAYER *pPlayer)
     pPlayer->atbd = 0;
     pPlayer->at2a = -1;
     pPlayer->atc.newWeapon = 1;
+    if (!VanillaMode())
+        pPlayer->lastWeapon = 1;
     for (i = 0; i < 14; i++)
     {
         pPlayer->at111[0][i] = defaultOrder1[i];

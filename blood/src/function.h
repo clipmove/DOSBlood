@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-#define NUMGAMEFUNCTIONS 54
+#define NUMGAMEFUNCTIONS 55
 
 extern char * gamefunctions[];
 
@@ -80,6 +80,7 @@ enum
    gamefunc_Toggle_Crosshair,
    gamefunc_Next_Weapon,
    gamefunc_Previous_Weapon,
+   gamefunc_Last_Weapon,
    gamefunc_Holster_Weapon,
    gamefunc_Show_Opponents_Weapon,
    gamefunc_BeastVision,

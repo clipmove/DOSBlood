@@ -75,6 +75,7 @@ char * gamefunctions[] =
    "Toggle_Crosshair",
    "Next_Weapon",
    "Previous_Weapon",
+   "Last_Weapon",
    "Holster_Weapon",
    "Show_Opponents_Weapon",
    "BeastVision",
@@ -85,7 +86,7 @@ char * gamefunctions[] =
    "RemoteBombs",
    };
 
-#define NUMKEYENTRIES 54
+#define NUMKEYENTRIES 55
 
 static char * keydefaults[] =
    {
@@ -135,6 +136,7 @@ static char * keydefaults[] =
    "Toggle_Crosshair", "I", "",
    "Next_Weapon", "'", "",
    "Previous_Weapon", ";", "",
+   "Last_Weapon", "", "",
    "Holster_Weapon", "ScrLck", "",
    "Show_Opponents_Weapon", "W", "",
    "BeastVision", "B", "",

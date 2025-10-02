@@ -55,6 +55,7 @@ union KEYFLAGS
         unsigned pause          : 1;    // pause the game
         unsigned quit           : 1;    // quit the game
         unsigned restart        : 1;    // restart the level
+        unsigned lastWeapon     : 1;    // new to dosblood
     };
 };
 
