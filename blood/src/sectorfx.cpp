@@ -100,6 +100,8 @@ short shadeList[512];
 short panList[kMaxXSectors];
 int shadeCount;
 int panCount;
+byte gotsectorROR[(kMaxSectors+7)>>3]; // this is the same as gotsector, except it includes any ROR drawn sectors
+byte *pGotsector = gotsectorROR;
 
 short wallPanList[kMaxXWalls];
 short wallPanListSect[kMaxXWalls];
@@ -291,7 +293,7 @@ void DoSectorPanning(void)
                     angle -= 512;
                 px += mulscale30(speed<<2, Cos(angle))>>((picsiz[nTile]&15)-((pSector->floorstat&kSectorStat3) ? 1 : 0));
                 py -= mulscale30(speed<<2, Sin(angle))>>((picsiz[nTile]/16)-((pSector->floorstat&kSectorStat3) ? 1 : 0));
-                if (bDoInterpolation && TestBitString(gotsector, nSector)) // if we can see this sector, interpolate
+                if (bDoInterpolation && TestBitString(pGotsector, nSector)) // if we can see this sector, interpolate
                     viewInterpolatePanningFloor(nSector, pSector);
                 pSector->floorxpanning = px>>8;
                 pSector->floorypanning = py>>8;
@@ -307,7 +309,7 @@ void DoSectorPanning(void)
                     angle -= 512;
                 px += mulscale30(speed<<2, Cos(angle))>>((picsiz[nTile]&15)-((pSector->ceilingstat&kSectorStat3) ? 1 : 0));
                 py += mulscale30(speed<<2, Sin(angle))>>((picsiz[nTile]/16)-((pSector->ceilingstat&kSectorStat3) ? 1 : 0));
-                if (bDoInterpolation && TestBitString(gotsector, nSector)) // if we can see this sector, interpolate
+                if (bDoInterpolation && TestBitString(pGotsector, nSector)) // if we can see this sector, interpolate
                     viewInterpolatePanningCeiling(nSector, pSector);
                 pSector->ceilingxpanning = px>>8;
                 pSector->ceilingypanning = py>>8;
@@ -336,7 +338,7 @@ void DoSectorPanning(void)
             int py = (wall[nWall].ypanning<<8)+pXWall->at12_2;
             px += (psx<<2)>>(picsiz[nTile]&15);
             py += (psy<<2)>>(picsiz[nTile]/16);
-            if (bDoInterpolation && (TestBitString(gotsector, wallPanListSect[i]) || (wallPanListNextSect[i] >= 0 && TestBitString(gotsector, wallPanListNextSect[i])))) // if we can see this sector (or the linked sector), interpolate
+            if (bDoInterpolation && (TestBitString(pGotsector, wallPanListSect[i]) || (wallPanListNextSect[i] >= 0 && TestBitString(pGotsector, wallPanListNextSect[i])))) // if we can see this sector (or the linked sector), interpolate
                 viewInterpolatePanningWall(nWall, &wall[nWall]);
             wall[nWall].xpanning = px>>8;
             wall[nWall].ypanning = py>>8;
@@ -385,6 +387,51 @@ void InitSectorFX(void)
                 wallPanList[wallPanCount++] = nXWall;
             }
         }
+    }
+    memset(gotsectorROR, 0, sizeof(gotsectorROR));
+    pGotsector = gotsectorROR;
+}
+
+static BOOL gHasRenderedROR = FALSE; // only do a OR operation copy if we have rendered a ROR sector
+
+void ClearGotSectorSectorFX(void)
+{
+    if (VanillaMode() || (gDetail < 4))
+        return;
+    if (gHasRenderedROR)
+    {
+        gHasRenderedROR = FALSE;
+        memset(gotsectorROR, 0, sizeof(gotsectorROR));
+    }
+    else
+        pGotsector = gotsectorROR;
+}
+
+void UpdateGotSectorSectorFX(BOOL bROR)
+{
+    unsigned long i;
+    if (VanillaMode() || (gDetail < 4))
+        return;
+    if (!gHasRenderedROR) // first run
+    {
+        if (bROR) // copy from gotsector and return
+        {
+            gHasRenderedROR = TRUE;
+            pGotsector = gotsectorROR;
+            memcpy(gotsectorROR, gotsector, sizeof(gotsector));
+        }
+        else
+        {
+            pGotsector = gotsector; // we didn't render a ROR surface, don't bother doing compare copy
+        }
+        return;
+    }
+    for (i = sizeof(gotsectorROR); i > 3; i -= 4)
+    {
+        gotsectorROR[i-1] |= gotsector[i-1];
+        gotsectorROR[i-2] |= gotsector[i-2];
+        gotsectorROR[i-3] |= gotsector[i-3];
+        gotsectorROR[i-4] |= gotsector[i-4];
     }
 }
 

@@ -3243,6 +3243,7 @@ void viewDrawScreen(void)
             cZ = vfc+(8<<4);
         }
         va0 = ClipRange(va0, -200, 200);
+        ClearGotSectorSectorFX();
         int deliriumPitchI;
         if (deliriumPitch != deliriumPitchO)
             deliriumPitchI = interpolate16(deliriumPitchO, deliriumPitch, gInterpolate);
@@ -3259,6 +3260,7 @@ void viewDrawScreen(void)
             gView->pSprite->cstat |= 514;
         }
         drawrooms(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitchI, nSectnum);
+        UpdateGotSectorSectorFX(FALSE);
         viewProcessSprites(cX, cY, cZ);
         func_5571C(TRUE);
         drawmasks();
@@ -3394,6 +3396,7 @@ void viewDrawScreen(void)
     }
     if (gViewMode == 4)
     {
+        ClearGotSectorSectorFX();
         gViewMap.func_25DB0(gView->pSprite);
     }
     viewDrawInterface(delta);

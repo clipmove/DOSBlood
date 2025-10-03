@@ -27,6 +27,7 @@
 #include "loadsave.h"
 #include "mirrors.h"
 #include "player.h"
+#include "sectorfx.h"
 #include "trig.h"
 #include "view.h"
 
@@ -346,6 +347,7 @@ void DrawMirrors(long x, long y, long z, int a, long horiz, int iViewPlayer)
                         preparemirror(x,y,z,a,horiz,nWall,mirrorsector,&cx,&cy,&ca);
                     }
                     drawrooms(cx, cy, z, ca,horiz,mirrorsector|kMaxSectors);
+                    UpdateGotSectorSectorFX(TRUE);
                     viewProcessSprites(cx,cy,z);
                     drawmasks();
                     if (pWall->type != 501)
@@ -369,6 +371,7 @@ void DrawMirrors(long x, long y, long z, int a, long horiz, int iViewPlayer)
                             gPlayer[iViewPlayer].pSprite->cstat |= 0x200 | 0x2;
                     }
                     drawrooms(x+mirror[i].at8, y+mirror[i].atc, z+mirror[i].at10, a, horiz, nSector|kMaxSectors);
+                    UpdateGotSectorSectorFX(TRUE);
                     viewProcessSprites(x+mirror[i].at8, y+mirror[i].atc, z+mirror[i].at10);
                     short fstat = sector[nSector].floorstat;
                     sector[nSector].floorstat |= 1;
@@ -391,6 +394,7 @@ void DrawMirrors(long x, long y, long z, int a, long horiz, int iViewPlayer)
                             gPlayer[iViewPlayer].pSprite->cstat |= 0x200 | 0x2;
                     }
                     drawrooms(x+mirror[i].at8, y+mirror[i].atc, z+mirror[i].at10, a, horiz, nSector|kMaxSectors);
+                    UpdateGotSectorSectorFX(TRUE);
                     viewProcessSprites(x+mirror[i].at8, y+mirror[i].atc, z+mirror[i].at10);
                     short cstat = sector[nSector].ceilingstat;
                     sector[nSector].ceilingstat |= 1;

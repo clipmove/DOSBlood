@@ -20,5 +20,7 @@
 void DoSectorLighting();
 void InitSectorFX(void);
 void DoSectorPanning(void);
+void ClearGotSectorSectorFX(void);
+void UpdateGotSectorSectorFX(BOOL bROR);
 
 #endif
