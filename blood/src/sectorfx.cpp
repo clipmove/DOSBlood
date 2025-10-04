@@ -353,6 +353,8 @@ void InitSectorFX(void)
     shadeCount = 0;
     panCount = 0;
     wallPanCount = 0;
+    memset(gotsectorROR, 0, sizeof(gotsectorROR));
+    pGotsector = gotsectorROR;
     for (int i = 0; i < numsectors; i++)
     {
         short nXSector = sector[i].extra;
@@ -388,8 +390,6 @@ void InitSectorFX(void)
             }
         }
     }
-    memset(gotsectorROR, 0, sizeof(gotsectorROR));
-    pGotsector = gotsectorROR;
 }
 
 static BOOL gHasRenderedROR = FALSE; // only do a OR operation copy if we have rendered a ROR sector
@@ -401,7 +401,7 @@ void ClearGotSectorSectorFX(void)
     if (gHasRenderedROR)
     {
         gHasRenderedROR = FALSE;
-        memset(gotsectorROR, 0, sizeof(gotsectorROR));
+        memset(gotsectorROR, 0, (long)((numsectors+7)>>3));
     }
     else
         pGotsector = gotsectorROR;
@@ -409,7 +409,6 @@ void ClearGotSectorSectorFX(void)
 
 void UpdateGotSectorSectorFX(BOOL bROR)
 {
-    unsigned long i;
     if (VanillaMode() || (gDetail < 4))
         return;
     if (!gHasRenderedROR) // first run
@@ -418,20 +417,21 @@ void UpdateGotSectorSectorFX(BOOL bROR)
         {
             gHasRenderedROR = TRUE;
             pGotsector = gotsectorROR;
-            memcpy(gotsectorROR, gotsector, sizeof(gotsector));
+            memcpy(gotsectorROR, gotsector, (long)((numsectors+7)>>3));
         }
         else
         {
-            pGotsector = gotsector; // we didn't render a ROR surface, don't bother doing compare copy
+            pGotsector = gotsector; // we didn't render a ROR surface, don't bother doing OR copy
         }
         return;
     }
-    for (i = sizeof(gotsectorROR); i > 3; i -= 4)
+    const long kCurSectors = (long)((numsectors+7)>>3);
+    for (long i = 0; i < kCurSectors; i += 4)
     {
-        gotsectorROR[i-1] |= gotsector[i-1];
-        gotsectorROR[i-2] |= gotsector[i-2];
-        gotsectorROR[i-3] |= gotsector[i-3];
-        gotsectorROR[i-4] |= gotsector[i-4];
+        gotsectorROR[i+0] |= gotsector[i+0];
+        gotsectorROR[i+1] |= gotsector[i+1];
+        gotsectorROR[i+2] |= gotsector[i+2];
+        gotsectorROR[i+3] |= gotsector[i+3];
     }
 }
 
