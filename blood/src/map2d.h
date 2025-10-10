@@ -55,7 +55,7 @@ public:
 
     void SetZoom(int z)
     {
-        nZoom = z;
+        nZoom = kscale(z, ydim, 200)>>1; // scale to display resolution
     }
 
     BOOL Mode(void)
