@@ -17,6 +17,7 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
+#include "..\gamever.h"
 #include "typedefs.h"
 #include "types.h"
 #include "resource.h"

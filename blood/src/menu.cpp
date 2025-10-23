@@ -375,7 +375,19 @@ CGameMenuItemText itemSorry2Text3("plus eight BloodBath-only levels!", 0, 160, 1
 
 CGameMenuItemTitle itemOnlineTitle(" ONLINE ", 1, 160, 20, 2038);
 CGameMenuItem7EA1C itemOnline1("DWANGO", 1, 0, 45, 320, "matt", "DWANGO", 1);
-CGameMenuItem7EA1C itemOnline2("RTIME", 1, 0, 65, 320, "matt", "RTIME", 1);
+CGameMenuItem7EA1C itemOnline2(
+#if APPVER_BLOODREV >= AV_BR_BL121
+    "RTIME"
+#else
+    "ENGAGE"
+#endif
+    , 1, 0, 65, 320, "matt",
+#if APPVER_BLOODREV >= AV_BR_BL121
+    "RTIME"
+#else
+    "ENGAGE"
+#endif
+    , 1);
 CGameMenuItem7EA1C itemOnline3("HEAT", 1, 0, 85, 320, "matt", "HEAT", 1);
 CGameMenuItem7EA1C itemOnline4("KALI", 1, 0, 105, 320, "matt", "KALI", 1);
 CGameMenuItem7EA1C itemOnline5("MPATH", 1, 0, 125, 320, "matt", "MPATH", 1);
@@ -508,9 +520,15 @@ void SetupDifficultyMenu(void)
     menuDifficultyCustom.Add(&itemBloodQAV, false);
 }
 
+#if APPVER_BLOODREV >= AV_BR_BL121
+#define LDIFF1 0
+#else
+#define LDIFF1 1
+#endif
+
 void SetupLevelMenuItem(int nEpisode)
 {
-    dassert(nEpisode >= 0 && nEpisode < gEpisodeCount, 471);
+    dassert(nEpisode >= 0 && nEpisode < gEpisodeCount, 471+LDIFF1);
     EPISODEINFO *pEpisdeInfo = &gEpisodeInfo[nEpisode];
     itemNetStart3.SetTextArray(zLevelNames[nEpisode], pEpisdeInfo->nLevels);
 }

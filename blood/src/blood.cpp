@@ -1011,6 +1011,15 @@ void GameErrorHandler(const Error &err)
 void BannerToTIO(void)
 {
     sprintf(buffer, "One Unit: WHOLE BLOOD %s [%s] -- github.com/clipmove/DOSBlood", GetVersionString(), gBuildDate);
+#if 0
+    sprintf(buffer,
+#if APPVER_BLOODREV >= AV_BR_BL121
+        "One Unit: WHOLE BLOOD %s [%s] -- DO NOT DISTRIBUTE"
+#else
+        "BLOOD With PLASMA PAK %s [%s] -- DO NOT DISTRIBUTE"
+#endif
+        , GetVersionString(), gBuildDate);
+#endif
     tioCenterString(0, 0, tioScreenCols-1, buffer, 0x4e);
     tioCenterString(tioScreenRows-1, 0, tioScreenCols-1, "Copyright (c)1994-1997 Monolith Productions Inc.", 0x4e);
     tioWindow(1, 0, tioScreenRows-3, tioScreenCols);
@@ -1091,6 +1100,12 @@ SWITCH switches[] = {
     { 0 }
 };
 
+#if APPVER_BLOODREV >= AV_BR_BL121
+#define LDIFF1 0
+#else
+#define LDIFF1 -4
+#endif
+
 void ParseOptions(void)
 {
     int option;
@@ -1099,10 +1114,10 @@ void ParseOptions(void)
         switch (option)
         {
         case -3:
-            ThrowError(1824)("Invalid argument: %s", OptFull);
+            ThrowError(1824+LDIFF1)("Invalid argument: %s", OptFull);
         case 29:
             if (OptArgc < 1)
-                ThrowError(1828)("Missing argument");
+                ThrowError(1828+LDIFF1)("Missing argument");
             gMaxAlloc = atoi(OptArgv[0]) << 20;
             if (!gMaxAlloc)
                 gMaxAlloc = 0x2000000;
@@ -1120,7 +1135,7 @@ void ParseOptions(void)
             char_148EEC = 1;
         case 20:
             if (OptArgc < 1)
-                ThrowError(1863)("Missing argument");
+                ThrowError(1863+LDIFF1)("Missing argument");
             strncpy(char_148ef0,OptArgv[0],13);
             char_148ef0[12] = 0;
             bQuickStart = 1;
@@ -1142,13 +1157,13 @@ void ParseOptions(void)
             break;
         case 21:
             if (OptArgc < 1)
-                ThrowError(1894)("Missing argument");
+                ThrowError(1894+LDIFF1)("Missing argument");
             strcpy(zCustomName, OptArgv[0]);
             bCustomName = 1;
             break;
         case 2:
             if (OptArgc < 1)
-                ThrowError(1901)("Missing argument");
+                ThrowError(1901+LDIFF1)("Missing argument");
             strcpy(gUserMapFilename, OptArgv[0]);
             bAddUserMap = 1;
             bNoDemo = 1;
@@ -1161,7 +1176,7 @@ void ParseOptions(void)
             break;
         case 4:
             if (OptArgc < 1)
-                ThrowError(1917)("Missing argument for -net parameter");
+                ThrowError(1917+LDIFF1)("Missing argument for -net parameter");
             if (gGameOptions.nGameType == GAMETYPE_0)
                 gGameOptions.nGameType = GAMETYPE_2;
             break;
@@ -1194,13 +1209,13 @@ void ParseOptions(void)
             break;
         case 13:
             if (OptArgc < 1)
-                ThrowError(1962)("Missing argument");
+                ThrowError(1962+LDIFF1)("Missing argument");
             func_269D8(OptArgv[0]);
             bNoDemo = 1;
             break;
         case 26:
             if (OptArgc < 1)
-                ThrowError(1972)("Missing argument");
+                ThrowError(1972+LDIFF1)("Missing argument");
             pUserTiles = (char*)malloc(strlen(OptArgv[0]+1));
             if (!pUserTiles)
                 return;
@@ -1208,7 +1223,7 @@ void ParseOptions(void)
             break;
         case 27:
             if (OptArgc < 1)
-                ThrowError(1984)("Missing argument");
+                ThrowError(1984+LDIFF1)("Missing argument");
             szSoundRes = (char*)malloc(strlen(OptArgv[0]+1));
             if (!szSoundRes)
                 return;
@@ -1216,7 +1231,7 @@ void ParseOptions(void)
             break;
         case 28:
             if (OptArgc < 1)
-                ThrowError(1996)("Missing argument");
+                ThrowError(1996+LDIFF1)("Missing argument");
             pUserRFF = (char*)malloc(strlen(OptArgv[0]+1));
             if (!pUserRFF)
                 return;
@@ -1224,18 +1239,18 @@ void ParseOptions(void)
             break;
         case 9:
             if (OptArgc < 1)
-                ThrowError(2008)("Missing argument");
+                ThrowError(2008+LDIFF1)("Missing argument");
             gExplicitSetup = 1;
             strcpy(SetupFilename,OptArgv[0]);
             break;
         case 10:
             if (OptArgc < 1)
-                ThrowError(2018)("Missing argument");
+                ThrowError(2018+LDIFF1)("Missing argument");
             gSkill = ClipRange(strtoul(OptArgv[0],NULL,0), 0, 4);
             break;
         case 15:
             if (OptArgc < 1)
-                ThrowError(2030)("Missing argument");
+                ThrowError(2030+LDIFF1)("Missing argument");
             gSyncRate = ClipRange(strtoul(OptArgv[0],NULL,0), 1, 4);
             if (gPacketMode == PACKETMODE_1)
                 gSyncRate = 1;
@@ -1269,7 +1284,7 @@ void main(void)
 {
     CheckIfWindows();
     if (_grow_handles(40) < 40)
-        ThrowError(2089)("Not enough file handles available.\nIncrease FILES=## value in CONFIG.SYS.");
+        ThrowError(2089+LDIFF1)("Not enough file handles available.\nIncrease FILES=## value in CONFIG.SYS.");
     memcpy(&gGameOptions, &gSingleGameOptions, sizeof(GAMEOPTIONS));
     ParseOptions();
     func_26988();
@@ -1332,12 +1347,12 @@ void main(void)
         strcpy(buffer,pUserTiles);
         strcat(buffer,"%03i.ART");
         if (!tileInit(0,buffer))
-            ThrowError(2243)("User specified ART files not found");
+            ThrowError(2243+LDIFF1)("User specified ART files not found");
     }
     else
     {
         if (!tileInit(0,NULL))
-            ThrowError(2248)("TILES###.ART files not found");
+            ThrowError(2248+LDIFF1)("TILES###.ART files not found");
     }
     powerupInit();
     tioPrint("Loading cosine table");
