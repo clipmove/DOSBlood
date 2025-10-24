@@ -1107,8 +1107,10 @@ static BOOL PickupWeapon(PLAYER *pPlayer, SPRITE *pWeapon)
     int nAmmoType = pWeaponItemData->ata;
     if (!pPlayer->atcb[nWeaponType] || gGameOptions.nWeaponSettings == WEAPONSETTINGS_2 || gGameOptions.nWeaponSettings == WEAPONSETTINGS_3)
     {
+#ifdef PLASMAPAK
         if (pWeapon->type == 50 && gGameOptions.nGameType > GAMETYPE_1 && func_3A158(pPlayer))
             return 0;
+#endif
         pPlayer->atcb[nWeaponType] = 1;
         if (nAmmoType != -1)
             pPlayer->at181[nAmmoType] = ClipHigh(pPlayer->at181[nAmmoType]+pWeaponItemData->atc, gAmmoInfo[nAmmoType].at0);

@@ -60,7 +60,11 @@ char gBuildTime[] = "14:37:44";
 const BLOODVERSION gGameVersion = { 21, 1 };
 #else
 char gBuildDate[] = "Mar 18 1998";
+# ifdef PLASMAPAK
 char gBuildTime[] = "12:16:41";
+# else
+char gBuildTime[] = "12:07:19";
+# endif
 const BLOODVERSION gGameVersion = { 20, 1 };
 #endif
 #endif

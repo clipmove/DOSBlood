@@ -235,8 +235,10 @@ void PreloadDudeCache(SPRITE *pSprite)
     {
     case 201:
     case 202:
+#ifdef PLASMAPAK
     case 247:
     case 248:
+#endif
         seqCache(pDudeInfo->seqStartID+6);
         seqCache(pDudeInfo->seqStartID+7);
         seqCache(pDudeInfo->seqStartID+8);
@@ -245,7 +247,27 @@ void PreloadDudeCache(SPRITE *pSprite)
         seqCache(pDudeInfo->seqStartID+14);
         seqCache(pDudeInfo->seqStartID+15);
         break;
+    case 205:
+        seqCache(pDudeInfo->seqStartID+12);
+        seqCache(pDudeInfo->seqStartID+9);
+    case 244:
+        seqCache(pDudeInfo->seqStartID+10);
+    case 203:
+        seqCache(pDudeInfo->seqStartID+6);
+        seqCache(pDudeInfo->seqStartID+7);
+        seqCache(pDudeInfo->seqStartID+8);
+        seqCache(pDudeInfo->seqStartID+11);
+        seqCache(pDudeInfo->seqStartID+13);
+        seqCache(pDudeInfo->seqStartID+14);
+        break;
     case 204:
+        seqCache(pDudeInfo->seqStartID+6);
+        seqCache(pDudeInfo->seqStartID+7);
+        seqCache(pDudeInfo->seqStartID+8);
+        seqCache(pDudeInfo->seqStartID+9);
+        seqCache(pDudeInfo->seqStartID+10);
+        seqCache(pDudeInfo->seqStartID+11);
+        break;
     case 217:
         seqCache(pDudeInfo->seqStartID+6);
         seqCache(pDudeInfo->seqStartID+7);
@@ -307,22 +329,11 @@ void PreloadDudeCache(SPRITE *pSprite)
         seqCache(pDudeInfo->seqStartID+6);
         seqCache(pDudeInfo->seqStartID+7);
         break;
+#ifdef PLASMAPAK
     case 249:
         seqCache(pDudeInfo->seqStartID+6);
         break;
-    case 205:
-        seqCache(pDudeInfo->seqStartID+12);
-        seqCache(pDudeInfo->seqStartID+9);
-    case 244:
-        seqCache(pDudeInfo->seqStartID+10);
-    case 203:
-        seqCache(pDudeInfo->seqStartID+6);
-        seqCache(pDudeInfo->seqStartID+7);
-        seqCache(pDudeInfo->seqStartID+8);
-        seqCache(pDudeInfo->seqStartID+11);
-        seqCache(pDudeInfo->seqStartID+13);
-        seqCache(pDudeInfo->seqStartID+14);
-        break;
+#endif
     }
 }
 
@@ -901,7 +912,7 @@ void ProcessFrame(void)
             }
             else if (gLoadSaveOnDeath && gAutosaveInCurLevel && !gDemo.RecordStatus() && !gDemo.PlaybackStatus()) // load autosave
             {
-                func_1EC78(2518, "Loading", "Loading Saved Game", strRestoreGameStrings[10]);
+                func_1EC78(BACKTILE, "Loading", "Loading Saved Game", strRestoreGameStrings[10]);
                 LoadSave::LoadGame("GAME0010.SAV");
                 gAutosaveInCurLevel = 1;
                 return;
@@ -1011,15 +1022,23 @@ void GameErrorHandler(const Error &err)
 void BannerToTIO(void)
 {
     sprintf(buffer, "One Unit: WHOLE BLOOD %s [%s] -- github.com/clipmove/DOSBlood", GetVersionString(), gBuildDate);
+
 #if 0
-    sprintf(buffer,
-#if APPVER_BLOODREV >= AV_BR_BL121
-        "One Unit: WHOLE BLOOD %s [%s] -- DO NOT DISTRIBUTE"
-#else
-        "BLOOD With PLASMA PAK %s [%s] -- DO NOT DISTRIBUTE"
+#ifdef REGISTERED
+# ifdef PLASMAPAK
+#  if APPVER_BLOODREV >= AV_BR_BL121
+    sprintf(buffer, "One Unit: WHOLE BLOOD %s [%s] -- DO NOT DISTRIBUTE", GetVersionString(), gBuildDate);
+#  else
+    sprintf(buffer, "BLOOD With PLASMA PAK %s [%s] -- DO NOT DISTRIBUTE", GetVersionString(), gBuildDate);
+#  endif
+# else
+    sprintf(buffer, "BLOOD RELEASE %s [%s] [%s] -- DO NOT DISTRIBUTE", GetVersionString(), gBuildDate, gBuildTime);
+# endif
+#else // SHAREWARE
+    sprintf(buffer, "BLOOD SHAREWARE %s [%s] -- BLOOD: SPILL SOME!", GetVersionString(), gBuildDate);
 #endif
-        , GetVersionString(), gBuildDate);
 #endif
+
     tioCenterString(0, 0, tioScreenCols-1, buffer, 0x4e);
     tioCenterString(tioScreenRows-1, 0, tioScreenCols-1, "Copyright (c)1994-1997 Monolith Productions Inc.", 0x4e);
     tioWindow(1, 0, tioScreenRows-3, tioScreenCols);
@@ -1469,14 +1488,14 @@ _RESTARTNOLOGO:
     if (!bAddUserMap && !char_148EEB && !gGameStarted)
         gGameMenuMgr.Push(&menuMain);
     else if (char_148EEB)
-        func_1EC78(2518,"Starting Game","Auto-Starting Network Game",0);
+        func_1EC78(BACKTILE,"Starting Game","Auto-Starting Network Game",0);
     ready2send = 1;
     if (char_148EED)
         func_86910();
     else if (char_148EEC || char_148EEB)
     {
         func_10324();
-        func_1EC78(2518,"Starting Game","Auto-Starting Network Game",0);
+        func_1EC78(BACKTILE,"Starting Game","Auto-Starting Network Game",0);
     }
     while (!gQuitGame && !gTenQuit)
     {
@@ -1527,7 +1546,7 @@ _RESTARTNOLOGO:
         else
         {
             clearview(0);
-            rotatesprite(160<<16,100<<16,65536,0,2518,gGameMenuMgr.m_bActive ? 40 : 0,0,0x4a,0,0,xdim-1,ydim-1);
+            rotatesprite(160<<16,100<<16,65536,0,BACKTILE,gGameMenuMgr.m_bActive ? 40 : 0,0,0x4a,0,0,xdim-1,ydim-1);
             netGetPackets();
             if (gQuitRequest && !gQuitGame)
                 netBroadcastMyLogoff();

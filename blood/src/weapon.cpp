@@ -105,9 +105,11 @@ static int nClientFireNapalm = qavRegisterClient((QAVTypeCast)FireNapalm);
 static int nClientFireNapalm2 = qavRegisterClient((QAVTypeCast)FireNapalm2);
 static int nClientFireLifeLeech = qavRegisterClient((QAVTypeCast)FireLifeLeech);
 static int nClientFireBeast = qavRegisterClient((QAVTypeCast)FireBeast);
+#ifdef PLASMAPAK
 static int nClientAltFireLifeLeech = qavRegisterClient((QAVTypeCast)AltFireLifeLeech);
 static int nClientDropVoodoo = qavRegisterClient((QAVTypeCast)DropVoodoo);
 static int nClientAltFireNapalm = qavRegisterClient((QAVTypeCast)AltFireNapalm);
+#endif
 
 void QAV::PlaySound(int nSound)
 {
@@ -570,9 +572,11 @@ void WeaponRaise(PLAYER *pPlayer)
         if (func_4B2C8(pPlayer, 7))
         {
             pPlayer->atc3 = 2;
+#ifdef PLASMAPAK
             if (powerupCheck(pPlayer, 17))
                 StartQAV(pPlayer, 82);
             else
+#endif
                 StartQAV(pPlayer, 74);
         }
         else
@@ -972,9 +976,11 @@ void WeaponUpdateState(PLAYER *pPlayer)
         switch (vb)
         {
         case 2:
+#ifdef PLASMAPAK
             if (func_4B2C8(pPlayer, 7, 10) && powerupCheck(pPlayer, 17))
                 pPlayer->at26 = 83;
             else
+#endif
                 pPlayer->at26 = 75;
             break;
         case 3:
@@ -1443,6 +1449,7 @@ static void AltFireVoodoo(int nTrigger, PLAYER *pPlayer)
     pPlayer->atc3 = -1;
 }
 
+#ifdef PLASMAPAK
 static void DropVoodoo(int nTrigger, PLAYER *pPlayer)
 {
     if (nTrigger != 2)
@@ -1459,6 +1466,7 @@ static void DropVoodoo(int nTrigger, PLAYER *pPlayer)
         pPlayer->atcb[10] = 0;
     }
 }
+#endif
 
 struct TeslaMissile
 {
@@ -1544,6 +1552,7 @@ static void FireNapalm2(int nTrigger, PLAYER *pPlayer)
     pPlayer->at37b = 1;
 }
 
+#ifdef PLASMAPAK
 static void AltFireNapalm(int nTrigger, PLAYER *pPlayer)
 {
     char bAkimbo = powerupCheck(pPlayer, 17);
@@ -1563,6 +1572,7 @@ static void AltFireNapalm(int nTrigger, PLAYER *pPlayer)
         pPlayer->at37b = 1;
     }
 }
+#endif
 
 static void FireLifeLeech(int nTrigger, PLAYER *pPlayer)
 {
@@ -1585,6 +1595,7 @@ static void FireLifeLeech(int nTrigger, PLAYER *pPlayer)
     pPlayer->at362 = ClipHigh(pPlayer->at362+5, 50);
 }
 
+#ifdef PLASMAPAK
 static void AltFireLifeLeech(int nTrigger, PLAYER *pPlayer)
 {
     sfxPlay3DSound(pPlayer->pSprite, 455, 2);
@@ -1617,6 +1628,7 @@ static void AltFireLifeLeech(int nTrigger, PLAYER *pPlayer)
         pPlayer->atcb[9] = 0;
     }
 }
+#endif
 
 static void FireBeast(int nTrigger, PLAYER * pPlayer)
 {
@@ -1883,25 +1895,31 @@ BOOL func_4F484(PLAYER *pPlayer)
     {
     case 4:
         pPlayer->atc3 = 5;
+#ifdef PLASMAPAK
         if (func_4B2C8(pPlayer, 7, 10) && powerupCheck(pPlayer, 17))
             StartQAV(pPlayer, 84, nClientFireTesla, 1);
         else
+#endif
             StartQAV(pPlayer, 77, nClientFireTesla, 1);
         return 1;
     case 5:
         if (pPlayer->atc.buttonFlags.shoot)
             break;
         pPlayer->atc3 = 2;
+#ifdef PLASMAPAK
         if (func_4B2C8(pPlayer, 7, 10) && powerupCheck(pPlayer, 17))
             StartQAV(pPlayer, 87);
         else
+#endif
             StartQAV(pPlayer, 80);
         return 1;
     case 7:
         pPlayer->atc3 = 2;
+#ifdef PLASMAPAK
         if (func_4B2C8(pPlayer, 7, 10) && powerupCheck(pPlayer, 17))
             StartQAV(pPlayer, 87);
         else
+#endif
             StartQAV(pPlayer, 80);
         return 1;
     }
@@ -2373,15 +2391,19 @@ void WeaponProcess(PLAYER *pPlayer)
             {
             case 2:
                 pPlayer->atc3 = 4;
+#ifdef PLASMAPAK
                 if (func_4B2C8(pPlayer, 7, 10) && powerupCheck(pPlayer, 17))
                     StartQAV(pPlayer, 84, nClientFireTesla);
                 else
+#endif
                     StartQAV(pPlayer, 77, nClientFireTesla);
                 return;
             case 5:
+#ifdef PLASMAPAK
                 if (func_4B2C8(pPlayer, 7, 10) && powerupCheck(pPlayer, 17))
                     StartQAV(pPlayer, 84, nClientFireTesla);
                 else
+#endif
                     StartQAV(pPlayer, 77, nClientFireTesla);
                 return;
             }
@@ -2495,24 +2517,37 @@ void WeaponProcess(PLAYER *pPlayer)
         case 8:
             if (func_4B2C8(pPlayer, 7, 35))
             {
+#ifdef PLASMAPAK
                 if (func_4B2C8(pPlayer, 7, 70) && powerupCheck(pPlayer, 17))
                     StartQAV(pPlayer, 85, nClientFireTesla);
                 else
                     StartQAV(pPlayer, 78, nClientFireTesla);
+#else
+                StartQAV(pPlayer, 78, nClientAltFireTesla);
+#endif
             }
             else
             {
+#ifdef PLASMAPAK
                 if (func_4B2C8(pPlayer, 7, 10) && powerupCheck(pPlayer, 17))
                     StartQAV(pPlayer, 84, nClientFireTesla);
                 else
+#endif
                     StartQAV(pPlayer, 77, nClientFireTesla);
             }
             return;
         case 5:
+#ifdef PLASMAPAK
             if (powerupCheck(pPlayer, 17))
                 StartQAV(pPlayer, 122, nClientAltFireNapalm);
             else
                 StartQAV(pPlayer, 91, nClientAltFireNapalm);
+#else
+            if (powerupCheck(pPlayer, 17))
+                StartQAV(pPlayer, 123, nClientFireNapalm2);
+            else
+                StartQAV(pPlayer, 91, nClientFireNapalm);
+#endif
             return;
         case 2:
             if (CheckAmmo(pPlayer, 1, 8))
@@ -2531,6 +2566,7 @@ void WeaponProcess(PLAYER *pPlayer)
             }
             return;
         case 9:
+#ifdef PLASMAPAK
             if (gGameOptions.nGameType <= GAMETYPE_1 && !func_4B2C8(pPlayer, 8) && pPlayer->pXSprite->health < (25 << 4))
             {
                 sfxPlay3DSound(pPlayer->pSprite, 494, 2);
@@ -2542,6 +2578,10 @@ void WeaponProcess(PLAYER *pPlayer)
                 AltFireLifeLeech(1, pPlayer);
                 pPlayer->atc3 = -1;
             }
+#else
+            sfxPlay3DSound(pPlayer->pSprite, 494, 2);
+            StartQAV(pPlayer, 116, nClientFireLifeLeech);
+#endif
             return;
         }
     }

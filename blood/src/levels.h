@@ -21,6 +21,12 @@
 
 #include "weather.h"
 
+#ifdef PLASMAPAK
+#define kMaxEpisodes 6
+#else
+#define kMaxEpisodes 5
+#endif
+
 enum GAMETYPE
 {
     GAMETYPE_0 = 0,

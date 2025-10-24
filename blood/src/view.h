@@ -153,6 +153,12 @@ inline void viewCorrectSpriteInterpolateOffsets(int nSprite, SPRITE *pSprite, VE
     }
 }
 
+#ifdef PLASMAPAK
+#define BACKTILE 2518
+#else
+#define BACKTILE 2046
+#endif
+
 void func_1EC78(int, char *, char *, char *);
 void viewResizeView(int);
 void viewUpdateFov(BOOL bCheck = 0);

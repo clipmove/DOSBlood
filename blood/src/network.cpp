@@ -94,6 +94,16 @@ int int_28F37C;
 
 const BLOODVERSION short_1328AC[2] = {{ 20, 2 }, { 21, 2 }}; // Blood v1.21/DOSBlood
 int gDOSBloodClients = 0; // count how many DOSBlood clients are connected
+#if 0
+const BLOODVERSION short_1328AC = { 
+    20,
+#ifdef PLASMAPAK
+    2
+#else
+    1
+#endif
+};
+#endif
 
 BOOL bNoResend = 1;
 int gSyncRate = 1;

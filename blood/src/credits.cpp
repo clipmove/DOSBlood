@@ -27,6 +27,7 @@
 #include "screen.h"
 #include "smkplay.h"
 #include "sound.h"
+#include "view.h"
 
 BOOL exitCredits = FALSE;
 
@@ -122,7 +123,7 @@ void credLogos(void)
     if (!DoUnFade(1))
         return;
     clearview(0);
-    rotatesprite(160<<16, 100<<16, 65536, 0, 2518, 0, 0, 0x4a, 0, 0, xdim-1, ydim-1);
+    rotatesprite(160<<16, 100<<16, 65536, 0, BACKTILE, 0, 0, 0x4a, 0, 0, xdim-1, ydim-1);
     scrNextPage();
     Wait(360);
     sndFadeSong(4000);

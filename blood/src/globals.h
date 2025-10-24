@@ -37,6 +37,12 @@ union BLOODVERSION {
     ushort w;
 };
 
+#ifdef PLASMAPAK
+#define RELEASEID 4
+#else
+#define RELEASEID 3
+#endif
+
 extern const BLOODVERSION gGameVersion;
 
 extern Resource gSysRes;

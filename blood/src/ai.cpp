@@ -348,9 +348,11 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
     }
     case 201:
     case 202:
+#ifdef PLASMAPAK
     case 247:
     case 248:
     case 249:
+#endif
     {
         const int nChannel = !VanillaMode() ? kMaxSprites+pSprite->index : -1; // use kMaxSprites+sprite index as channel, so cultist alerts can be muted on death/hurt state
         DUDEEXTRA_CULTIST *pDudeExtraE = &gDudeExtra[pSprite->extra].at6.cultist;
@@ -773,6 +775,7 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
         }
         break;
     }
+#ifdef PLASMAPAK
     case 250:
     {
         DUDEEXTRA_TINYCALEB *pDudeExtraE = &gDudeExtra[pSprite->extra].at6.tinyCaleb;
@@ -860,6 +863,7 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
             aiNewState(pSprite, pXSprite, &tentacleChase);
         }
         break;
+#endif
     }
 }
 
@@ -938,8 +942,10 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
         {
         case 201:
         case 202:
+#ifdef PLASMAPAK
         case 247:
         case 248:
+#endif
             if (nDmgType != kDamageBurn)
             {
                 if (!aiSeqPlaying(pSprite, 14) && pXSprite->at17_6 == 0)
@@ -1004,6 +1010,7 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
                 evKill(nSprite, 3, CALLBACK_ID_0);
             }
             break;
+#ifdef PLASMAPAK
         case 250:
             if (nDmgType == kDamageBurn && pXSprite->health <= pDudeInfo->at23 && (pXSprite->at17_6 != 1 || pXSprite->at17_6 != 2))
             {
@@ -1032,6 +1039,7 @@ int aiDamageSprite(SPRITE *pSprite, XSPRITE *pXSprite, int nSource, DAMAGE_TYPE 
                 actHealDude(pXSprite, dudeInfo[51].at2, dudeInfo[51].at2);
             }
             break;
+#endif
         case 203:
         case 205:
             if (nDmgType == kDamageBurn && pXSprite->health <= pDudeInfo->at23)
@@ -1061,9 +1069,11 @@ void RecoilDude(SPRITE *pSprite, XSPRITE *pXSprite)
     {
     case 201:
     case 202:
+#ifdef PLASMAPAK
     case 247:
     case 248:
     case 249:
+#endif
         if (pSprite->type == 201)
             aiPlay3DSound(pSprite, 4013+Random(2), AI_SFX_PRIORITY_2);
         else
@@ -1201,6 +1211,7 @@ void RecoilDude(SPRITE *pSprite, XSPRITE *pXSprite)
         else
             aiNewState(pSprite, pXSprite, &innocentRecoil);
         break;
+#ifdef PLASMAPAK
     case 250:
         if (pXSprite->at17_6 == 0)
         {
@@ -1250,6 +1261,7 @@ void RecoilDude(SPRITE *pSprite, XSPRITE *pXSprite)
     case 224:
         aiNewState(pSprite, pXSprite, &tentacleRecoil);
         break;
+#endif
     case 208:
     case 209:
         break;
@@ -1445,9 +1457,11 @@ void aiInitSprite(SPRITE *pSprite)
     {
     case 201:
     case 202:
+#ifdef PLASMAPAK
     case 247:
     case 248:
     case 249:
+#endif
     {
         DUDEEXTRA_CULTIST *pDudeExtraE = &gDudeExtra[nXSprite].at6.cultist;
         pDudeExtraE->at8 = 0;
@@ -1613,6 +1627,7 @@ void aiInitSprite(SPRITE *pSprite)
         aiNewState(pSprite, pXSprite, &tchernobogIdle);
         break;
     }
+#ifdef PLASMAPAK
     case 250:
         aiNewState(pSprite, pXSprite, &tinycalebIdle);
         break;
@@ -1627,6 +1642,7 @@ void aiInitSprite(SPRITE *pSprite)
     case 224:
         aiNewState(pSprite, pXSprite, &tentacleIdle);
         break;
+#endif
     default:
         aiNewState(pSprite, pXSprite, &genIdle);
         break;

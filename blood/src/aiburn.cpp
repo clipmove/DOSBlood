@@ -15,6 +15,7 @@
  *
  */
 #include "typedefs.h"
+#include "globals.h"
 #include "ai.h"
 #include "aiburn.h"
 #include "build.h"
@@ -101,12 +102,14 @@ static void thinkGoto(SPRITE *pSprite, XSPRITE *pXSprite)
         case 239:
             aiNewState(pSprite, pXSprite, &innocentBurnSearch);
             break;
+#ifdef PLASMAPAK
         case 253:
             aiNewState(pSprite, pXSprite, &beastBurnSearch);
             break;
         case 252:
             aiNewState(pSprite, pXSprite, &tinycalebBurnSearch);
             break;
+#endif
         }
     }
     aiThinkTarget(pSprite, pXSprite);
@@ -130,12 +133,14 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
         case 239:
             aiNewState(pSprite, pXSprite, &innocentBurnGoto);
             break;
+#ifdef PLASMAPAK
         case 253:
             aiNewState(pSprite, pXSprite, &beastBurnGoto);
             break;
         case 252:
             aiNewState(pSprite, pXSprite, &tinycalebBurnGoto);
             break;
+#endif
         }
         return;
     }
@@ -164,12 +169,14 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
         case 239:
             aiNewState(pSprite, pXSprite, &innocentBurnSearch);
             break;
+#ifdef PLASMAPAK
         case 253:
             aiNewState(pSprite, pXSprite, &beastBurnSearch);
             break;
         case 252:
             aiNewState(pSprite, pXSprite, &tinycalebBurnSearch);
             break;
+#endif
         }
         return;
     }
@@ -200,12 +207,14 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                     case 239:
                         aiNewState(pSprite, pXSprite, &innocentBurnAttack);
                         break;
+#ifdef PLASMAPAK
                     case 253:
                         aiNewState(pSprite, pXSprite, &beastBurnAttack);
                         break;
                     case 252:
                         aiNewState(pSprite, pXSprite, &tinycalebBurnAttack);
                         break;
+#endif
                     }
                 }
                 return;
@@ -227,12 +236,14 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
     case 239:
         aiNewState(pSprite, pXSprite, &innocentBurnGoto);
         break;
+#ifdef PLASMAPAK
     case 253:
         aiNewState(pSprite, pXSprite, &beastBurnGoto);
         break;
     case 252:
         aiNewState(pSprite, pXSprite, &tinycalebBurnGoto);
         break;
+#endif
     }
     pXSprite->target = -1;
 }

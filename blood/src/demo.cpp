@@ -46,7 +46,7 @@ CDemo gDemo;
 
 CDemo::CDemo()
 {
-    int_28F380 = 4;
+    int_28F380 = RELEASEID;
     at0 = 0;
     at1 = 0;
     at3 = 0;
