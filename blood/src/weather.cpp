@@ -440,6 +440,7 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
         nWeatherOverrideWindY = 4;
         nWeatherOverrideGravity = 24;
         break;
+    case 0xBA5DB227: // e1m2
     case 0xD64D2666: // e2m5
     case 0x09E3434D: // e2m6
     case 0x0FFF85AC: // e2m7
