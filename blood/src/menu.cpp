@@ -59,6 +59,7 @@ void SetSlopeTilting(CGameMenuItemZBool *);
 void SetViewBobbing(CGameMenuItemZBool *);
 void SetViewSwaying(CGameMenuItemZBool *);
 void SetWeaponSmoothing(CGameMenuItemZCycle *);
+void SetWeatherEffect(CGameMenuItemZBool *);
 void SetAutosaveOnLevelStart(CGameMenuItemZBool *);
 void SetLoadSaveOnDeath(CGameMenuItemZCycle *);
 void SetVanillaMode(CGameMenuItemZBool *);
@@ -176,8 +177,8 @@ char *zMouseCalculationStrings[] =
 };
 
 char zUserMapName[13];
-char *zEpisodeNames[6];
-char *zLevelNames[6][16];
+char *zEpisodeNames[kMaxEpisodes];
+char *zLevelNames[kMaxEpisodes][16];
 char zFov[] = "FOV (XXX):";
 
 CGameMenu menuMain;
@@ -232,7 +233,7 @@ CGameMenuItemChain itemMainSave7("CREDITS", 1, 0, 135, 320, 1, &menuCredits);
 CGameMenuItemChain itemMainSave8("QUIT", 1, 0, 150, 320, 1, &menuQuit);
 
 CGameMenuItemTitle itemEpisodeTitle("EPISODES", 1, 160, 20, 2038);
-CGameMenuItemChain7F2F0 itemEpisodes[6];
+CGameMenuItemChain7F2F0 itemEpisodes[kMaxEpisodes];
 
 CGameMenuItemTitle itemDifficultyTitle("DIFFICULTY", 1, 160, 20, 2038);
 CGameMenuItemChain itemDifficulty1("STILL KICKING", 1, 0, 50, 320, 1, NULL, -1, SetDifficultyAndStart, 0);
@@ -274,8 +275,9 @@ CGameMenuItemZBool boolAutoAim("AUTOAIM:", 1, 10, 60, 300, gAutoAim, SetAutoAim)
 CGameMenuItemZCycle cycleLevelStats("LEVEL STATS:", 1, 10, 80, 300, 0, SetLevelStats, zLevelStatsStrings, 3, 0);
 CGameMenuItemZCycle cycleShowPowerUps("SHOW POWERUPS:", 1, 10, 100, 300, 0, SetShowPowerUps, zShowPowerUpsStrings, 3, 0);
 CGameMenuItemZCycle cycleWeaponSmoothing("WEAPON SMOOTHING:", 1, 10, 120, 300, 0, SetWeaponSmoothing, zWeaponSmoothingStrings, 3, 0);
-CGameMenuItemZBool boolAutosaveOnLevelStart("AUTOSAVE ON LEVEL START:", 1, 10, 140, 300, gAutosaveOnLevelStart, SetAutosaveOnLevelStart);
-CGameMenuItemZCycle cycleLoadSaveOnDeath("LOAD SAVE ON DEATH:", 1, 10, 160, 300, 0, SetLoadSaveOnDeath, zLoadSaveOnDeathStrings, 3, 0);
+CGameMenuItemZBool boolWeatherEffect("WEATHER EFFECTS:", 1, 10, 140, 300, gWeatherEffect, SetWeatherEffect);
+CGameMenuItemZBool boolAutosaveOnLevelStart("AUTOSAVE ON LEVEL START:", 1, 10, 160, 300, gAutosaveOnLevelStart, SetAutosaveOnLevelStart);
+CGameMenuItemZCycle cycleLoadSaveOnDeath("LOAD SAVE ON DEATH:", 1, 10, 180, 300, 0, SetLoadSaveOnDeath, zLoadSaveOnDeathStrings, 3, 0);
 
 CGameMenuItemTitle itemControlsTitle("CONTROLS", 1, 160, 20, 2038);
 CGameMenuItemSlider sliderMouseSpeed("Mouse Sensitivity:", 1, 10, 50, 300, gMouseSensitivity, 0, 0x20000, 0x1000, SetMouseSensitivity);
@@ -471,6 +473,7 @@ void SetupOptionsExtraMenu(void)
     cycleLevelStats.at24 = ClipRange(gLevelStats, 0, cycleLevelStats.at2c);
     cycleShowPowerUps.at24 = ClipRange(gShowPowerUps, 0, cycleShowPowerUps.at2c);
     cycleWeaponSmoothing.at24 = ClipRange(gWeaponSmoothing, 0, cycleWeaponSmoothing.at2c);
+    boolWeatherEffect.at20 = gWeatherEffect;
     boolAutosaveOnLevelStart.at20 = gAutosaveOnLevelStart;
     cycleLoadSaveOnDeath.at24 = gLoadSaveOnDeath;
 
@@ -480,6 +483,7 @@ void SetupOptionsExtraMenu(void)
     menuOptionsExtra.Add(&cycleLevelStats, 0);
     menuOptionsExtra.Add(&cycleShowPowerUps, 0);
     menuOptionsExtra.Add(&cycleWeaponSmoothing, 0);
+    menuOptionsExtra.Add(&boolWeatherEffect, 0);
     menuOptionsExtra.Add(&boolAutosaveOnLevelStart, 0);
     menuOptionsExtra.Add(&cycleLoadSaveOnDeath, 0);
     menuOptionsExtra.Add(&itemBloodQAV, 0);
@@ -522,7 +526,7 @@ void SetupEpisodeMenu(void)
     int height;
     gMenuTextMgr.GetFontInfo(1, NULL, NULL, &height);
     int j = 0;
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < kMaxEpisodes; i++)
     {
         EPISODEINFO *pEpisode = &gEpisodeInfo[i];
         if (!pEpisode->bloodbath || gGameOptions.nGameType != GAMETYPE_0)
@@ -628,7 +632,7 @@ void SetupNetStartMenu(void)
     BOOL oneEpisode = 0;
     menuNetStart.Add(&itemNetStartTitle, 0);
     menuNetStart.Add(&itemNetStart1, 1);
-    for (int i = 0; i < (oneEpisode ? 1 : 6); i++)
+    for (int i = 0; i < (oneEpisode ? 1 : kMaxEpisodes); i++)
     {
         EPISODEINFO *pEpisode = &gEpisodeInfo[i];
         if (i < gEpisodeCount)
@@ -940,6 +944,18 @@ void SetViewSwaying(CGameMenuItemZBool *pItem)
 void SetWeaponSmoothing(CGameMenuItemZCycle *pItem)
 {
     gWeaponSmoothing = ClipRange(pItem->at24, 0, pItem->at2c);
+}
+
+void SetWeatherEffect(CGameMenuItemZBool *pItem)
+{
+    gWeatherEffect = pItem->at20;
+    if (gWeatherEffect)
+    {
+        gWeather.Initialize();
+        gWeather.LoadPreset(gGameOptions.uMapCRC);
+        gWeather.SetParticles(0, -1);
+        viewResizeView(gViewSize);
+    }
 }
 
 void SetAutosaveOnLevelStart(CGameMenuItemZBool *pItem)
@@ -1341,7 +1357,7 @@ void MenuSetupEpisodeInfo(void)
 {
     memset(zEpisodeNames, 0, sizeof(zEpisodeNames));
     memset(zLevelNames, 0, sizeof(zLevelNames));
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < kMaxEpisodes; i++)
     {
         if (i < gEpisodeCount)
         {

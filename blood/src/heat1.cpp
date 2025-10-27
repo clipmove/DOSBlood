@@ -25,14 +25,14 @@
 #include "player.h"
 #include "view.h"
 
-char unk[8];
+//char unk[8];
 
 struct heatstruct1 {
     char __f_0[4];
     short f_4;
     char __f_6[10];
     short f_10;
-    char __f_14[2];
+    char __f_12[2];
 };
 
 struct heatstruct3 {

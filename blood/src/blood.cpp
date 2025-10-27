@@ -525,6 +525,8 @@ void StartLevel(GAMEOPTIONS *gameOptions)
     gKillMgr.Clear();
     gSecretMgr.Clear();
     automapping = 1;
+    gWeather.LoadPreset(gameOptions->uMapCRC);
+    gWeather.SetParticles(0, -1);
     for (i = 0; i < kMaxSprites; i++)
     {
         SPRITE *pSprite = &sprite[i];
@@ -1419,7 +1421,7 @@ void main(void)
     scrSetGameMode(ScreenMode, ScreenWidth, ScreenHeight);
     scrSetGamma(gGamma);
     viewResizeView(gViewSize);
-    gWeather.Initialize((char*)frameplace, windowx1, windowy1, windowx2 - windowx1 + 1, windowy2 - windowy1 + 1, gYLookup, 0, 32, -1);
+    gWeather.Initialize();
     gChoke.func_83ff0(518, func_84230);
     levelLoadDefaults();
     if (bAddUserMap)

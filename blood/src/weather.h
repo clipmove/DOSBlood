@@ -17,67 +17,101 @@
 #ifndef _WEATHER_H_
 #define _WEATHER_H_
 
-#include "typedefs.h"
 #include "misc.h"
 
 #define kMaxVectors 4096
+#define kScaleTableShift 2 // downscale to save space at the expense of less precision
+#define kScaleTableSize (65536>>kScaleTableShift)
+#define kScaleTableMask (kScaleTableSize-1)
+#define kWeatherTileY 1600 // max res supported
 
 enum WEATHERTYPE {
-    WEATHERTYPE_0,
-    WEATHERTYPE_1,
-    WEATHERTYPE_2,
-    WEATHERTYPE_3,
+    WEATHERTYPE_NONE,
+    WEATHERTYPE_RAIN,
+    WEATHERTYPE_SNOW,
+    WEATHERTYPE_BLOOD,
+    WEATHERTYPE_UNDERWATER,
+    WEATHERTYPE_DUST,
+    WEATHERTYPE_STARS,
+    WEATHERTYPE_RAINHARD,
+    WEATHERTYPE_SNOWHARD,
 };
 
 class CWeather {
 public:
     CWeather();
     ~CWeather();
-    RandomizeVectors(void);
-    SetDefaultBuffer(char *a1, int a2, int a3, int *a4);
-    SetParticles(short nCount, short a2, short nTile);
-    SetTranslucency(int);
-    SetColor(char a1);
-    SetColorShift(char);
-    Initialize(char *, int, int, int, int, int *, short, short, short);
-    Draw(char *pBuffer, int x, int y, int a4, int a5, int *pYLookup, int a7, int a8, int a9, int a10, int a11, int nCount, int nTile);
-    Draw(int a1, int a2, int a3, int a4, int a5, int a6);
-    SetWeatherType(WEATHERTYPE);
+    void RandomizeVectors(void);
+    void SetViewport(int nX, int nY, int nXOffset0, int nXOffset1, int nYOffset0, int nYOffset1, int nFov);
+    void SetParticles(short nCount, short nLimit = -1);
+    void SetGravity(short nGravity, char bVariance);
+    void SetWind(short nX, short nY);
+    void RandomWind(char bHeavyWind);
+    void SetTranslucency(int);
+    void SetColor(unsigned char a1);
+    void SetColorShift(char);
+    void SetShape(char);
+    void SetStaticView(char);
+    void Initialize(int nCount = 0);
+    void Draw(char* pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, int nDelta);
+    void Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, long nClock, int nInterpolate);
+    void LoadPreset(unsigned int uMapCRC);
+    void Process(long nX, long nY, long nZ, int nSector, int nClipDist);
+    void SetWeatherType(WEATHERTYPE nWeather);
 
     short GetCount(void) {
-        return f_12d8;
+        return ClipHigh(nCount, nLimit);
     }
 
-    void SetCount(short t) {
-        f_12d8 = ClipRange(t, 0, 4095);
+    void SetCount(int t) {
+        nCount = ClipRange(t, 0, kMaxVectors);
     }
 
     BOOL Status(void) {
-        return f_0.f_0 ? 1 : 0;
+        return nDraw.bActive ? 1 : 0;
     }
 
+private:
     union {
         byte b;
         struct {
-            unsigned int f_0 : 1;
-            unsigned int f_1 : 2;
+            unsigned int bActive : 1;
+            unsigned int bStaticView : 1;
+            unsigned int bShape : 2;
+            unsigned int nTransparent : 2;
+            unsigned int bGravityVariance : 1;
         };
-    } f_0;
-    char *f_4;
-    int f_8;
-    int f_c;
-    int f_10;
-    int f_14;
-    int YLookup[1200]; // at18
-    short f_12d8;
-    short f_12da;
-    short f_12dc;
-    short f_12de[kMaxVectors][3];
-    char f_72de;
-    char f_72df;
+    } nDraw;
+    int nWidth;
+    int nHeight;
+    int nOffsetX;
+    int nOffsetY;
+    int YLookup[kWeatherTileY];
+    unsigned int nScaleFactor;
+    short nCount;
+    short nLimit;
+    short nGravity;
+    short nWindX;
+    short nWindY;
+    short nWindXOffset;
+    short nWindYOffset;
+    short nPos[kMaxVectors][3];
+    unsigned char nPalColor;
+    char nPalShift;
+    int nScaleTableWidth;
+    int nScaleTableFov;
+    int nFovV;
+    int nScaleTable[kScaleTableSize];
+    int nLastFrameClock;
+    WEATHERTYPE nWeatherCur;
+    WEATHERTYPE nWeatherForecast;
+    WEATHERTYPE nWeatherOverrideType;
+    char nWeatherOverride;
+    short nWeatherOverrideWindX;
+    short nWeatherOverrideWindY;
+    short nWeatherOverrideGravity;
 };
 
 extern CWeather gWeather;
-
 
 #endif // !_WEATHER_H_

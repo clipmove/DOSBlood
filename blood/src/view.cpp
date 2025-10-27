@@ -1750,6 +1750,7 @@ void viewResizeView(int size)
         setview(gViewX0, gViewY0, gViewX1, gViewY1);
         gGameMessageMgr.SetCoordinates(gViewX0S+1, gViewY0S+1);
         viewUpdateFov();
+        gWeather.SetViewport(xdim, ydim, gViewX0, gViewX1, gViewY0, gViewY1, gFovAspect);
         return;
     }
     gViewX0 = 0;
@@ -1774,6 +1775,7 @@ void viewResizeView(int size)
     gGameMessageMgr.SetCoordinates(gViewX0S + 1, gViewY0S + 1);
     viewUpdatePages();
     viewUpdateFov();
+    gWeather.SetViewport(xdim, ydim, gViewX0, gViewX1, gViewY0, gViewY1, gFovAspect);
 }
 
 void viewUpdateFov(BOOL bCheck)
@@ -1787,6 +1789,7 @@ void viewUpdateFov(BOOL bCheck)
     gFovOld = gFov;
     gFovAspect = divscale16(gFov, 60);
     setaspect(gFovAspect, yxaspect);
+    gWeather.SetViewport(xdim, ydim, gViewX0, gViewX1, gViewY0, gViewY1, gFovAspect);
 }
 
 void UpdateFrame(void)
@@ -3286,26 +3289,10 @@ void viewDrawScreen(void)
             nAng = dmulscale32(Cos(nAng), 256000, Sin(nAng), 160000);
             rotatesprite(160<<16, 100<<16, nAng, v78+512, TILTBUFFER, 0, 0, vrc, gViewX0, gViewY0, gViewX1, gViewY1);
         }
-        long vf4, vf0, vec, ve8;
-        GetZRange(gView->pSprite, &vf4, &vf0, &vec, &ve8, gView->pSprite->clipdist<<2, 0);
-        int tmpSect = nSectnum;
-        if ((vf0 & 0xe000) == 0x4000)
+        if (gWeatherEffect)
         {
-            tmpSect = vf0 & 0x1fff;
-        }
-        BOOL v8 = (gWeatherType > 0 && (sector[tmpSect].ceilingstat&kSectorStat0)) ? TRUE : FALSE;
-        if (gWeather.GetCount() > 0 || v8)
-        {
-            short vsi = gWeather.GetCount();
-            gWeather.Draw(cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitchI, vsi);
-            if (v8)
-            {
-                gWeather.SetCount(vsi+delta*8);
-            }
-            else
-            {
-                gWeather.SetCount(vsi-delta*64);
-            }
+            gWeather.Process(cX, cY, cZ, nSectnum, gView->pSprite->clipdist<<2);
+            gWeather.Draw(cX, cY, cZ, cA, va0 + deliriumPitch, defaultHoriz, gWeather.GetCount(), gFrameClock, gInterpolate);
         }
         if (gViewPos == VIEWPOS_0)
         {

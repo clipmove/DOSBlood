@@ -22,188 +22,612 @@
 #include "misc.h"
 #include "weather.h"
 
-#define kNoTile -1
+#include "actor.h"
+#include "gameutil.h"
+#include "levels.h"
+#include "weather.h"
 
 CWeather gWeather;
 
 CWeather::CWeather()
 {
-    f_0.b = 0;
-    f_4 = NULL;
-    f_8 = 0;
-    f_c = 0;
-    f_10 = 0;
-    f_14 = 0;
+    nDraw.b = 0;
+    nWidth = 0;
+    nHeight = 0;
+    nOffsetX = 0;
+    nOffsetY = 0;
+    nScaleFactor = 0;
     memset(YLookup, 0, sizeof(YLookup));
-    f_12d8 = 0;
-    f_12da = 0;
-    f_12dc = -1;
-    memset(f_12de, 0, sizeof(f_12de));
-    f_72de = 0;
-    f_72df = 0;
+    nCount = 0;
+    nLimit = kMaxVectors;
+    nGravity = 0;
+    nWindX = 0;
+    nWindY = 0;
+    nWindXOffset = 0;
+    nWindYOffset = 0;
+    memset(nPos, 0, sizeof(nPos));
+    nPalColor = 0;
+    nPalShift = 0;
+    nScaleTableWidth = 0;
+    nScaleTableFov = 0;
+    nFovV = 0;
+    memset(nScaleTable, 0, sizeof(nScaleTable));
+    nLastFrameClock = 0;
+    nWeatherCur = WEATHERTYPE_NONE;
+    nWeatherForecast = WEATHERTYPE_NONE;
+    nWeatherOverride = 0;
+    nWeatherOverrideType = WEATHERTYPE_NONE;
+    nWeatherOverrideWindX = 0;
+    nWeatherOverrideWindY = 0;
+    nWeatherOverrideGravity = 0;
 }
 
 CWeather::~CWeather()
 {
-    f_0.b = 0;
-    f_4 = NULL;
-    f_8 = 0;
-    f_c = 0;
-    f_10 = 0;
-    f_14 = 0;
+    nDraw.b = 0;
+    nWidth = 0;
+    nHeight = 0;
+    nOffsetX = 0;
+    nOffsetY = 0;
+    nScaleFactor = 0;
     memset(YLookup, 0, sizeof(YLookup));
-    f_12da = 0;
-    f_12d8 = 0;
-    f_12dc = -1;
-    memset(f_12de, 0, sizeof(f_12de));
-    f_72de = 0;
-    f_72df = 0;
+    nCount = 0;
+    nLimit = kMaxVectors;
+    nGravity = 0;
+    nWindX = 0;
+    nWindY = 0;
+    nWindXOffset = 0;
+    nWindYOffset = 0;
+    memset(nPos, 0, sizeof(nPos));
+    nPalColor = 0;
+    nPalShift = 0;
+    nScaleTableWidth = 0;
+    nScaleTableFov = 0;
+    nFovV = 0;
+    memset(nScaleTable, 0, sizeof(nScaleTable));
+    nLastFrameClock = 0;
+    nWeatherCur = WEATHERTYPE_NONE;
+    nWeatherForecast = WEATHERTYPE_NONE;
+    nWeatherOverride = 0;
+    nWeatherOverrideType = WEATHERTYPE_NONE;
+    nWeatherOverrideWindX = 0;
+    nWeatherOverrideWindY = 0;
+    nWeatherOverrideGravity = 0;
 }
 
-CWeather::RandomizeVectors(void)
+void CWeather::RandomizeVectors(void)
 {
-    for (int i = 0; i < 4096; i++)
+    for (int i = 0; i < kMaxVectors; i++)
     {
-        f_12de[i][0] = krand()&0x3fff;
-        f_12de[i][1] = krand()&0x3fff;
-        f_12de[i][2] = krand()&0x3fff;
+        nPos[i][0] = krand()&0x3fff;
+        nPos[i][1] = krand()&0x3fff;
+        nPos[i][2] = krand()&0x3fff;
     }
+    nWindXOffset = krand()&0x3fff;
+    nWindYOffset = krand()&0x3fff;
 }
 
-CWeather::SetDefaultBuffer(char *a1, int a2, int a3, int *a4)
+void CWeather::SetViewport(int nX, int nY, int nXOffset0, int nXOffset1, int nYOffset0, int nYOffset1, int nFov)
 {
-    f_4 = a1;
-    f_8 = a2;
-    f_c = a3;
-    memcpy(YLookup, a4, sizeof(YLookup));
-}
-
-CWeather::SetParticles(short nCount, short a2, short nTile)
-{
-    dassert(nCount >= 0 && nCount < kMaxVectors, 81);
-    dassert(nTile == kNoTile || (nTile >= 0 && nTile < kMaxTiles), 82);
-    f_12d8 = nCount;
-    f_12da = a2;
-    f_12dc = nTile;
-}
-
-CWeather::SetTranslucency(int a1)
-{
-    f_0.f_1 = ClipRange(a1, 0, 2);
-}
-
-CWeather::SetColor(char a1)
-{
-    f_72de = ClipRange(a1, 0, 255);
-}
-
-CWeather::SetColorShift(char a1)
-{
-    f_72df = ClipRange(a1, 0, 2);
-}
-
-CWeather::Initialize(char *pBuffer, int a2, int a3, int a4, int a5, int *pYLookup, short nCount, short a8, short nTile)
-{
-    dassert(pBuffer != NULL, 107);
-    dassert(pYLookup != NULL, 108);
-    dassert(nCount >= 0 && nCount < kMaxVectors, 109);
-    dassert(nTile == kNoTile || (nTile >= 0 && nTile < kMaxTiles), 110);
-    f_0.f_0 = 1;
-    RandomizeVectors();
-    SetDefaultBuffer(pBuffer, a4, a5, pYLookup);
-    f_10 = a2;
-    f_14 = a3;
-    SetParticles(nCount, a8, nTile);
-}
-
-CWeather::Draw(char *pBuffer, int x, int y, int a4, int a5, int *pYLookup, int a7, int a8, int a9, int a10, int a11, int nCount, int nTile)
-{
-    dassert(pBuffer != NULL, 122);
-    dassert(pYLookup != NULL, 123);
-    dassert(nCount > 0 && nCount < kMaxVectors, 124);
-    dassert(nTile == kNoTile || (nTile >= 0 && nTile < kMaxTiles), 125);
-    pBuffer += pYLookup[y]+x;
-
-    int i;
-    int v2;
-    int v1;
-    int v3;
-    int v4;
-    int v6;
-    int v7;
-    int v8;
-
-
-    int nCos = Cos(a10)>>16;
-    int nSin = Sin(a10)>>16;
-    for (i = 0; i < nCount; i++)
+    nWidth = (nXOffset1-nXOffset0)+1;
+    nHeight = (nYOffset1-nYOffset0)+1;
+    nOffsetX = nXOffset0;
+    nOffsetY = nYOffset0;
+    if (nX < 320 || nY < 200 || nOffsetX < 0 || nOffsetY < 0 || nWidth + nOffsetX > nX || nHeight + nOffsetY > nY) // something went very wrong, disable weather effects
     {
-        v2 = ((f_12de[i][0]-a8*2)&0x3fff)-0x2000;
-        v1 = ((f_12de[i][1]-a7*2)&0x3fff)-0x2000;
-        v3 = (v1*nCos+v2*nSin)>>14;
-        if (v3 > 4)
+        SetWeatherType(WEATHERTYPE_NONE);
+        return;
+    }
+    nScaleFactor = divscale16(nHeight<<16, 200<<16); // scale to viewport
+    for (int i = 0; i < nY; i++)
+        YLookup[i] = nX * i;
+    if (nScaleTableFov != nFov)
+    {
+        nFovV = nFov;
+    }
+    if (nScaleTableFov != nFov || nScaleTableWidth != nWidth)
+    {
+        nScaleTable[0] = 0; // index 0 is unused (depth 0 is invalid/culled earlier) - set to 0 to be safe
+        const int nNumerator = nWidth<<15;
+        for (int i = 1; i < kScaleTableSize; i++)
         {
-            v4 = (v2*nCos-v1*nSin)>>14;
-            if (v4*v4+v3*v3 < 0x4000000)
+            const int nScale = divscale16(nNumerator, (i<<kScaleTableShift)<<16);
+            nScaleTable[i] = divscale16(nScale, nFovV);
+        }
+    }
+    nScaleTableWidth = nWidth;
+    nScaleTableFov = nFov;
+}
+
+void CWeather::SetParticles(short nCount, short nLimit)
+{
+    dassert(nCount >= 0 && nCount <= kMaxVectors, __LINE__);
+    if (nLimit < 0 || nLimit > kMaxVectors)
+        nLimit = kMaxVectors;
+    this->nCount = nCount;
+    this->nLimit = nLimit;
+    if (!nCount)
+        nWeatherCur = nWeatherForecast = WEATHERTYPE_NONE;
+}
+
+void CWeather::SetGravity(short nGravity, char bVariance)
+{
+    this->nGravity = nGravity;
+    this->nDraw.bGravityVariance = bVariance & 1;
+}
+
+void CWeather::SetWind(short nX, short nY)
+{
+    nWindX = nX;
+    nWindY = nY;
+}
+
+void CWeather::RandomWind(char bHeavyWind)
+{
+    const short nX = !bHeavyWind ? (krand()&0x3f)-0x20 : (krand()&0x7f)-0x40;
+    const short nY = !bHeavyWind ? (krand()&0x3f)-0x20 : (krand()&0x7f)-0x40;
+    nWindX = nX;
+    nWindY = nY;
+}
+
+void CWeather::SetTranslucency(int a1)
+{
+    nDraw.nTransparent = ClipRange(a1, 0, 2);
+}
+
+void CWeather::SetColor(unsigned char a1)
+{
+    nPalColor = ClipRange(a1, 0, 255);
+}
+
+void CWeather::SetColorShift(char a1)
+{
+    nPalShift = ClipRange(a1, 0, 2);
+}
+
+void CWeather::SetShape(char a1)
+{
+    nDraw.bShape = a1 & 3;
+}
+
+void CWeather::SetStaticView(char a1)
+{
+    nDraw.bStaticView = a1;
+}
+
+void CWeather::Initialize(int nCount)
+{
+    nDraw.bActive = 1;
+    nDraw.bShape = 1;
+    nScaleTableWidth = 0;
+    nScaleTableFov = 0;
+    nFovV = 0;
+    nLastFrameClock = 0;
+    nWeatherCur = WEATHERTYPE_NONE;
+    nWeatherForecast = WEATHERTYPE_NONE;
+    nWeatherOverride = 0;
+    RandomizeVectors();
+    SetParticles(nCount, kMaxVectors);
+}
+
+void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int *pYLookup, long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, int nDelta)
+{
+    dassert(pBuffer != NULL, __LINE__);
+    dassert(pYLookup != NULL, __LINE__);
+    dassert(nCount > 0 && nCount <= kMaxVectors, __LINE__);
+
+    // move to first pixel within framebuffer
+    pBuffer += pYLookup[nOffsetY] + nOffsetX;
+
+    // adjust to starfield relative scale
+    if (!nDraw.bStaticView)
+    {
+        nX <<= 1;
+        nY <<= 1;
+        nZ >>= 3;
+    }
+    else
+    {
+        nX = 0;
+        nY = 0;
+        nZ = 0;
+    }
+
+    // calculate wind offsets
+    if (nWindX || nWindY)
+    {
+        nWindXOffset += mulscale16(nWindX, nDelta);
+        nWindYOffset += mulscale16(nWindY, nDelta);
+    }
+    nX += nWindXOffset;
+    nY += nWindYOffset;
+
+    // scale pitch and horizon to buffer resolution (default res is 320x200)
+    nPitch = mulscale16(nPitch<<16, nScaleFactor);
+    nPitch = divscale16(nPitch, nFovV);
+    nHoriz = mulscale16(nHoriz<<16, nScaleFactor);
+    nPitch += nHoriz;
+    nPitch >>= 16;
+
+    const int nCos = Cos(nAng) >> 16;
+    const int nSin = Sin(nAng) >> 16;
+    const char bShape = nDraw.bShape;
+    const char bTransparent = nDraw.nTransparent;
+    const int nScaleMod = nScaleFactor >> 16;
+    const int nGrav = mulscale16(nGravity, nDelta);
+    const int nGravityFast = nDraw.bGravityVariance && (nGrav != 0) ? nGrav - (nGrav >> 2) : nGrav;
+
+    for (int i = 0; i < nCount; i++)
+    {
+        // calculate and wrap X/Y
+        const int relX = ((nPos[i][1] - nX) & 0x3fff) - 0x2000;
+        const int relY = ((nPos[i][0] - nY) & 0x3fff) - 0x2000;
+
+        // depth in rotated/view space
+        const int nDepth = (relX * nCos + relY * nSin) >> 14;
+        if (nDepth <= 4)
+            continue;
+
+        // cull by radius in rotated space
+        const int nLatOffset = (relY * nCos - relX * nSin) >> 14;
+        if (nDepth * nDepth + nLatOffset * nLatOffset >= 0x4000000)
+            continue;
+
+        // perspective scale with fov adjustment (uses precomputed table instead of divscale16)
+        const int nScale = nScaleTable[(nDepth>>kScaleTableShift)&kScaleTableMask];
+        unsigned int screenX = ((nLatOffset * nScale) >> 16) + (nWidth >> 1);
+        nPos[i][2] += i&4 ? nGravityFast : nGrav;
+        if (screenX < (unsigned)nWidth) // if within screen bounds
+        {
+            // wrapping/centering logic for Z
+            const int relZ = ((nPos[i][2] - nZ) & 0x3fff) - 0x2000;
+            unsigned int screenY = nPitch + ((nScale * relZ) >> 16);
+            if (screenY < (unsigned)nHeight) // if within screen bounds
             {
-                int v5 = (a4<<15)/v3;
-                v6 = (((v4*v5)>>16)+(a4>>1));
-                if (v6 < (unsigned int) a4)
+                // size/palette color calculation
+                const int nSize = ClipRange(nScale >> 12, 1, nScaleMod);
+                const int nDepthColorShift = ClipLow(nDepth >> (nPalShift + 8), 1);
+                const byte nColor = ClipRange(nPalColor - nDepthColorShift, 0, 255); // clamp color
+
+                if (nSize <= 1) // if size is a pixel, don't bother calculating box fill
                 {
-                    v7 = ((f_12de[i][2]-(a9>>3))&0x3fff)-0x2000;
-                    v8 = a11+((v5*v7)>>16);
-                    if (v8 < (unsigned int) a5 && nTile == kNoTile)
+                    for (int j = 1 << bShape; j > 0 && screenY > 0; j--, screenY--)
                     {
-                        if (f_0.f_1 == 0)
+                        char *pDest = pBuffer + pYLookup[screenY] + screenX;
+                        switch (bTransparent)
                         {
-                            pBuffer[pYLookup[v8] + v6] = f_72de - (v3 >> (f_72df+8));
-                        }
-                        else
-                        {
-                            byte p2 = pBuffer[pYLookup[v8] + v6];
-                            byte p1 = f_72de-(v3 >> (f_72df+8));
-                            if (f_0.f_1 == 1)
-                                pBuffer[pYLookup[v8] + v6] = transluc[(p1 << 8) + p2];
-                            else if (f_0.f_1 == 2)
-                                pBuffer[pYLookup[v8] + v6] = transluc[(p2 << 8) + p1];
+                        case 0:
+                            *pDest = nColor;
+                            break;
+                        case 1:
+                            *pDest = transluc[(nColor << 8) + *pDest];
+                            break;
+                        case 2:
+                            *pDest = transluc[(*pDest << 8) + nColor];
+                            break;
                         }
                     }
+                    continue;
                 }
-                f_12de[i][2] += f_12da;
+                // do block fill
+                const int cx = (int)screenX;
+                const int cy = (int)screenY;
+                const int nHalfX = nSize >> 1;
+                const int nHalfY = !bShape ? nSize >> 1 : nSize * bShape;
+                switch (bTransparent)
+                {
+                case 0: // opaque path: fill size x size
+                {
+                    int yStart = cy - nHalfY;
+                    int yEnd   = cy + nHalfY;
+                    if (yStart < 0) yStart = 0;
+                    if (yEnd >= nHeight) yEnd = nHeight - 1;
+
+                    int xStart = cx - nHalfX;
+                    int xEnd   = cx + nHalfX;
+                    if (xStart < 0) xStart = 0;
+                    if (xEnd >= nWidth) xEnd = nWidth - 1;
+
+                    if (yStart <= yEnd && xStart <= xEnd)
+                    {
+                        size_t len = (size_t)(xEnd - xStart + 1);
+                        for (int yy = yStart; yy <= yEnd; yy++)
+                        {
+                            char *pDest = pBuffer + pYLookup[yy];
+                            memset(pDest + xStart, (int)nColor, len);
+                        }
+                    }
+                    break;
+                }
+                case 1: // translucency/blend path: blend per-pixel using transluc table
+                {
+                    for (int yy = cy - nHalfY; yy <= cy + nHalfY; yy++)
+                    {
+                        if ((unsigned)yy >= (unsigned)nHeight) continue;
+                        char *pDest = pBuffer + pYLookup[yy];
+                        for (int xx = cx - nHalfX; xx <= cx + nHalfX; xx++)
+                        {
+                            if ((unsigned)xx >= (unsigned)nWidth) continue;
+                            byte dst = (byte)pDest[xx];
+                            pDest[xx] = transluc[(nColor << 8) + dst];
+                        }
+                    }
+                    break;
+                }
+                case 2: // translucency/blend path: blend per-pixel using transluc table
+                {
+                    for (int yy = cy - nHalfY; yy <= cy + nHalfY; yy++)
+                    {
+                        if ((unsigned)yy >= (unsigned)nHeight) continue;
+                        char *pDest = pBuffer + pYLookup[yy];
+                        for (int xx = cx - nHalfX; xx <= cx + nHalfX; xx++)
+                        {
+                            if ((unsigned)xx >= (unsigned)nWidth) continue;
+                            byte dst = (byte)pDest[xx];
+                            pDest[xx] = transluc[(dst << 8) + nColor];
+                        }
+                    }
+                    break;
+                }
+                }
             }
         }
     }
 }
 
-CWeather::Draw(int a1, int a2, int a3, int a4, int a5, int a6)
+void CWeather::Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, long nClock, int nInterpolate)
 {
-    a6 = a6 == -1 ? f_12d8 : a6;
-    if (Status() && a6 > 0)
-        Draw(f_4, f_10, f_14, f_8, f_c, YLookup, a1, a2, a3, a4, a5, a6, f_12dc);
+    const char bActive = Status();
+    if (!bActive)
+        return;
+    nClock += mulscale16(1, nInterpolate<<2);
+    int nDelta = (nClock - nLastFrameClock)<<16;
+    nLastFrameClock = nClock;
+    if (nCount == -1)
+        nCount = this->nCount;
+    if (bActive && nCount > 0)
+        Draw((char*)frameplace, nWidth, nHeight, nOffsetX, nOffsetY, YLookup, nX, nY, nZ, nAng, nPitch, nHoriz, nCount, nDelta);
+    nDelta >>= 16;
+    if (nWeatherForecast == nWeatherCur) // increase until reached weather limit
+    {
+        nCount += nDelta * 16;
+        SetCount(nCount);
+    }
+    else if (nCount && (nWeatherForecast != nWeatherCur)) // changed weather type, fade out then switch to new weather type
+    {
+        nCount -= nDelta * 56;
+        SetCount(nCount);
+    }
+    else if (!nCount && (nWeatherForecast != WEATHERTYPE_NONE)) // fade out complete, now switch to new weather
+    {
+        nWindXOffset = krand()&0x3fff;
+        nWindYOffset = krand()&0x3fff;
+        SetWeatherType(nWeatherForecast);
+    }
 }
 
-CWeather::SetWeatherType(WEATHERTYPE a1)
+void CWeather::LoadPreset(unsigned int uMapCRC)
 {
-    switch (a1)
+    switch (uMapCRC)
     {
-    case WEATHERTYPE_1:
-        SetTranslucency(2);
-        f_12da = 128;
-        SetColor(128);
+    case 0xBBF1A5D5: // e1m3
+    case 0xF524ACA4: // e5m2
+    case 0xFE99F0E7: // e5m6
+        nWeatherOverride = 1;
+        nWeatherOverrideType = WEATHERTYPE_SNOW;
+        nWeatherOverrideWindX = 0;
+        nWeatherOverrideWindY = -96;
+        nWeatherOverrideGravity = 32;
         break;
-    case WEATHERTYPE_2:
-        SetTranslucency(0);
-        f_12da = 32;
-        SetColor(32);
+    case 0xAEC06508: // e1m5
+    case 0xFA1A3218: // e4m1
+    case 0x2D6A6F3D: // e4m3
+    case 0x98FDBE0E: // e6m4
+        nWeatherOverride = 1;
+        nWeatherOverrideType = WEATHERTYPE_RAINHARD;
+        nWeatherOverrideWindX = 32;
+        nWeatherOverrideWindY = 0;
+        nWeatherOverrideGravity = 96;
         break;
-    case WEATHERTYPE_3:
-        SetTranslucency(0);
-        f_12da = 84;
-        SetColor(152);
-        SetColorShift(2);
+    case 0xCA80EAA3: // e2m1
+    case 0x29D27D07: // e2m2
+    case 0xE6B88CA6: // e2m3
+    case 0x6AF2A719: // e2m4
+    case 0xA0639DE5: // e4m6
+        nWeatherOverride = 1;
+        nWeatherOverrideType = WEATHERTYPE_SNOW;
+        nWeatherOverrideWindX = 0;
+        nWeatherOverrideWindY = 4;
+        nWeatherOverrideGravity = 24;
+        break;
+    case 0xD64D2666: // e2m5
+    case 0x09E3434D: // e2m6
+    case 0x0FFF85AC: // e2m7
+    case 0x602296E1: // e2m8
+    case 0xF369A447: // e2m9
+        nWeatherOverride = 1;
+        nWeatherOverrideType = WEATHERTYPE_SNOWHARD;
+        nWeatherOverrideWindX = 0;
+        nWeatherOverrideWindY = -32;
+        nWeatherOverrideGravity = 32;
+        break;
+    case 0xE898B54C: // e4m4
+        nWeatherOverride = 1;
+        nWeatherOverrideType = WEATHERTYPE_DUST;
+        nWeatherOverrideGravity = 1;
+        nWeatherOverrideWindX = 1;
+        nWeatherOverrideWindY = 0;
+        break;
+    case 0xCB7A97D6: // e6m2
+        nWeatherOverride = 1;
+        nWeatherOverrideType = WEATHERTYPE_RAIN;
+        nWeatherOverrideWindX = 0;
+        nWeatherOverrideWindY = -16;
+        nWeatherOverrideGravity = 96;
         break;
     default:
-        SetCount(0);
+        nWeatherOverride = 0;
+        break;
+    }
+}
+
+inline WEATHERTYPE RandomWeather(unsigned int nRNG)
+{
+    if (nRNG&0x10)
+        return WEATHERTYPE_SNOWHARD;
+    else if (nRNG&8)
+        return WEATHERTYPE_SNOW;
+    else if (nRNG&4)
+        return WEATHERTYPE_RAIN;
+    else if (nRNG&2)
+        return WEATHERTYPE_RAINHARD;
+    return WEATHERTYPE_DUST;
+}
+
+void CWeather::Process(long nX, long nY, long nZ, int nSector, int nClipDist)
+{
+    static int nSectorChecked = -1;
+    if (IsUnderwaterSector(nSector))
+    {
+        nWeatherForecast = nWeatherCur;
+        nSectorChecked = nSector;
+        SetWeatherType(WEATHERTYPE_UNDERWATER);
+        return;
+    }
+    if (sector[nSector].ceilingstat&1) // outside
+    {
+        nWeatherForecast = nWeatherCur;
+        nSectorChecked = nSector;
+        if (nWeatherOverride)
+        {
+            SetWeatherType(nWeatherOverrideType);
+            nWindX = nWeatherOverrideWindX;
+            nWindY = nWeatherOverrideWindY;
+            nGravity = nWeatherOverrideGravity;
+            return;
+        }
+        SetWeatherType(RandomWeather(gGameOptions.uMapCRC));
+        return;
+    }
+
+    if (nSector == nSectorChecked)
+        return;
+    long ve8, vec, vf0, vf4;
+    GetZRangeAtXYZ(nX, nY, nZ, nSector, &vf4, &vf0, &vec, &ve8, nClipDist, 0);
+    int tmpSect = nSector;
+    if ((vf0 & 0xc000) == 0x4000)
+    {
+        tmpSect = vf0 & 0x3ff;
+        if (sector[tmpSect].ceilingstat&1) // outside
+        {
+            nSectorChecked = tmpSect;
+            nWeatherForecast = nWeatherCur;
+            if (nWeatherOverride)
+            {
+                SetWeatherType(nWeatherOverrideType);
+                nWindX = nWeatherOverrideWindX;
+                nWindY = nWeatherOverrideWindY;
+                nGravity = nWeatherOverrideGravity;
+                return;
+            }
+            nWeatherForecast = RandomWeather(gGameOptions.uMapCRC);
+            return;
+        }
+    }
+    nSectorChecked = nSector;
+    nWeatherForecast = WEATHERTYPE_DUST;
+}
+
+void CWeather::SetWeatherType(WEATHERTYPE nWeather)
+{
+    if (nWeather == nWeatherCur)
+        return;
+    nWeatherCur = nWeather;
+    switch (nWeather)
+    {
+    case WEATHERTYPE_RAIN:
+        SetTranslucency(2);
+        SetGravity(96, 1);
+        RandomWind(0);
+        SetColor(128);
+        SetColorShift(0);
+        SetShape(2);
+        SetStaticView(0);
+        nLimit = kMaxVectors>>1;
+        break;
+    case WEATHERTYPE_SNOW:
+        SetTranslucency(0);
+        SetGravity(32, 1);
+        RandomWind(0);
+        SetColor(32);
+        SetColorShift(0);
+        SetShape(0);
+        SetStaticView(0);
+        nLimit = kMaxVectors;
+        break;
+    case WEATHERTYPE_BLOOD:
+        SetTranslucency(0);
+        SetGravity(48, 1);
+        SetWind(0, 0);
+        SetColor(152);
+        SetColorShift(2);
+        SetShape(1);
+        SetStaticView(0);
+        nLimit = kMaxVectors;
+        break;
+    case WEATHERTYPE_UNDERWATER:
+        SetTranslucency(2);
+        SetGravity(1, 1);
+        SetWind(0, 0);
+        SetColor(170);
+        SetColorShift(2);
+        SetShape(0);
+        SetStaticView(0);
+        nLimit = kMaxVectors>>1;
+        break;
+    case WEATHERTYPE_DUST:
+        SetTranslucency(2);
+        SetGravity(4, 1);
+        SetWind(0, 0);
+        SetColor(170);
+        SetColorShift(2);
+        SetShape(0);
+        SetStaticView(0);
+        nLimit = kMaxVectors>>2;
+        break;
+    case WEATHERTYPE_STARS:
+        SetTranslucency(1);
+        SetGravity(0, 0);
+        SetWind(0, 0);
+        SetColor(128);
+        SetColorShift(0);
+        SetShape(0);
+        SetStaticView(1);
+        nLimit = kMaxVectors;
+        break;
+    case WEATHERTYPE_RAINHARD:
+        SetTranslucency(2);
+        SetGravity(128, 1);
+        RandomWind(1);
+        SetColor(128);
+        SetColorShift(0);
+        SetShape(2);
+        SetStaticView(0);
+        nLimit = kMaxVectors;
+        break;
+    case WEATHERTYPE_SNOWHARD:
+        SetTranslucency(0);
+        SetGravity(128, 1);
+        RandomWind(1);
+        SetColor(32);
+        SetColorShift(0);
+        SetShape(1);
+        SetStaticView(0);
+        nLimit = kMaxVectors-(kMaxVectors>>1);
+        break;
+    default:
+        nDraw.bActive = 0;
+        nCount = 0;
         break;
     }
 }

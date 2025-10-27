@@ -17,6 +17,8 @@
 #include <string.h>
 #include "mpath.h"
 
+typedef double alignment_hack; // bss para alignment hack
+
 typedef struct {
     short f_0;
     short f_2;

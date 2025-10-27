@@ -72,6 +72,7 @@ BOOL gViewVBobbing = TRUE;
 BOOL gFollowMap = TRUE;
 BOOL gAutoAim = TRUE;
 BOOL gAutoRun = TRUE;
+BOOL gWeatherEffect = FALSE;
 BOOL gAutosaveOnLevelStart = TRUE;
 BOOL gCenterHoriz = FALSE;
 BOOL gSlopeTilting = TRUE;
@@ -691,8 +692,9 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetBool( scripthandle, "Options","MouseAim",&gMouseAim);
    SCRIPT_GetBool( scripthandle, "Options","AutoAim",&gAutoAim);
    SCRIPT_GetBool( scripthandle, "Options","AutoRun",&gAutoRun);
+   SCRIPT_GetBool( scripthandle, "Options","WeatherEffect",&gWeatherEffect);
    SCRIPT_GetBool( scripthandle, "Options","AutosaveOnLevelStart",&gAutosaveOnLevelStart);
-      SCRIPT_GetBool( scripthandle, "Options","Interpolation",&gViewInterpolate);
+   SCRIPT_GetBool( scripthandle, "Options","Interpolation",&gViewInterpolate);
    SCRIPT_GetBool( scripthandle, "Options","ViewHBobbing",&gViewHBobbing);
    SCRIPT_GetBool( scripthandle, "Options","ViewVBobbing",&gViewVBobbing);
    SCRIPT_GetBool( scripthandle, "Options","FollowMap",&gFollowMap);
@@ -750,6 +752,7 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutBoolean( scripthandle, "Options","MouseAim", gMouseAim);
    SCRIPT_PutBoolean( scripthandle, "Options","AutoAim", gAutoAim);
    SCRIPT_PutBoolean( scripthandle, "Options","AutoRun", gAutoRun);
+   SCRIPT_PutBoolean( scripthandle, "Options","WeatherEffect", gWeatherEffect);
    SCRIPT_PutBoolean( scripthandle, "Options","AutosaveOnLevelStart", gAutosaveOnLevelStart);
    SCRIPT_PutBoolean( scripthandle, "Options","Interpolation", gViewInterpolate);
    SCRIPT_PutBoolean( scripthandle, "Options","ViewHBobbing", gViewHBobbing);

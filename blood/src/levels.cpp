@@ -61,7 +61,7 @@ GAMEOPTIONS gGameOptions;
 BOOL gGameStarted;
 WEATHERTYPE gWeatherType;
 IniFile *BloodINI;
-EPISODEINFO gEpisodeInfo[7];
+EPISODEINFO gEpisodeInfo[kMaxEpisodes + 1];
 int gEpisodeCount;
 
 void func_26988(void)
@@ -225,7 +225,7 @@ void levelLoadDefaults(void)
     char buffer[64];
     char buffer2[16];
     memset(gEpisodeInfo, 0, sizeof(gEpisodeInfo));
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < kMaxEpisodes; i++)
     {
         sprintf(buffer, "Episode%ld", i+1);
         if (!BloodINI->SectionExists(buffer))
@@ -274,7 +274,7 @@ void levelAddUserMap(char *pzMap)
     ChangeExtension(buffer, ".DEF");
 
     IniFile UserINI(buffer);
-    int nEpisode = ClipRange(UserINI.GetKeyInt(NULL, "Episode", 0), 0, 5);
+    int nEpisode = ClipRange(UserINI.GetKeyInt(NULL, "Episode", 0), 0, kMaxEpisodes-1);
     EPISODEINFO *pEpisodeInfo = &gEpisodeInfo[nEpisode];
     int nLevel = ClipRange(UserINI.GetKeyInt(NULL, "Level", pEpisodeInfo->nLevels), 0, 15);
     if (nLevel >= pEpisodeInfo->nLevels)

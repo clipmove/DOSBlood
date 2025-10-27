@@ -21,6 +21,8 @@
 
 #include "weather.h"
 
+#define kMaxEpisodes 6
+
 enum GAMETYPE
 {
     GAMETYPE_0 = 0,
