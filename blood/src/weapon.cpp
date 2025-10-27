@@ -1398,14 +1398,13 @@ static void AltFireVoodoo(int nTrigger, PLAYER *pPlayer)
 {
     if (nTrigger != 2)
         return;
-    long dx = pPlayer->pSprite->x;
-    long dy = pPlayer->pSprite->y;
-    long dz = pPlayer->pSprite->z;
+    long posx = pPlayer->pSprite->x;
+    long posy = pPlayer->pSprite->y;
     if (!VanillaMode()) // check for ror so voodoo doll attack can work peering above water
     {
-        dz = pPlayer->at6f; // offset view height to weapon level
+        long posz = pPlayer->at6f; // offset view height to weapon level
         int nSector = pPlayer->pSprite->sectnum;
-        CheckLink(&dx, &dy, &dz, &nSector);
+        CheckLink(&posx, &posy, &posz, &nSector);
     }
     int nAmmo = pPlayer->at181[9];
     int nCount = nAmmo < pPlayer->at1da ? nAmmo : pPlayer->at1da;
@@ -1419,8 +1418,8 @@ static void AltFireVoodoo(int nTrigger, PLAYER *pPlayer)
             if (v4 > 0)
                 v4--;
             SPRITE *pSprite = pPlayer->pSprite;
-            int dx = pTarget->x - dx;
-            int dy = pTarget->y - dy;
+            int dx = pTarget->x - posx;
+            int dy = pTarget->y - posy;
             int nDist = approxDist(dx, dy);
             if (nDist > 0 && nDist < 51200)
             {
