@@ -44,6 +44,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix Cerberus spinning on lava
 * Ignore floor pal zero for sectors
 * Fix infinite burning enemies bug
+* Restore fog visibility on loading save
 * Fix tiny Calebs using the wrong sprite
 * Fix 2D map view not scaling to resolution
 * Fix prone tesla Cultists infinitely firing

@@ -258,6 +258,7 @@ void MyLoadSave::Load(void)
     Read(&parallaxyoffs, sizeof(parallaxyoffs));
     Read(&parallaxyscale, sizeof(parallaxyscale));
     Read(&visibility, sizeof(visibility));
+    gVisibility = visibility;
     Read(&parallaxvisibility, sizeof(parallaxvisibility));
     Read(pskyoff, sizeof(pskyoff));
     Read(&pskybits, sizeof(pskybits));

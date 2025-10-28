@@ -270,7 +270,7 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
     const int nSin = Sin(nAng)>>16;
     const int bShape = nDraw.bShape;
     const int bTransparent = nDraw.nTransparent;
-    const int nMaxPixelSize = nWidth>>7; // use screen width to control max pixel size
+    const int nMaxPixelSize = (nScaleFactor>>16)+1; // use screen height to control max pixel size
     const int nGrav = mulscale16(nGravity, nDelta);
     const int nGravityFast = nDraw.bGravityVariance && (nGrav != 0) ? nGrav - (nGrav >> 2) : nGrav;
 
