@@ -21,6 +21,7 @@
 
 #define kMaxVectors 4096
 #define kScaleTableSize 8192 // this mirrors the maximum nDepth value (8191)
+#define kColorTableSize 32 // this mirrors the maximum nDepth value after shifting (31)
 #define kWeatherTileY 1600 // max res supported
 
 enum WEATHERTYPE {
@@ -83,6 +84,7 @@ public:
     WEATHERTYPE nWeatherCheat;
 private:
     void Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, int nDelta);
+    void UpdateColorTable(void);
     union {
         byte b;
         struct {
@@ -113,6 +115,7 @@ private:
     int nScaleTableFov;
     int nFovV;
     int nScaleTable[kScaleTableSize];
+    byte nColorTable[kColorTableSize];
     int nLastFrameClock;
     WEATHERTYPE nWeatherCur;
     WEATHERTYPE nWeatherForecast;

@@ -45,12 +45,13 @@ CWeather::CWeather()
     nWindXOffset = 0;
     nWindYOffset = 0;
     memset(nPos, 0, sizeof(nPos));
-    nPalColor = 0;
+    nPalColor = 1;
     nPalShift = 0;
     nScaleTableWidth = 0;
     nScaleTableFov = 0;
     nFovV = 0;
     memset(nScaleTable, 0, sizeof(nScaleTable));
+    memset(nColorTable, 0, sizeof(nColorTable));
     nLastFrameClock = 0;
     nWeatherCheat = WEATHERTYPE_NONE;
     nWeatherCur = WEATHERTYPE_NONE;
@@ -80,12 +81,13 @@ CWeather::~CWeather()
     nWindXOffset = 0;
     nWindYOffset = 0;
     memset(nPos, 0, sizeof(nPos));
-    nPalColor = 0;
+    nPalColor = 1;
     nPalShift = 0;
     nScaleTableWidth = 0;
     nScaleTableFov = 0;
     nFovV = 0;
     memset(nScaleTable, 0, sizeof(nScaleTable));
+    memset(nColorTable, 0, sizeof(nColorTable));
     nLastFrameClock = 0;
     nWeatherCheat = WEATHERTYPE_NONE;
     nWeatherCur = WEATHERTYPE_NONE;
@@ -179,12 +181,25 @@ void CWeather::SetTranslucency(int a1)
 
 void CWeather::SetColor(unsigned char a1)
 {
-    nPalColor = ClipRange(a1, 0, 255);
+    nPalColor = ClipRange(a1, 1, 255); // color picked is always minus 1, so don't allow anything less than 1
+    UpdateColorTable();
 }
 
 void CWeather::SetColorShift(char a1)
 {
     nPalShift = ClipRange(a1, 0, 2);
+    UpdateColorTable();
+}
+
+void CWeather::UpdateColorTable(void)
+{
+    const int kDepthStep = 8192 / kColorTableSize; // potential range for nDepth is 5-8191, or 0-31 after shifting
+    for (int i = 0, nDepth = 0; i < kColorTableSize; i++, nDepth += kDepthStep)
+    {
+        const int nDepthColorShift = ClipLow(nDepth >> (nPalShift + 8), 1); // max range is 1-31
+        const byte nColor = ClipRange(nPalColor - nDepthColorShift, 0, 255); // clamp color
+        nColorTable[i] = nColor;
+    }
 }
 
 void CWeather::SetShape(char a1)
@@ -287,9 +302,8 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
             if (screenY < (unsigned)nHeight) // if within screen bounds
             {
                 // size/palette color calculation
-                const int nDepthColorShift = ClipLow(nDepth >> (nPalShift + 8), 1);
-                const byte nColor = ClipRange(nPalColor - nDepthColorShift, 0, 255); // clamp color
                 const int nSize = ClipHigh(nScale>>12, nMaxPixelSize); // why did I pick 12? because it looked the best
+                const byte nColor = nColorTable[nDepth>>8]; // potential range for nDepth is 5-8191, or 0-31 after shift
 
                 if (nSize <= 1) // if size is a pixel, don't bother calculating box fill
                 {
