@@ -119,7 +119,7 @@ void CWeather::SetViewport(int nX, int nY, int nXOffset0, int nXOffset1, int nYO
     nOffsetY = nYOffset0;
     if (nX < 320 || nY < 200 || nOffsetX < 0 || nOffsetY < 0 || nWidth + nOffsetX > nX || nHeight + nOffsetY > nY) // something went very wrong, disable weather effects
     {
-        SetWeatherType(WEATHERTYPE_NONE);
+        SetWeatherType(WEATHERTYPE_NONE, 0);
         return;
     }
     nScaleFactor = divscale16(nHeight<<16, 200<<16); // scale to viewport
@@ -166,12 +166,11 @@ void CWeather::SetWind(short nX, short nY)
     nWindY = nY;
 }
 
-void CWeather::RandomWind(char bHeavyWind)
+void CWeather::RandomWind(char bHeavyWind, unsigned int uMapCRC)
 {
-    const short nX = !bHeavyWind ? (krand()&0x3f)-0x20 : (krand()&0x7f)-0x40;
-    const short nY = !bHeavyWind ? (krand()&0x3f)-0x20 : (krand()&0x7f)-0x40;
-    nWindX = nX;
-    nWindY = nY;
+    nWindX = !bHeavyWind ? (uMapCRC&0x3f) - 0x20 : (uMapCRC&0x7f) - 0x40;
+    uMapCRC >>= 16;
+    nWindY = !bHeavyWind ? (uMapCRC&0x3f) - 0x20 : (uMapCRC&0x7f) - 0x40;
 }
 
 void CWeather::SetTranslucency(int a1)
@@ -379,7 +378,7 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
     }
 }
 
-void CWeather::Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, long nClock, int nInterpolate)
+void CWeather::Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, long nClock, int nInterpolate, unsigned int uMapCRC)
 {
     const char bActive = Status();
     if (!bActive)
@@ -406,7 +405,7 @@ void CWeather::Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz,
     {
         nWindXOffset = krand()&0x3fff;
         nWindYOffset = krand()&0x3fff;
-        SetWeatherType(nWeatherForecast);
+        SetWeatherType(nWeatherForecast, uMapCRC);
     }
 }
 
@@ -495,21 +494,21 @@ inline WEATHERTYPE RandomWeather(unsigned int nRNG)
     return WEATHERTYPE_DUST;
 }
 
-void CWeather::Process(long nX, long nY, long nZ, int nSector, int nClipDist)
+void CWeather::Process(long nX, long nY, long nZ, int nSector, int nClipDist, unsigned int uMapCRC)
 {
     static int nSectorChecked = -1;
     if (nWeatherCheat > WEATHERTYPE_NONE)
     {
         if (nWeatherCur != nWeatherCheat)
             nWeatherCur = WEATHERTYPE_NONE;
-        SetWeatherType(nWeatherCheat);
+        SetWeatherType(nWeatherCheat, uMapCRC);
         nWeatherForecast = nWeatherCheat;
         return;
     }
     if (IsUnderwaterSector(nSector))
     {
         nWeatherForecast = WEATHERTYPE_UNDERWATER; // skip transition if player is underwater
-        SetWeatherType(WEATHERTYPE_UNDERWATER);
+        SetWeatherType(WEATHERTYPE_UNDERWATER, uMapCRC);
         return;
     }
     int tmpSect = nSector;
@@ -522,18 +521,18 @@ void CWeather::Process(long nX, long nY, long nZ, int nSector, int nClipDist)
         nSectorChecked = tmpSect;
     }
     if (sector[tmpSect].ceilingstat&1) // outside
-        nWeatherForecast = nWeatherOverride ? nWeatherOverrideType : RandomWeather(gGameOptions.uMapCRC);
+        nWeatherForecast = nWeatherOverride ? nWeatherOverrideType : RandomWeather(uMapCRC);
     else // inside
         nWeatherForecast = nWeatherOverride ? nWeatherOverrideTypeInside : WEATHERTYPE_DUST;
     if ((nWeatherCur == WEATHERTYPE_UNDERWATER) && (nWeatherCur != nWeatherForecast)) // if player has just left underwater, skip transition
     {
         nWindXOffset = krand()&0x3fff;
         nWindYOffset = krand()&0x3fff;
-        SetWeatherType(nWeatherForecast);
+        SetWeatherType(nWeatherForecast, uMapCRC);
     }
 }
 
-void CWeather::SetWeatherType(WEATHERTYPE nWeather)
+void CWeather::SetWeatherType(WEATHERTYPE nWeather, unsigned int uMapCRC)
 {
     if (nWeather == nWeatherCur)
         return;
@@ -543,7 +542,7 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather)
     case WEATHERTYPE_RAIN:
         SetTranslucency(2);
         SetGravity(96, 1);
-        RandomWind(0);
+        RandomWind(0, uMapCRC);
         SetColor(128);
         SetColorShift(0);
         SetShape(2);
@@ -553,7 +552,7 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather)
     case WEATHERTYPE_SNOW:
         SetTranslucency(0);
         SetGravity(32, 1);
-        RandomWind(0);
+        RandomWind(0, uMapCRC);
         SetColor(32);
         SetColorShift(0);
         SetShape(0);
@@ -613,7 +612,7 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather)
     case WEATHERTYPE_RAINHARD:
         SetTranslucency(2);
         SetGravity(128, 1);
-        RandomWind(1);
+        RandomWind(1, uMapCRC);
         SetColor(128);
         SetColorShift(0);
         SetShape(2);
@@ -623,7 +622,7 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather)
     case WEATHERTYPE_SNOWHARD:
         SetTranslucency(0);
         SetGravity(128, 1);
-        RandomWind(1);
+        RandomWind(1, uMapCRC);
         SetColor(32);
         SetColorShift(0);
         SetShape(1);
@@ -635,7 +634,7 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather)
         nCount = 0;
         break;
     }
-    if (nWeatherOverride && (nWeather == nWeatherOverrideType)) // apply overrides
+    if (nWeatherOverride && (nWeather == nWeatherOverrideType) && (nWeatherCheat == WEATHERTYPE_NONE)) // apply overrides
     {
         SetWind(nWeatherOverrideWindX, nWeatherOverrideWindY);
         SetGravity(nWeatherOverrideGravity, 1);

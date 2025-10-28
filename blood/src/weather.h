@@ -48,7 +48,7 @@ public:
     void SetParticles(short nCount, short nLimit = -1);
     void SetGravity(short nGravity, char bVariance);
     void SetWind(short nX, short nY);
-    void RandomWind(char bHeavyWind);
+    void RandomWind(char bHeavyWind, unsigned int nRNG);
     void SetTranslucency(int);
     void SetColor(unsigned char a1);
     void SetColorShift(char);
@@ -56,12 +56,12 @@ public:
     void SetStaticView(char);
     void Initialize(int nCount = 0);
     void Draw(char* pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, int nDelta);
-    void Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, long nClock, int nInterpolate);
+    void Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, long nClock, int nInterpolate, unsigned int uMapCRC);
     void LoadPreset(unsigned int uMapCRC);
     void UnloadPreset(void);
     void SetWeatherOverride(WEATHERTYPE nOverride, WEATHERTYPE nOverrideInside, short nX, short nY, short nZ);
-    void Process(long nX, long nY, long nZ, int nSector, int nClipDist);
-    void SetWeatherType(WEATHERTYPE nWeather);
+    void Process(long nX, long nY, long nZ, int nSector, int nClipDist, unsigned int uMapCRC);
+    void SetWeatherType(WEATHERTYPE nWeather, unsigned int nRNG);
 
     short GetCount(void) {
         return ClipHigh(nCount, nLimit);

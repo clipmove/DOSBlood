@@ -677,13 +677,10 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
     if (nCheatCode == kCheat40)
     {
         char szTemp[128];
-        int nWeather = (int)gWeather.nWeatherCheat;
-        nWeather++;
+        int nWeather = (int)gWeather.nWeatherCheat+1;
         if (nWeather >= (int)WEATHERTYPE_MAX)
             nWeather = (int)WEATHERTYPE_NONE; // turn the cheat off
         gWeather.nWeatherCheat = (WEATHERTYPE)nWeather;
-        gWeather.SetParticles(kMaxVectors);
-        gWeather.UnloadPreset();
         if (nWeather == (int)WEATHERTYPE_NONE)
             sprintf(szTemp, "weathertype override: OFF");
         else
