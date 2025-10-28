@@ -53,10 +53,12 @@ CWeather::CWeather()
     nFovV = 0;
     memset(nScaleTable, 0, sizeof(nScaleTable));
     nLastFrameClock = 0;
+    nWeatherCheat = WEATHERTYPE_NONE;
     nWeatherCur = WEATHERTYPE_NONE;
     nWeatherForecast = WEATHERTYPE_NONE;
     nWeatherOverride = 0;
     nWeatherOverrideType = WEATHERTYPE_NONE;
+    nWeatherOverrideTypeInside = WEATHERTYPE_NONE;
     nWeatherOverrideWindX = 0;
     nWeatherOverrideWindY = 0;
     nWeatherOverrideGravity = 0;
@@ -86,10 +88,12 @@ CWeather::~CWeather()
     nFovV = 0;
     memset(nScaleTable, 0, sizeof(nScaleTable));
     nLastFrameClock = 0;
+    nWeatherCheat = WEATHERTYPE_NONE;
     nWeatherCur = WEATHERTYPE_NONE;
     nWeatherForecast = WEATHERTYPE_NONE;
     nWeatherOverride = 0;
     nWeatherOverrideType = WEATHERTYPE_NONE;
+    nWeatherOverrideTypeInside = WEATHERTYPE_NONE;
     nWeatherOverrideWindX = 0;
     nWeatherOverrideWindY = 0;
     nWeatherOverrideGravity = 0;
@@ -275,7 +279,7 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
 
         // perspective scale with fov adjustment (uses precomputed table instead of divscale16)
         const int nScale = nScaleTable[(nDepth>>kScaleTableShift)&kScaleTableMask];
-        unsigned int screenX = ((nLatOffset * nScale) >> 16) + (nWidth >> 1);
+        const unsigned int screenX = ((nLatOffset * nScale) >> 16) + (nWidth >> 1);
         nPos[i][2] += i&4 ? nGravityFast : nGrav;
         if (screenX < (unsigned)nWidth) // if within screen bounds
         {
@@ -408,37 +412,26 @@ void CWeather::Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz,
 
 void CWeather::LoadPreset(unsigned int uMapCRC)
 {
+    nWeatherCheat = WEATHERTYPE_NONE;
     switch (uMapCRC)
     {
     case 0xBBF1A5D5: // e1m3
     case 0xF524ACA4: // e5m2
     case 0xFE99F0E7: // e5m6
-        nWeatherOverride = 1;
-        nWeatherOverrideType = WEATHERTYPE_SNOW;
-        nWeatherOverrideWindX = 0;
-        nWeatherOverrideWindY = -96;
-        nWeatherOverrideGravity = 32;
+        SetWeatherOverride(WEATHERTYPE_SNOW, WEATHERTYPE_DUST, 0, -96, 32);
         break;
     case 0xAEC06508: // e1m5
     case 0xFA1A3218: // e4m1
     case 0x2D6A6F3D: // e4m3
     case 0x98FDBE0E: // e6m4
-        nWeatherOverride = 1;
-        nWeatherOverrideType = WEATHERTYPE_RAINHARD;
-        nWeatherOverrideWindX = 32;
-        nWeatherOverrideWindY = 0;
-        nWeatherOverrideGravity = 96;
+        SetWeatherOverride(WEATHERTYPE_RAINHARD, WEATHERTYPE_DUST, 32, 0, 96);
         break;
     case 0xCA80EAA3: // e2m1
     case 0x29D27D07: // e2m2
     case 0xE6B88CA6: // e2m3
     case 0x6AF2A719: // e2m4
     case 0xA0639DE5: // e4m6
-        nWeatherOverride = 1;
-        nWeatherOverrideType = WEATHERTYPE_SNOW;
-        nWeatherOverrideWindX = 0;
-        nWeatherOverrideWindY = 4;
-        nWeatherOverrideGravity = 24;
+        SetWeatherOverride(WEATHERTYPE_SNOW, WEATHERTYPE_DUST, 0, 4, 24);
         break;
     case 0xBA5DB227: // e1m2
     case 0xD64D2666: // e2m5
@@ -446,30 +439,47 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
     case 0x0FFF85AC: // e2m7
     case 0x602296E1: // e2m8
     case 0xF369A447: // e2m9
-        nWeatherOverride = 1;
-        nWeatherOverrideType = WEATHERTYPE_SNOWHARD;
-        nWeatherOverrideWindX = 0;
-        nWeatherOverrideWindY = -32;
-        nWeatherOverrideGravity = 32;
+        SetWeatherOverride(WEATHERTYPE_SNOWHARD, WEATHERTYPE_DUST, 0, -32, 32);
         break;
     case 0xE898B54C: // e4m4
-        nWeatherOverride = 1;
-        nWeatherOverrideType = WEATHERTYPE_DUST;
-        nWeatherOverrideGravity = 1;
-        nWeatherOverrideWindX = 1;
-        nWeatherOverrideWindY = 0;
+        SetWeatherOverride(WEATHERTYPE_DUST, WEATHERTYPE_DUST, 0, 1, 1);
         break;
     case 0xCB7A97D6: // e6m2
-        nWeatherOverride = 1;
-        nWeatherOverrideType = WEATHERTYPE_RAIN;
-        nWeatherOverrideWindX = 0;
-        nWeatherOverrideWindY = -16;
-        nWeatherOverrideGravity = 96;
+        SetWeatherOverride(WEATHERTYPE_RAIN, WEATHERTYPE_DUST, 0, -16, 96);
+        break;
+    case 0xC3B72664: // e3m7
+        SetWeatherOverride(WEATHERTYPE_LAVA, WEATHERTYPE_LAVA, 0, 0, 6);
         break;
     default:
-        nWeatherOverride = 0;
+        if (nWeatherOverride)
+            UnloadPreset();
         break;
     }
+}
+
+void CWeather::UnloadPreset(void)
+{
+    nWeatherOverride = 0;
+    nWeatherOverrideType = WEATHERTYPE_NONE;
+    nWeatherOverrideTypeInside = WEATHERTYPE_NONE;
+    nWeatherOverrideWindX = 0;
+    nWeatherOverrideWindY = 0;
+    nWeatherOverrideGravity = 0;
+}
+
+void CWeather::SetWeatherOverride(WEATHERTYPE nOverride, WEATHERTYPE nOverrideInside, short nX, short nY, short nZ)
+{
+    if ((nOverride <= WEATHERTYPE_NONE) || (nOverride >= WEATHERTYPE_MAX)) // invalid, unload
+    {
+        UnloadPreset();
+        return;
+    }
+    nWeatherOverride = 1;
+    nWeatherOverrideType = nOverride;
+    nWeatherOverrideTypeInside = nOverrideInside;
+    nWeatherOverrideWindX = nX;
+    nWeatherOverrideWindY = nY;
+    nWeatherOverrideGravity = nZ;
 }
 
 inline WEATHERTYPE RandomWeather(unsigned int nRNG)
@@ -488,55 +498,39 @@ inline WEATHERTYPE RandomWeather(unsigned int nRNG)
 void CWeather::Process(long nX, long nY, long nZ, int nSector, int nClipDist)
 {
     static int nSectorChecked = -1;
+    if (nWeatherCheat > WEATHERTYPE_NONE)
+    {
+        if (nWeatherCur != nWeatherCheat)
+            nWeatherCur = WEATHERTYPE_NONE;
+        SetWeatherType(nWeatherCheat);
+        nWeatherForecast = nWeatherCheat;
+        return;
+    }
     if (IsUnderwaterSector(nSector))
     {
-        nWeatherForecast = nWeatherCur;
-        nSectorChecked = nSector;
+        nWeatherForecast = WEATHERTYPE_UNDERWATER; // skip transition if player is underwater
         SetWeatherType(WEATHERTYPE_UNDERWATER);
         return;
     }
-    if (sector[nSector].ceilingstat&1) // outside
-    {
-        nWeatherForecast = nWeatherCur;
-        nSectorChecked = nSector;
-        if (nWeatherOverride)
-        {
-            SetWeatherType(nWeatherOverrideType);
-            nWindX = nWeatherOverrideWindX;
-            nWindY = nWeatherOverrideWindY;
-            nGravity = nWeatherOverrideGravity;
-            return;
-        }
-        SetWeatherType(RandomWeather(gGameOptions.uMapCRC));
-        return;
-    }
-
-    if (nSector == nSectorChecked)
-        return;
-    long ve8, vec, vf0, vf4;
-    GetZRangeAtXYZ(nX, nY, nZ, nSector, &vf4, &vf0, &vec, &ve8, nClipDist, 0);
     int tmpSect = nSector;
-    if ((vf0 & 0xc000) == 0x4000)
+    if (nSectorChecked != nSector) // moved to new sector, hitscan above
     {
-        tmpSect = vf0 & 0x3ff;
-        if (sector[tmpSect].ceilingstat&1) // outside
-        {
-            nSectorChecked = tmpSect;
-            nWeatherForecast = nWeatherCur;
-            if (nWeatherOverride)
-            {
-                SetWeatherType(nWeatherOverrideType);
-                nWindX = nWeatherOverrideWindX;
-                nWindY = nWeatherOverrideWindY;
-                nGravity = nWeatherOverrideGravity;
-                return;
-            }
-            nWeatherForecast = RandomWeather(gGameOptions.uMapCRC);
-            return;
-        }
+        long ve8, vec, vf0, vf4;
+        GetZRangeAtXYZ(nX, nY, nZ, nSector, &vf4, &vf0, &vec, &ve8, nClipDist, 0);
+        if ((vf0 & 0xc000) == 0x4000) // we hit ceiling
+            tmpSect = vf0 & 0x3ff;
+        nSectorChecked = tmpSect;
     }
-    nSectorChecked = nSector;
-    nWeatherForecast = WEATHERTYPE_DUST;
+    if (sector[tmpSect].ceilingstat&1) // outside
+        nWeatherForecast = nWeatherOverride ? nWeatherOverrideType : RandomWeather(gGameOptions.uMapCRC);
+    else // inside
+        nWeatherForecast = nWeatherOverride ? nWeatherOverrideTypeInside : WEATHERTYPE_DUST;
+    if ((nWeatherCur == WEATHERTYPE_UNDERWATER) && (nWeatherCur != nWeatherForecast)) // if player has just left underwater, skip transition
+    {
+        nWindXOffset = krand()&0x3fff;
+        nWindYOffset = krand()&0x3fff;
+        SetWeatherType(nWeatherForecast);
+    }
 }
 
 void CWeather::SetWeatherType(WEATHERTYPE nWeather)
@@ -596,6 +590,16 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather)
         SetStaticView(0);
         nLimit = kMaxVectors>>2;
         break;
+    case WEATHERTYPE_LAVA:
+        SetTranslucency(1);
+        SetGravity(6, 1);
+        SetWind(0, 0);
+        SetColor(160);
+        SetColorShift(1);
+        SetShape(0);
+        SetStaticView(0);
+        nLimit = kMaxVectors>>3;
+        break;
     case WEATHERTYPE_STARS:
         SetTranslucency(1);
         SetGravity(0, 0);
@@ -630,5 +634,10 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather)
         nDraw.bActive = 0;
         nCount = 0;
         break;
+    }
+    if (nWeatherOverride && (nWeather == nWeatherOverrideType)) // apply overrides
+    {
+        SetWind(nWeatherOverrideWindX, nWeatherOverrideWindY);
+        SetGravity(nWeatherOverrideGravity, 1);
     }
 }

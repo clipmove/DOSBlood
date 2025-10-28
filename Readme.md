@@ -32,6 +32,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * High precision weapon sway calculation and interpolation
 * Don't restart midi track when loading save for current level
 * Incorporates mouse fixes from bMouse and sMouse natively
+* New 'WEATHERMAN' cheat code to cycle through weather effects
 * Use Pentium II/PRO (if found) optimizations for a.asm functions (12% speed improvement)
 
 ### Fixes

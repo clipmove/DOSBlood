@@ -34,6 +34,7 @@
 #include "network.h"
 #include "player.h"
 #include "view.h"
+#include "weather.h"
 
 CPlayerMsg gPlayerMsg;
 CCheatMgr gCheatMgr;
@@ -607,6 +608,7 @@ CCheatMgr::CHEATINFO CCheatMgr::s_CheatInfo[] = {
     {"TQJFMCFSH", kCheat36, 1 }, // SPIELBERG (Disables all cheats. If number values corresponding to a level and episode number are entered after the cheat word (i.e. "spielberg 1 3" for Phantom Express), you will be spawned to said level and the game will begin recording a demo from your actions.)
     {"MJNJUT", kCheat38, 0 }, // LIMITS (Display sprite/sector/wall usage (doesn't count as a cheat))
     {"LSBWJU[", kCheat39, 0 }, // KRAVITZ (Fly mode)
+    {"XFBUIFSNBO", kCheat40, 0 }, // WEATHERMAN (Change weather)
 };
 
 BOOL CCheatMgr::m_bPlayerCheated;
@@ -619,7 +621,7 @@ BOOL CCheatMgr::Check(char *pzString)
     strupr(buffer);
     for (j = 0; j < strlen(pzString); j++)
         buffer[j]++;
-    for (i = 0; i < 38UL; i++)
+    for (i = 0; i < 39UL; i++)
     {
         int nCheatLen = strlen(s_CheatInfo[i].pzString);
         if (s_CheatInfo[i].flags & kCheatFlags0)
@@ -670,6 +672,23 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char *pzArgs)
     if (nCheatCode == kCheat38)
     {
         gShowLevelLimits = !gShowLevelLimits;
+        return;
+    }
+    if (nCheatCode == kCheat40)
+    {
+        char szTemp[128];
+        int nWeather = (int)gWeather.nWeatherCheat;
+        nWeather++;
+        if (nWeather >= (int)WEATHERTYPE_MAX)
+            nWeather = (int)WEATHERTYPE_NONE; // turn the cheat off
+        gWeather.nWeatherCheat = (WEATHERTYPE)nWeather;
+        gWeather.SetParticles(kMaxVectors);
+        gWeather.UnloadPreset();
+        if (nWeather == (int)WEATHERTYPE_NONE)
+            sprintf(szTemp, "weathertype override: OFF");
+        else
+            sprintf(szTemp, "weathertype override: %d", nWeather);
+        viewSetMessage(szTemp);
         return;
     }
     if (gGameOptions.nGameType != GAMETYPE_0)

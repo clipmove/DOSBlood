@@ -32,9 +32,11 @@ enum WEATHERTYPE {
     WEATHERTYPE_BLOOD,
     WEATHERTYPE_UNDERWATER,
     WEATHERTYPE_DUST,
+    WEATHERTYPE_LAVA,
     WEATHERTYPE_STARS,
     WEATHERTYPE_RAINHARD,
     WEATHERTYPE_SNOWHARD,
+    WEATHERTYPE_MAX,
 };
 
 class CWeather {
@@ -56,6 +58,8 @@ public:
     void Draw(char* pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, int nDelta);
     void Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, long nClock, int nInterpolate);
     void LoadPreset(unsigned int uMapCRC);
+    void UnloadPreset(void);
+    void SetWeatherOverride(WEATHERTYPE nOverride, WEATHERTYPE nOverrideInside, short nX, short nY, short nZ);
     void Process(long nX, long nY, long nZ, int nSector, int nClipDist);
     void SetWeatherType(WEATHERTYPE nWeather);
 
@@ -71,6 +75,15 @@ public:
         return nDraw.bActive ? 1 : 0;
     }
 
+    WEATHERTYPE GetWeather(void) {
+        return nWeatherCur;
+    }
+
+    WEATHERTYPE GetWeatherForecast(void) {
+        return nWeatherForecast;
+    }
+
+    WEATHERTYPE nWeatherCheat;
 private:
     union {
         byte b;
@@ -106,6 +119,7 @@ private:
     WEATHERTYPE nWeatherCur;
     WEATHERTYPE nWeatherForecast;
     WEATHERTYPE nWeatherOverrideType;
+    WEATHERTYPE nWeatherOverrideTypeInside;
     char nWeatherOverride;
     short nWeatherOverrideWindX;
     short nWeatherOverrideWindY;
