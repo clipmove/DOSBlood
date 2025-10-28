@@ -20,9 +20,7 @@
 #include "misc.h"
 
 #define kMaxVectors 4096
-#define kScaleTableShift 2 // downscale to save space at the expense of less precision
-#define kScaleTableSize (65536>>kScaleTableShift)
-#define kScaleTableMask (kScaleTableSize-1)
+#define kScaleTableSize 8192 // this mirrors the maximum nDepth value (8191)
 #define kWeatherTileY 1600 // max res supported
 
 enum WEATHERTYPE {
@@ -55,7 +53,6 @@ public:
     void SetShape(char);
     void SetStaticView(char);
     void Initialize(int nCount = 0);
-    void Draw(char* pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, int nDelta);
     void Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, long nClock, int nInterpolate, unsigned int uMapCRC);
     void LoadPreset(unsigned int uMapCRC);
     void UnloadPreset(void);
@@ -85,6 +82,7 @@ public:
 
     WEATHERTYPE nWeatherCheat;
 private:
+    void Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, int nDelta);
     union {
         byte b;
         struct {

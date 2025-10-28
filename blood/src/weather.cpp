@@ -20,7 +20,6 @@
 #include "debug4g.h"
 #include "trig.h"
 #include "misc.h"
-#include "weather.h"
 
 #include "actor.h"
 #include "gameutil.h"
@@ -135,7 +134,7 @@ void CWeather::SetViewport(int nX, int nY, int nXOffset0, int nXOffset1, int nYO
         const int nNumerator = nWidth<<15;
         for (int i = 1; i < kScaleTableSize; i++)
         {
-            const int nScale = divscale16(nNumerator, (i<<kScaleTableShift)<<16);
+            const int nScale = divscale16(nNumerator, i<<16);
             nScaleTable[i] = divscale16(nScale, nFovV);
         }
     }
@@ -190,7 +189,7 @@ void CWeather::SetColorShift(char a1)
 
 void CWeather::SetShape(char a1)
 {
-    nDraw.bShape = a1 & 3;
+    nDraw.bShape = a1&3;
 }
 
 void CWeather::SetStaticView(char a1)
@@ -252,11 +251,11 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
     nPitch += nHoriz;
     nPitch >>= 16;
 
-    const int nCos = Cos(nAng) >> 16;
-    const int nSin = Sin(nAng) >> 16;
-    const char bShape = nDraw.bShape;
-    const char bTransparent = nDraw.nTransparent;
-    const int nScaleMod = nScaleFactor >> 16;
+    const int nCos = Cos(nAng)>>16;
+    const int nSin = Sin(nAng)>>16;
+    const int bShape = nDraw.bShape;
+    const int bTransparent = nDraw.nTransparent;
+    const int nMaxPixelSize = nWidth>>7; // use screen width to control max pixel size
     const int nGrav = mulscale16(nGravity, nDelta);
     const int nGravityFast = nDraw.bGravityVariance && (nGrav != 0) ? nGrav - (nGrav >> 2) : nGrav;
 
@@ -267,34 +266,34 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
         const int relY = ((nPos[i][0] - nY) & 0x3fff) - 0x2000;
 
         // depth in rotated/view space
-        const int nDepth = (relX * nCos + relY * nSin) >> 14;
+        const int nDepth = (relX * nCos + relY * nSin)>>14;
         if (nDepth <= 4)
             continue;
 
         // cull by radius in rotated space
-        const int nLatOffset = (relY * nCos - relX * nSin) >> 14;
-        if (nDepth * nDepth + nLatOffset * nLatOffset >= 0x4000000)
+        const int nLatOffset = (relY * nCos - relX * nSin)>>14;
+        if (nDepth * nDepth + nLatOffset * nLatOffset >= 0x4000000) // < 8192*8192
             continue;
 
         // perspective scale with fov adjustment (uses precomputed table instead of divscale16)
-        const int nScale = nScaleTable[(nDepth>>kScaleTableShift)&kScaleTableMask];
-        const unsigned int screenX = ((nLatOffset * nScale) >> 16) + (nWidth >> 1);
+        const int nScale = nScaleTable[nDepth]; // potential range for nDepth is 5-8191
+        const unsigned int screenX = ((nLatOffset * nScale)>>16) + (nWidth>>1);
         nPos[i][2] += i&4 ? nGravityFast : nGrav;
         if (screenX < (unsigned)nWidth) // if within screen bounds
         {
             // wrapping/centering logic for Z
-            const int relZ = ((nPos[i][2] - nZ) & 0x3fff) - 0x2000;
-            unsigned int screenY = nPitch + ((nScale * relZ) >> 16);
+            const int relZ = ((nPos[i][2] - nZ)&0x3fff) - 0x2000;
+            unsigned int screenY = nPitch + ((nScale * relZ)>>16);
             if (screenY < (unsigned)nHeight) // if within screen bounds
             {
                 // size/palette color calculation
-                const int nSize = ClipRange(nScale >> 12, 1, nScaleMod);
                 const int nDepthColorShift = ClipLow(nDepth >> (nPalShift + 8), 1);
                 const byte nColor = ClipRange(nPalColor - nDepthColorShift, 0, 255); // clamp color
+                const int nSize = ClipHigh(nScale>>12, nMaxPixelSize); // why did I pick 12? because it looked the best
 
                 if (nSize <= 1) // if size is a pixel, don't bother calculating box fill
                 {
-                    for (int j = 1 << bShape; j > 0 && screenY > 0; j--, screenY--)
+                    for (int j = 1<<bShape; j > 0 && screenY > 0; j--, screenY--)
                     {
                         char *pDest = pBuffer + pYLookup[screenY] + screenX;
                         switch (bTransparent)
@@ -303,10 +302,10 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
                             *pDest = nColor;
                             break;
                         case 1:
-                            *pDest = transluc[(nColor << 8) + *pDest];
+                            *pDest = transluc[(nColor<<8) + *pDest];
                             break;
                         case 2:
-                            *pDest = transluc[(*pDest << 8) + nColor];
+                            *pDest = transluc[(*pDest<<8) + nColor];
                             break;
                         }
                     }
@@ -316,7 +315,7 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
                 const int cx = (int)screenX;
                 const int cy = (int)screenY;
                 const int nHalfX = nSize >> 1;
-                const int nHalfY = !bShape ? nSize >> 1 : nSize * bShape;
+                const int nHalfY = !bShape ? nSize>>1 : nSize * bShape;
                 switch (bTransparent)
                 {
                 case 0: // opaque path: fill size x size
@@ -352,7 +351,7 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
                         {
                             if ((unsigned)xx >= (unsigned)nWidth) continue;
                             byte dst = (byte)pDest[xx];
-                            pDest[xx] = transluc[(nColor << 8) + dst];
+                            pDest[xx] = transluc[(nColor<<8) + dst];
                         }
                     }
                     break;
@@ -367,7 +366,7 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
                         {
                             if ((unsigned)xx >= (unsigned)nWidth) continue;
                             byte dst = (byte)pDest[xx];
-                            pDest[xx] = transluc[(dst << 8) + nColor];
+                            pDest[xx] = transluc[(dst<<8) + nColor];
                         }
                     }
                     break;
