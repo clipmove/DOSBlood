@@ -78,6 +78,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Limit impulse damage when shooting enemies downward at point-blank
 * Correct ear velocity when transitioning through room-over-room sectors
 * Fix shadows and flare glow effects rendering on room-over-room surfaces
+* Fix build engine divide by zero crash when rendering horizon aligned sprites
 * Fix next/previous weapon buttons not skipping TNT/spray can while underwater
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
 * Cheogh blasting/attacking can now hit prone players (only for well done and above difficulties)

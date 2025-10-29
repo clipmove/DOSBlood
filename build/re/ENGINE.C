@@ -5699,8 +5699,16 @@ drawsprite (long snum)
 		rpoint = -1; rmax = 0x80000000;
 		for(z=0;z<npoints;z++)
 		{
-			xsi[z] = scale(rxi[z],xdimen<<15,rzi[z]) + (xdimen<<15);
-			ysi[z] = scale(ryi[z],xdimen<<15,rzi[z]) + (globalhoriz<<16);
+			if (rzi[z]) // fix divide by zero if looking directly at the flat sprite (Blood's E1M4/E6M2 dumpsters)
+			{
+				xsi[z] = scale(rxi[z],xdimen<<15,rzi[z]) + (xdimen<<15);
+				ysi[z] = scale(ryi[z],xdimen<<15,rzi[z]) + (globalhoriz<<16);
+			}
+			else
+			{
+				xsi[z] = xdimen<<15;
+				ysi[z] = globalhoriz<<16;
+			}
 			if (xsi[z] < 0) xsi[z] = 0;
 			if (xsi[z] > (xdimen<<16)) xsi[z] = (xdimen<<16);
 			if (ysi[z] < ((long)0<<16)) ysi[z] = ((long)0<<16);
