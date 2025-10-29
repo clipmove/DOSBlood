@@ -112,9 +112,9 @@ void CWeather::RandomizeVectors(void)
     nWindYOffset = krand()&0x3fff;
 }
 
-void CWeather::SetViewport(int nX, int nY, int nXOffset0, int nXOffset1, int nYOffset0, int nYOffset1, int nFov)
+void CWeather::SetViewport(int nX, int nY, int nXOffset0, int nXOffset1, int nYOffset0, int nYOffset1, int nFov, int nAspect)
 {
-    nWidth = (nXOffset1-nXOffset0)+1;
+    nWidth = (nXOffset1-nXOffset0)+1; // based off calculations from setview()
     nHeight = (nYOffset1-nYOffset0)+1;
     nOffsetX = nXOffset0;
     nOffsetY = nYOffset0;
@@ -123,7 +123,8 @@ void CWeather::SetViewport(int nX, int nY, int nXOffset0, int nXOffset1, int nYO
         SetWeatherType(WEATHERTYPE_NONE, 0);
         return;
     }
-    nScaleFactor = divscale16(nHeight<<16, 200<<16); // scale to viewport
+    nScaleFactor = mulscale16(nWidth<<16, nAspect); // based off calculations from setaspect()
+    nScaleFactor = divscale16(nScaleFactor, 320<<16);
     for (int i = 0; i < nY; i++)
         YLookup[i] = nX * i;
     if (nScaleTableFov != nFov)
@@ -227,7 +228,7 @@ void CWeather::Initialize(int nCount)
     SetParticles(nCount, kMaxVectors);
 }
 
-void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int *pYLookup, long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, int nDelta)
+void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int *pYLookup, long nX, long nY, long nZ, int nAng, int nHoriz, int nCount, int nDelta)
 {
     dassert(pBuffer != NULL, __LINE__);
     dassert(pYLookup != NULL, __LINE__);
@@ -259,18 +260,14 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
     nX += nWindXOffset;
     nY += nWindYOffset;
 
-    // scale pitch and horizon to buffer resolution (default res is 320x200)
-    nPitch = mulscale16(nPitch<<16, nScaleFactor);
-    nPitch = divscale16(nPitch, nFovV);
-    nHoriz = mulscale16(nHoriz<<16, nScaleFactor);
-    nPitch += nHoriz;
-    nPitch >>= 16;
+    // use drawrooms() calculation to find horizon and center of viewport
+    nHoriz = mulscale16(nHoriz-100, nScaleFactor)+(nHeight>>1);
 
     const int nCos = Cos(nAng)>>16;
     const int nSin = Sin(nAng)>>16;
     const int bShape = nDraw.bShape;
     const int bTransparent = nDraw.nTransparent;
-    const int nMaxPixelSize = (nScaleFactor>>16)+1; // use screen height to control max pixel size
+    const int nMaxPixelSize = (nScaleFactor>>16)+1; // use screen res as factor for pixel size
     const int nGrav = mulscale16(nGravity, nDelta);
     const int nGravityFast = nDraw.bGravityVariance && (nGrav != 0) ? nGrav - (nGrav >> 2) : nGrav;
 
@@ -298,7 +295,7 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
         {
             // wrapping/centering logic for Z
             const int relZ = ((nPos[i][2] - nZ)&0x3fff) - 0x2000;
-            unsigned int screenY = nPitch + ((nScale * relZ)>>16);
+            unsigned int screenY = nHoriz + ((nScale * relZ)>>16);
             if (screenY < (unsigned)nHeight) // if within screen bounds
             {
                 // size/palette color calculation
@@ -391,18 +388,19 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
     }
 }
 
-void CWeather::Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, long nClock, int nInterpolate, unsigned int uMapCRC)
+void CWeather::Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHoriz, int nCount, long nClock, int nInterpolate, unsigned int uMapCRC)
 {
-    const char bActive = Status();
-    if (!bActive)
+    if (!Status() || !pBuffer)
         return;
     nClock += mulscale16(1, nInterpolate<<2);
     int nDelta = (nClock - nLastFrameClock)<<16;
     nLastFrameClock = nClock;
     if (nCount == -1)
         nCount = this->nCount;
-    if (bActive && nCount > 0)
-        Draw((char*)frameplace, nWidth, nHeight, nOffsetX, nOffsetY, YLookup, nX, nY, nZ, nAng, nPitch, nHoriz, nCount, nDelta);
+    if (nCount > 0)
+        Draw(pBuffer, nWidth, nHeight, nOffsetX, nOffsetY, YLookup, nX, nY, nZ, nAng, nHoriz, nCount, nDelta);
+    if ((nWeatherCur == WEATHERTYPE_NONE) && (nWeatherForecast == WEATHERTYPE_NONE))
+        return;
     nDelta >>= 16;
     if (nWeatherForecast == nWeatherCur) // increase until reached weather limit
     {
@@ -643,7 +641,6 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather, unsigned int uMapCRC)
         nLimit = kMaxVectors-(kMaxVectors>>1);
         break;
     default:
-        nDraw.bActive = 0;
         nCount = 0;
         break;
     }

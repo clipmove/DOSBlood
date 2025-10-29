@@ -43,7 +43,7 @@ public:
     CWeather();
     ~CWeather();
     void RandomizeVectors(void);
-    void SetViewport(int nX, int nY, int nXOffset0, int nXOffset1, int nYOffset0, int nYOffset1, int nFov);
+    void SetViewport(int nX, int nY, int nXOffset0, int nXOffset1, int nYOffset0, int nYOffset1, int nFov, int nAspect);
     void SetParticles(short nCount, short nLimit = -1);
     void SetGravity(short nGravity, char bVariance);
     void SetWind(short nX, short nY);
@@ -54,7 +54,7 @@ public:
     void SetShape(char);
     void SetStaticView(char);
     void Initialize(int nCount = 0);
-    void Draw(long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, long nClock, int nInterpolate, unsigned int uMapCRC);
+    void Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHoriz, int nCount, long nClock, int nInterpolate, unsigned int uMapCRC);
     void LoadPreset(unsigned int uMapCRC);
     void UnloadPreset(void);
     void SetWeatherOverride(WEATHERTYPE nOverride, WEATHERTYPE nOverrideInside, short nX, short nY, short nZ);
@@ -83,7 +83,7 @@ public:
 
     WEATHERTYPE nWeatherCheat;
 private:
-    void Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nPitch, int nHoriz, int nCount, int nDelta);
+    void Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nHoriz, int nCount, int nDelta);
     void UpdateColorTable(void);
     union {
         byte b;

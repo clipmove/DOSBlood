@@ -1750,7 +1750,7 @@ void viewResizeView(int size)
         setview(gViewX0, gViewY0, gViewX1, gViewY1);
         gGameMessageMgr.SetCoordinates(gViewX0S+1, gViewY0S+1);
         viewUpdateFov();
-        gWeather.SetViewport(xdim, ydim, gViewX0, gViewX1, gViewY0, gViewY1, gFovAspect);
+        gWeather.SetViewport(xdim, ydim, gViewX0, gViewX1, gViewY0, gViewY1, gFovAspect, yxaspect);
         return;
     }
     gViewX0 = 0;
@@ -1775,7 +1775,7 @@ void viewResizeView(int size)
     gGameMessageMgr.SetCoordinates(gViewX0S + 1, gViewY0S + 1);
     viewUpdatePages();
     viewUpdateFov();
-    gWeather.SetViewport(xdim, ydim, gViewX0, gViewX1, gViewY0, gViewY1, gFovAspect);
+    gWeather.SetViewport(xdim, ydim, gViewX0, gViewX1, gViewY0, gViewY1, gFovAspect, yxaspect);
 }
 
 void viewUpdateFov(BOOL bCheck)
@@ -1789,7 +1789,7 @@ void viewUpdateFov(BOOL bCheck)
     gFovOld = gFov;
     gFovAspect = divscale16(gFov, 60);
     setaspect(gFovAspect, yxaspect);
-    gWeather.SetViewport(xdim, ydim, gViewX0, gViewX1, gViewY0, gViewY1, gFovAspect);
+    gWeather.SetViewport(xdim, ydim, gViewX0, gViewX1, gViewY0, gViewY1, gFovAspect, yxaspect);
 }
 
 void UpdateFrame(void)
@@ -3292,7 +3292,7 @@ void viewDrawScreen(void)
         if (gWeatherEffect)
         {
             gWeather.Process(cX, cY, cZ, nSectnum, gView->pSprite->clipdist<<2, gGameOptions.uMapCRC);
-            gWeather.Draw(cX, cY, cZ, cA, va0 + deliriumPitch, defaultHoriz, gWeather.GetCount(), gFrameClock, gInterpolate, gGameOptions.uMapCRC);
+            gWeather.Draw((char*)frameplace, cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitchI, -1, gFrameClock, gInterpolate, gGameOptions.uMapCRC);
         }
         if (gViewPos == VIEWPOS_0)
         {
