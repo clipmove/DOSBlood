@@ -51,14 +51,15 @@ public:
     void SetTranslucency(int);
     void SetColor(unsigned char a1);
     void SetColorShift(char);
+    void SetFade(char nIn, char nOut);
     void SetShape(char);
     void SetStaticView(char);
     void Initialize(int nCount = 0);
-    void Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHoriz, int nCount, long nClock, int nInterpolate, unsigned int uMapCRC);
+    void Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHoriz, long nClock, int nInterpolate, unsigned int uMapCRC);
     void LoadPreset(unsigned int uMapCRC);
     void UnloadPreset(void);
     void SetWeatherOverride(WEATHERTYPE nOverride, WEATHERTYPE nOverrideInside, short nX, short nY, short nZ);
-    void Process(long nX, long nY, long nZ, int nSector, int nClipDist, unsigned int uMapCRC);
+    void Process(long nX, long nY, long nZ, int nAng, int nSector, char bSpinning, long nTime, int nClipDist, unsigned int uMapCRC);
     void SetWeatherType(WEATHERTYPE nWeather, unsigned int nRNG);
 
     short GetCount(void) {
@@ -81,7 +82,7 @@ public:
         return nWeatherForecast;
     }
 
-    WEATHERTYPE nWeatherCheat;
+    WEATHERTYPE nWeatherCheat : 8;
 private:
     void Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nHoriz, int nCount, int nDelta);
     void UpdateColorTable(void);
@@ -111,20 +112,27 @@ private:
     short nPos[kMaxVectors][3];
     unsigned char nPalColor;
     char nPalShift;
+    byte nFadeIn;
+    byte nFadeOut;
+    byte nColorTable[kColorTableSize];
     int nScaleTableWidth;
     int nScaleTableFov;
     int nFovV;
     int nScaleTable[kScaleTableSize];
-    byte nColorTable[kColorTableSize];
     int nLastFrameClock;
-    WEATHERTYPE nWeatherCur;
-    WEATHERTYPE nWeatherForecast;
-    WEATHERTYPE nWeatherOverrideType;
-    WEATHERTYPE nWeatherOverrideTypeInside;
+    WEATHERTYPE nWeatherCur : 8;
+    WEATHERTYPE nWeatherForecast : 8;
     char nWeatherOverride;
+    WEATHERTYPE nWeatherOverrideType : 8;
+    WEATHERTYPE nWeatherOverrideTypeInside : 8;
     short nWeatherOverrideWindX;
     short nWeatherOverrideWindY;
     short nWeatherOverrideGravity;
+    short nSectorChecked;
+    short nSectorCheckedFound;
+    short nSectorCheckedFoundForward;
+    char nSectorCheckedTime;
+    char nSectorCheckedAng;
 };
 
 extern CWeather gWeather;

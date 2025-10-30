@@ -35,8 +35,8 @@ CWeather::CWeather()
     nHeight = 0;
     nOffsetX = 0;
     nOffsetY = 0;
-    nScaleFactor = 0;
     memset(YLookup, 0, sizeof(YLookup));
+    nScaleFactor = 0;
     nCount = 0;
     nLimit = kMaxVectors;
     nGravity = 0;
@@ -47,11 +47,13 @@ CWeather::CWeather()
     memset(nPos, 0, sizeof(nPos));
     nPalColor = 1;
     nPalShift = 0;
+    nFadeIn = 16;
+    nFadeOut = 56;
+    memset(nColorTable, 0, sizeof(nColorTable));
     nScaleTableWidth = 0;
     nScaleTableFov = 0;
     nFovV = 0;
     memset(nScaleTable, 0, sizeof(nScaleTable));
-    memset(nColorTable, 0, sizeof(nColorTable));
     nLastFrameClock = 0;
     nWeatherCheat = WEATHERTYPE_NONE;
     nWeatherCur = WEATHERTYPE_NONE;
@@ -62,6 +64,11 @@ CWeather::CWeather()
     nWeatherOverrideWindX = 0;
     nWeatherOverrideWindY = 0;
     nWeatherOverrideGravity = 0;
+    nSectorChecked = -1;
+    nSectorCheckedFound = -1;
+    nSectorCheckedFoundForward = -1;
+    nSectorCheckedTime = 0;
+    nSectorCheckedAng = 0;
 }
 
 CWeather::~CWeather()
@@ -71,8 +78,8 @@ CWeather::~CWeather()
     nHeight = 0;
     nOffsetX = 0;
     nOffsetY = 0;
-    nScaleFactor = 0;
     memset(YLookup, 0, sizeof(YLookup));
+    nScaleFactor = 0;
     nCount = 0;
     nLimit = kMaxVectors;
     nGravity = 0;
@@ -83,11 +90,13 @@ CWeather::~CWeather()
     memset(nPos, 0, sizeof(nPos));
     nPalColor = 1;
     nPalShift = 0;
+    nFadeIn = 16;
+    nFadeOut = 56;
+    memset(nColorTable, 0, sizeof(nColorTable));
     nScaleTableWidth = 0;
     nScaleTableFov = 0;
     nFovV = 0;
     memset(nScaleTable, 0, sizeof(nScaleTable));
-    memset(nColorTable, 0, sizeof(nColorTable));
     nLastFrameClock = 0;
     nWeatherCheat = WEATHERTYPE_NONE;
     nWeatherCur = WEATHERTYPE_NONE;
@@ -98,6 +107,11 @@ CWeather::~CWeather()
     nWeatherOverrideWindX = 0;
     nWeatherOverrideWindY = 0;
     nWeatherOverrideGravity = 0;
+    nSectorChecked = -1;
+    nSectorCheckedFound = -1;
+    nSectorCheckedFoundForward = -1;
+    nSectorCheckedTime = 0;
+    nSectorCheckedAng = 0;
 }
 
 void CWeather::RandomizeVectors(void)
@@ -121,8 +135,10 @@ void CWeather::SetViewport(int nX, int nY, int nXOffset0, int nXOffset1, int nYO
     if (nX < 320 || nY < 200 || nOffsetX < 0 || nOffsetY < 0 || nWidth + nOffsetX > nX || nHeight + nOffsetY > nY) // something went very wrong, disable weather effects
     {
         SetWeatherType(WEATHERTYPE_NONE, 0);
+        nDraw.bActive = 0;
         return;
     }
+    nDraw.bActive = 1;
     nScaleFactor = mulscale16(nWidth<<16, nAspect); // based off calculations from setaspect()
     nScaleFactor = divscale16(nScaleFactor, 320<<16);
     for (int i = 0; i < nY; i++)
@@ -150,10 +166,15 @@ void CWeather::SetParticles(short nCount, short nLimit)
     dassert(nCount >= 0 && nCount <= kMaxVectors, __LINE__);
     if (nLimit < 0 || nLimit > kMaxVectors)
         nLimit = kMaxVectors;
+    if (!nCount) // if set particles to 0, set count to max and switch weather to none so weather skips fade in
+    {
+        this->nCount = kMaxVectors;
+        SetWeatherType(WEATHERTYPE_NONE, 0);
+        nWeatherCur = nWeatherForecast = WEATHERTYPE_NONE;
+        return;
+    }
     this->nCount = nCount;
     this->nLimit = nLimit;
-    if (!nCount)
-        nWeatherCur = nWeatherForecast = WEATHERTYPE_NONE;
 }
 
 void CWeather::SetGravity(short nGravity, char bVariance)
@@ -192,6 +213,12 @@ void CWeather::SetColorShift(char a1)
     UpdateColorTable();
 }
 
+void CWeather::SetFade(char nIn, char nOut)
+{
+    nFadeIn = ClipRange(nIn, 1, 255);
+    nFadeOut = ClipRange(nOut, 1, 255);
+}
+
 void CWeather::UpdateColorTable(void)
 {
     const int kDepthStep = 8192 / kColorTableSize; // potential range for nDepth is 5-8191, or 0-31 after shifting
@@ -216,16 +243,20 @@ void CWeather::SetStaticView(char a1)
 void CWeather::Initialize(int nCount)
 {
     nDraw.bActive = 1;
-    nDraw.bShape = 1;
     nScaleTableWidth = 0;
     nScaleTableFov = 0;
     nFovV = 0;
     nLastFrameClock = 0;
     nWeatherCur = WEATHERTYPE_NONE;
     nWeatherForecast = WEATHERTYPE_NONE;
-    nWeatherOverride = 0;
+    UnloadPreset();
+    nSectorChecked = -1;
+    nSectorCheckedFound = -1;
+    nSectorCheckedFoundForward = -1;
+    nSectorCheckedTime = 0;
+    nSectorCheckedAng = 0;
     RandomizeVectors();
-    SetParticles(nCount, kMaxVectors);
+    SetParticles(nCount, -1);
 }
 
 void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int *pYLookup, long nX, long nY, long nZ, int nAng, int nHoriz, int nCount, int nDelta)
@@ -274,8 +305,8 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
     for (int i = 0; i < nCount; i++)
     {
         // calculate and wrap X/Y
-        const int relX = ((nPos[i][1] - nX) & 0x3fff) - 0x2000;
-        const int relY = ((nPos[i][0] - nY) & 0x3fff) - 0x2000;
+        const int relX = ((nPos[i][1] - nX)&0x3fff) - 0x2000;
+        const int relY = ((nPos[i][0] - nY)&0x3fff) - 0x2000;
 
         // depth in rotated/view space
         const int nDepth = (relX * nCos + relY * nSin)>>14;
@@ -388,31 +419,28 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
     }
 }
 
-void CWeather::Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHoriz, int nCount, long nClock, int nInterpolate, unsigned int uMapCRC)
+void CWeather::Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHoriz, long nClock, int nInterpolate, unsigned int uMapCRC)
 {
     if (!Status() || !pBuffer)
         return;
     nClock += mulscale16(1, nInterpolate<<2);
     int nDelta = (nClock - nLastFrameClock)<<16;
     nLastFrameClock = nClock;
-    if (nCount == -1)
-        nCount = this->nCount;
-    if (nCount > 0)
-        Draw(pBuffer, nWidth, nHeight, nOffsetX, nOffsetY, YLookup, nX, nY, nZ, nAng, nHoriz, nCount, nDelta);
-    if ((nWeatherCur == WEATHERTYPE_NONE) && (nWeatherForecast == WEATHERTYPE_NONE))
-        return;
+    int nCountLimited = GetCount(); // get count with limit applied
+    if (nCountLimited > 0)
+        Draw(pBuffer, nWidth, nHeight, nOffsetX, nOffsetY, YLookup, nX, nY, nZ, nAng, nHoriz, nCountLimited, nDelta);
     nDelta >>= 16;
     if (nWeatherForecast == nWeatherCur) // increase until reached weather limit
     {
-        nCount += nDelta * 16;
-        SetCount(nCount);
+        nCountLimited += nDelta * (int)nFadeIn;
+        SetCount(nCountLimited);
     }
-    else if (nCount && (nWeatherForecast != nWeatherCur)) // changed weather type, fade out then switch to new weather type
+    else if (nCountLimited && (nWeatherForecast != nWeatherCur)) // changed weather type, fade out then switch to new weather type
     {
-        nCount -= nDelta * 56;
-        SetCount(nCount);
+        nCountLimited -= nDelta * (int)nFadeOut;
+        SetCount(nCountLimited);
     }
-    else if (!nCount && (nWeatherForecast != WEATHERTYPE_NONE)) // fade out complete, now switch to new weather
+    else if (!nCountLimited && (nWeatherForecast != WEATHERTYPE_NONE)) // fade out complete, now switch to new weather
     {
         nWindXOffset = krand()&0x3fff;
         nWindYOffset = krand()&0x3fff;
@@ -479,7 +507,7 @@ void CWeather::UnloadPreset(void)
 
 void CWeather::SetWeatherOverride(WEATHERTYPE nOverride, WEATHERTYPE nOverrideInside, short nX, short nY, short nZ)
 {
-    if ((nOverride <= WEATHERTYPE_NONE) || (nOverride >= WEATHERTYPE_MAX)) // invalid, unload
+    if ((nOverride < WEATHERTYPE_NONE) || (nOverride >= WEATHERTYPE_MAX)) // invalid, unload
     {
         UnloadPreset();
         return;
@@ -505,15 +533,25 @@ inline WEATHERTYPE RandomWeather(unsigned int nRNG)
     return WEATHERTYPE_DUST;
 }
 
-void CWeather::Process(long nX, long nY, long nZ, int nSector, int nClipDist, unsigned int uMapCRC)
+const byte bAngDiff[8][8] = {
+    {0, 0, 1, 1, 1, 1, 1, 0},
+    {0, 0, 0, 1, 1, 1, 1, 1},
+    {1, 0, 0, 0, 1, 1, 1, 1},
+    {1, 1, 0, 0, 0, 1, 1, 1},
+    {1, 1, 1, 0, 0, 0, 1, 1},
+    {1, 1, 1, 1, 0, 0, 0, 1},
+    {1, 1, 1, 1, 1, 0, 0, 0},
+    {0, 1, 1, 1, 1, 1, 0, 0},
+};
+
+void CWeather::Process(long nX, long nY, long nZ, int nAng, int nSector, char bSpinning, long nTime, int nClipDist, unsigned int uMapCRC)
 {
-    static int nSectorChecked = -1;
     if (nWeatherCheat > WEATHERTYPE_NONE)
     {
         if (nWeatherCur != nWeatherCheat)
             nWeatherCur = WEATHERTYPE_NONE;
-        SetWeatherType(nWeatherCheat, uMapCRC);
         nWeatherForecast = nWeatherCheat;
+        SetWeatherType(nWeatherCheat, uMapCRC);
         return;
     }
     if (IsUnderwaterSector(nSector))
@@ -522,16 +560,42 @@ void CWeather::Process(long nX, long nY, long nZ, int nSector, int nClipDist, un
         SetWeatherType(WEATHERTYPE_UNDERWATER, uMapCRC);
         return;
     }
-    int tmpSect = nSector;
-    if (nSectorChecked != nSector) // moved to new sector, hitscan above
+    nTime = (nTime>>3)&3;
+    const char bEnoughTimePassed = (nSectorChecked != nSector && nTime != nSectorCheckedTime) || (((nTime - nSectorCheckedTime)>>1) != 0);
+    if (bEnoughTimePassed || (!bSpinning && (bAngDiff[nSectorCheckedAng][(nAng&2047)>>8] != 0))) // if moved to new sector, waited half a second or turned more than 22.5 degrees, hitscan above
     {
+        nSectorChecked = nSector;
+        nSectorCheckedTime = nTime;
+        nSectorCheckedAng = (nAng&2047)>>8; // round down to 22.5 degrees
+        int tmpSect = nSectorCheckedFoundForward >= 0 ? nSectorCheckedFoundForward : nSector;
+        const long nStepX = nX+mulscale30(1024, Cos(nAng)); // move forward a bit
+        const long nStepY = nY+mulscale30(1024, Sin(nAng));
+        if (FindSector(nStepX, nStepY, nZ, &tmpSect)) // check sector in front of player
+        {
+            if (tmpSect == nSector)
+            {
+                nX = nStepX;
+                nY = nStepY;
+            }
+            else if (cansee(nStepX, nStepY, nZ, tmpSect, nX, nY, nZ, nSector)) // if we can see the newly found sector, set as position to test ceiling
+            {
+                nX = nStepX;
+                nY = nStepY;
+                nSector = tmpSect & 0x3ff;
+                nSectorCheckedFoundForward = nSector; // save for next FindSector() call
+            }
+        }
         long ve8, vec, vf0, vf4;
         GetZRangeAtXYZ(nX, nY, nZ, nSector, &vf4, &vf0, &vec, &ve8, nClipDist, 0);
         if ((vf0 & 0xc000) == 0x4000) // we hit ceiling
-            tmpSect = vf0 & 0x3ff;
-        nSectorChecked = tmpSect;
+            nSector = vf0 & 0x3ff;
+        nSectorCheckedFound = nSector;
     }
-    if (sector[tmpSect].ceilingstat&1) // outside
+    else if (nSectorCheckedFound >= 0)
+    {
+        nSector = nSectorCheckedFound;
+    }
+    if (sector[nSector].ceilingstat&1) // outside
         nWeatherForecast = nWeatherOverride ? nWeatherOverrideType : RandomWeather(uMapCRC);
     else // inside
         nWeatherForecast = nWeatherOverride ? nWeatherOverrideTypeInside : WEATHERTYPE_DUST;
@@ -545,106 +609,117 @@ void CWeather::Process(long nX, long nY, long nZ, int nSector, int nClipDist, un
 
 void CWeather::SetWeatherType(WEATHERTYPE nWeather, unsigned int uMapCRC)
 {
-    if (nWeather == nWeatherCur)
-        return;
-    nWeatherCur = nWeather;
-    switch (nWeather)
+    if (nWeather != nWeatherCur || nWeather == WEATHERTYPE_NONE)
     {
-    case WEATHERTYPE_RAIN:
-        SetTranslucency(2);
-        SetGravity(96, 1);
-        RandomWind(0, uMapCRC);
-        SetColor(128);
-        SetColorShift(0);
-        SetShape(2);
-        SetStaticView(0);
-        nLimit = kMaxVectors>>1;
-        break;
-    case WEATHERTYPE_SNOW:
-        SetTranslucency(0);
-        SetGravity(32, 1);
-        RandomWind(0, uMapCRC);
-        SetColor(32);
-        SetColorShift(0);
-        SetShape(0);
-        SetStaticView(0);
-        nLimit = kMaxVectors;
-        break;
-    case WEATHERTYPE_BLOOD:
-        SetTranslucency(0);
-        SetGravity(48, 1);
-        SetWind(0, 0);
-        SetColor(152);
-        SetColorShift(2);
-        SetShape(1);
-        SetStaticView(0);
-        nLimit = kMaxVectors;
-        break;
-    case WEATHERTYPE_UNDERWATER:
-        SetTranslucency(2);
-        SetGravity(1, 1);
-        SetWind(0, 0);
-        SetColor(170);
-        SetColorShift(2);
-        SetShape(0);
-        SetStaticView(0);
-        nLimit = kMaxVectors>>1;
-        break;
-    case WEATHERTYPE_DUST:
-        SetTranslucency(2);
-        SetGravity(4, 1);
-        SetWind(0, 0);
-        SetColor(170);
-        SetColorShift(2);
-        SetShape(0);
-        SetStaticView(0);
-        nLimit = kMaxVectors>>2;
-        break;
-    case WEATHERTYPE_LAVA:
-        SetTranslucency(1);
-        SetGravity(6, 1);
-        SetWind(0, 0);
-        SetColor(160);
-        SetColorShift(1);
-        SetShape(0);
-        SetStaticView(0);
-        nLimit = kMaxVectors>>3;
-        break;
-    case WEATHERTYPE_STARS:
-        SetTranslucency(1);
-        SetGravity(0, 0);
-        SetWind(0, 0);
-        SetColor(128);
-        SetColorShift(0);
-        SetShape(0);
-        SetStaticView(1);
-        nLimit = kMaxVectors;
-        break;
-    case WEATHERTYPE_RAINHARD:
-        SetTranslucency(2);
-        SetGravity(128, 1);
-        RandomWind(1, uMapCRC);
-        SetColor(128);
-        SetColorShift(0);
-        SetShape(2);
-        SetStaticView(0);
-        nLimit = kMaxVectors;
-        break;
-    case WEATHERTYPE_SNOWHARD:
-        SetTranslucency(0);
-        SetGravity(128, 1);
-        RandomWind(1, uMapCRC);
-        SetColor(32);
-        SetColorShift(0);
-        SetShape(1);
-        SetStaticView(0);
-        nLimit = kMaxVectors-(kMaxVectors>>1);
-        break;
-    default:
-        nCount = 0;
-        break;
+        nWeatherCur = nWeather;
+        switch (nWeather)
+        {
+        case WEATHERTYPE_RAIN:
+            SetTranslucency(2);
+            SetGravity(96, 1);
+            RandomWind(0, uMapCRC);
+            SetColor(128);
+            SetColorShift(0);
+            SetFade(16, 56);
+            SetShape(2);
+            SetStaticView(0);
+            nLimit = kMaxVectors>>1;
+            break;
+        case WEATHERTYPE_SNOW:
+            SetTranslucency(0);
+            SetGravity(32, 1);
+            RandomWind(0, uMapCRC);
+            SetColor(32);
+            SetColorShift(0);
+            SetFade(16, 56);
+            SetShape(0);
+            SetStaticView(0);
+            nLimit = kMaxVectors;
+            break;
+        case WEATHERTYPE_BLOOD:
+            SetTranslucency(0);
+            SetGravity(56, 1);
+            SetWind(0, 0);
+            SetColor(152);
+            SetColorShift(2);
+            SetFade(16, 56);
+            SetShape(1);
+            SetStaticView(0);
+            nLimit = kMaxVectors;
+            break;
+        case WEATHERTYPE_UNDERWATER:
+            SetTranslucency(2);
+            SetGravity(1, 1);
+            SetWind(0, 0);
+            SetColor(170);
+            SetColorShift(2);
+            SetFade(16, 56);
+            SetShape(0);
+            SetStaticView(0);
+            nLimit = kMaxVectors>>1;
+            break;
+        case WEATHERTYPE_DUST:
+            SetTranslucency(2);
+            SetGravity(4, 1);
+            SetWind(0, 0);
+            SetColor(170);
+            SetColorShift(2);
+            SetFade(16, 56);
+            SetShape(0);
+            SetStaticView(0);
+            nLimit = kMaxVectors>>2;
+            break;
+        case WEATHERTYPE_LAVA:
+            SetTranslucency(1);
+            SetGravity(6, 1);
+            SetWind(0, 0);
+            SetColor(160);
+            SetColorShift(1);
+            SetFade(16, 56);
+            SetShape(0);
+            SetStaticView(0);
+            nLimit = kMaxVectors>>3;
+            break;
+        case WEATHERTYPE_STARS:
+            SetTranslucency(1);
+            SetGravity(0, 0);
+            SetWind(0, 0);
+            SetColor(128);
+            SetColorShift(0);
+            SetFade(32, 56);
+            SetShape(0);
+            SetStaticView(1);
+            nLimit = kMaxVectors;
+            break;
+        case WEATHERTYPE_RAINHARD:
+            SetTranslucency(2);
+            SetGravity(128, 1);
+            RandomWind(1, uMapCRC);
+            SetColor(128);
+            SetColorShift(0);
+            SetFade(32, 64);
+            SetShape(2);
+            SetStaticView(0);
+            nLimit = kMaxVectors;
+            break;
+        case WEATHERTYPE_SNOWHARD:
+            SetTranslucency(0);
+            SetGravity(128, 1);
+            RandomWind(1, uMapCRC);
+            SetColor(32);
+            SetColorShift(0);
+            SetFade(32, 64);
+            SetShape(1);
+            SetStaticView(0);
+            nLimit = kMaxVectors-(kMaxVectors>>1);
+            break;
+        default:
+            SetFade(255, 255);
+            nLimit = 0;
+            break;
+        }
     }
-    if (nWeatherOverride && (nWeather == nWeatherOverrideType) && (nWeatherCheat == WEATHERTYPE_NONE)) // apply overrides
+    if (nWeatherOverride && (nWeather == nWeatherOverrideType) && (nWeatherCheat == WEATHERTYPE_NONE)) // apply exterior weather override
     {
         SetWind(nWeatherOverrideWindX, nWeatherOverrideWindY);
         SetGravity(nWeatherOverrideGravity, 1);
