@@ -525,8 +525,8 @@ void StartLevel(GAMEOPTIONS *gameOptions)
     gKillMgr.Clear();
     gSecretMgr.Clear();
     automapping = 1;
+    gWeather.Restart();
     gWeather.LoadPreset(gameOptions->uMapCRC);
-    gWeather.SetParticles(0);
     for (i = 0; i < kMaxSprites; i++)
     {
         SPRITE *pSprite = &sprite[i];

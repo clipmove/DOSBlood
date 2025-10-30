@@ -54,7 +54,8 @@ public:
     void SetFade(char nIn, char nOut);
     void SetShape(char);
     void SetStaticView(char);
-    void Initialize(int nCount = 0);
+    void Initialize(void);
+    void Restart(void);
     void Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHoriz, long nClock, int nInterpolate, unsigned int uMapCRC);
     void LoadPreset(unsigned int uMapCRC);
     void UnloadPreset(void);

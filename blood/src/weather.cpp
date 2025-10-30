@@ -240,12 +240,17 @@ void CWeather::SetStaticView(char a1)
     nDraw.bStaticView = a1;
 }
 
-void CWeather::Initialize(int nCount)
+void CWeather::Initialize(void)
 {
     nDraw.bActive = 1;
     nScaleTableWidth = 0;
     nScaleTableFov = 0;
     nFovV = 0;
+    Restart();
+}
+
+void CWeather::Restart(void)
+{
     nLastFrameClock = 0;
     nWeatherCur = WEATHERTYPE_NONE;
     nWeatherForecast = WEATHERTYPE_NONE;
@@ -256,7 +261,7 @@ void CWeather::Initialize(int nCount)
     nSectorCheckedTime = 0;
     nSectorCheckedAng = 0;
     RandomizeVectors();
-    SetParticles(nCount, -1);
+    SetParticles(0);
 }
 
 void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int *pYLookup, long nX, long nY, long nZ, int nAng, int nHoriz, int nCount, int nDelta)

@@ -173,6 +173,8 @@ void LoadSave::LoadGame(char *pzFile)
     gGameClock = 0;
     gPaused = 0;
     gGameStarted = 1;
+    gWeather.Restart();
+    gWeather.LoadPreset(gGameOptions.uMapCRC);
     if (gGameOptions.nGameType == GAMETYPE_0 && numplayers == 1)
     {
         for (int i = connecthead; i >= 0; i = connectpoint2[i])
