@@ -1420,8 +1420,8 @@ void main(void)
         CONTROL_CenterJoystick(CenterCenter, UpperLeft, LowerRight, CenterThrottle, CenterRudder);
     scrSetGameMode(ScreenMode, ScreenWidth, ScreenHeight);
     scrSetGamma(gGamma);
-    viewResizeView(gViewSize);
     gWeather.Initialize();
+    viewResizeView(gViewSize);
     gChoke.func_83ff0(518, func_84230);
     levelLoadDefaults();
     if (bAddUserMap)
