@@ -3744,7 +3744,8 @@ void actTouchFloor(SPRITE *pSprite, int nSector)
     if (tileGetSurfType(nSector+0x4000) == 14)
     {
         actDamageSprite(pSprite->index, pSprite, kDamageBurn, 16);
-        sfxPlay3DSound(pSprite, 352, 5, 2);
+        if (VanillaMode() || !(gFrame&3)) // don't trigger this every frame
+            sfxPlay3DSound(pSprite, 352, 5, 2);
     }
 }
 
