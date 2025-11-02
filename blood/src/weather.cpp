@@ -461,7 +461,7 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
     case 0xBBF1A5D5: // e1m3
     case 0xF524ACA4: // e5m2
     case 0xFE99F0E7: // e5m6
-        SetWeatherOverride(WEATHERTYPE_SNOW, WEATHERTYPE_DUST, 0, -96, 32);
+        SetWeatherOverride(WEATHERTYPE_SNOWHARD, WEATHERTYPE_DUST, 0, -96, 32);
         break;
     case 0xAEC06508: // e1m5
     case 0xFA1A3218: // e4m1
@@ -469,6 +469,8 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
     case 0x98FDBE0E: // e6m4
         SetWeatherOverride(WEATHERTYPE_RAINHARD, WEATHERTYPE_DUST, 32, 0, 96);
         break;
+    case 0x76937196: // e1m1
+    case 0xBA5DB227: // e1m2
     case 0xCA80EAA3: // e2m1
     case 0x29D27D07: // e2m2
     case 0xE6B88CA6: // e2m3
@@ -476,7 +478,6 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
     case 0xA0639DE5: // e4m6
         SetWeatherOverride(WEATHERTYPE_SNOW, WEATHERTYPE_DUST, 0, 4, 24);
         break;
-    case 0xBA5DB227: // e1m2
     case 0xD64D2666: // e2m5
     case 0x09E3434D: // e2m6
     case 0x0FFF85AC: // e2m7
@@ -639,7 +640,7 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather, unsigned int uMapCRC)
             SetFade(16, 56);
             SetShape(0);
             SetStaticView(0);
-            nLimit = kMaxVectors;
+            nLimit = kMaxVectors>>1;
             break;
         case WEATHERTYPE_BLOOD:
             SetTranslucency(0);
