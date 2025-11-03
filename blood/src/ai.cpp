@@ -669,14 +669,14 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
             aiPlay3DSound(pSprite, 1401, AI_SFX_PRIORITY_1);
         else
             aiPlay3DSound(pSprite, 1400, AI_SFX_PRIORITY_1);
-        aiNewState(pSprite, pXSprite, &gargoyleFMorph);
+        aiNewState(pSprite, pXSprite, !VanillaMode() ? &statueFBreakSEQ : &gargoyleFMorph);
         break;
     case 209:
         if (Chance(0x4000))
             aiPlay3DSound(pSprite, 1401, AI_SFX_PRIORITY_1);
         else
             aiPlay3DSound(pSprite, 1400, AI_SFX_PRIORITY_1);
-        aiNewState(pSprite, pXSprite, &gargoyleSMorph);
+        aiNewState(pSprite, pXSprite, !VanillaMode() ? &statueSBreakSEQ : &gargoyleSMorph);
         break;
     case 227:
         if (pXSprite->target == -1)

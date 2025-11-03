@@ -45,6 +45,7 @@ static void MoveForward(SPRITE *, XSPRITE *);
 static void MoveSlow(SPRITE *, XSPRITE *);
 static void MoveSwoop(SPRITE *, XSPRITE *);
 static void MoveFly(SPRITE *, XSPRITE *);
+static void playStatueBreakSnd(SPRITE *, XSPRITE *);
 
 static int nSlashFClient = seqRegisterClient(SlashFSeqCallback);
 static int nThrowFClient = seqRegisterClient(ThrowFSeqCallback);
@@ -74,6 +75,14 @@ AISTATE gargoyleFDodgeUpLeft = { 0, -1, 90, NULL, MoveDodgeUp, NULL, &gargoyleFC
 AISTATE gargoyleDodgeDown = { 0, -1, 120, NULL, MoveDodgeDown, NULL, &gargoyleFChase };
 AISTATE gargoyleFDodgeDownRight = { 0, -1, 90, NULL, MoveDodgeDown, NULL, &gargoyleFChase };
 AISTATE gargoyleFDodgeDownLeft = { 0, -1, 90, NULL, MoveDodgeDown, NULL, &gargoyleFChase };
+
+AISTATE statueFBreakSEQ = { 5, -1, 0, entryFStatue, NULL, playStatueBreakSnd, &gargoyleFMorph2};
+AISTATE statueSBreakSEQ = { 5, -1, 0, entrySStatue, NULL, playStatueBreakSnd, &gargoyleSMorph2};
+
+static void playStatueBreakSnd(SPRITE *pSprite, XSPRITE *pXSprite)
+{
+    aiPlay3DSound(pSprite, 313, AI_SFX_PRIORITY_1);
+}
 
 inline void SlashFSeqCallbackFixed(SPRITE *pSprite, XSPRITE *pXSprite, SPRITE *pTarget)
 {

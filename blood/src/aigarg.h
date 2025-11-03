@@ -43,6 +43,8 @@ extern AISTATE gargoyleFDodgeUpLeft;
 extern AISTATE gargoyleDodgeDown;
 extern AISTATE gargoyleFDodgeDownRight;
 extern AISTATE gargoyleFDodgeDownLeft;
+extern AISTATE statueFBreakSEQ;
+extern AISTATE statueSBreakSEQ;
 
 #endif
 

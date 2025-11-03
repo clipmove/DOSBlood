@@ -56,6 +56,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix inventory items resetting between levels
 * Fix shotgun akimbo animation glitch on loop
 * Fixed underwater issue with hitscan weapons
+* Restore unused gargoyle stone animation morph
 * Allow cheat phrases to be said in multiplayer
 * Reset view bob/view sway inertia on level start
 * Fix weapon state not resetting on weapon change
