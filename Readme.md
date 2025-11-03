@@ -64,6 +64,8 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix secrets for maps with glitched secret triggers
 * Fix projectiles glitching when autoaim is disabled
 * Fix pod enemy projectiles using walls as enemy index
+* Cheogh blasting/attacking can now hit prone players
+* Phantasm spirit attack/slashing can now hit prone players
 * Fix spray can glitching when alt-firing and entering water
 * Fix demos desyncing if launched with -noaim argument
 * Replaced sector based damage logic for player explosions
@@ -81,7 +83,6 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix build engine divide by zero crash when rendering horizon aligned sprites
 * Fix next/previous weapon buttons not skipping TNT/spray can while underwater
 * Fix enemies always using tesla hit reaction after being hit by tesla projectile once
-* Cheogh blasting/attacking can now hit prone players (only for well done and above difficulties)
 * Fix interpolated sprite interpolation resetting when transitioning through room-over-room sectors
 
 ### Notes

@@ -93,7 +93,8 @@ inline void SlashFSeqCallbackFixed(SPRITE *pSprite, XSPRITE *pXSprite, SPRITE *p
     r1 = Random(50);
     r2 = Random(50);
     actFireVector(pSprite, 0, 0, dx-r2, dy+r1, dz, kVectorSlash);
-    gVectorData[kVectorSlash].at9 = bakVecDist;
+    if (pSprite->type == 207)
+        gVectorData[kVectorSlash].at9 = bakVecDist;
 }
 
 static void SlashFSeqCallback(int, int nXSprite)
@@ -102,7 +103,7 @@ static void SlashFSeqCallback(int, int nXSprite)
     int nSprite = pXSprite->reference;
     SPRITE *pSprite = &sprite[nSprite];
     SPRITE *pTarget = &sprite[pXSprite->target];
-    if ((gGameOptions.nDifficulty >= 2) && !VanillaMode()) // use fixed calculation and increase vector distance
+    if (!VanillaMode()) // use fixed calculation and increase vector distance
     {
         SlashFSeqCallbackFixed(pSprite, pXSprite, pTarget);
         return;
@@ -179,7 +180,7 @@ static void BlastSSeqCallback(int, int nXSprite)
         GetSpriteExtents(pSprite2, &top, &bottom);
         if (bottom<tz-tsr || top>tz+tsr)
         {
-            if ((gGameOptions.nDifficulty >= 2) && IsDudeSprite(pSprite2) && !VanillaMode()) // use fixed calculation for missile projectile
+            if (IsDudeSprite(pSprite2) && !VanillaMode()) // use fixed calculation for missile projectile
                 aim.dz = divscale10(pSprite2->z-pSprite->z, ClipHigh(nDist, 0x1800));
             continue;
         }
@@ -348,12 +349,20 @@ static void MoveDodgeDown(SPRITE *pSprite, XSPRITE *pXSprite)
 
 inline int thinkChaseGetTargetHeight(SPRITE *pSprite, DUDEINFO *pDudeInfo, SPRITE *pTarget)
 {
-    if ((gGameOptions.nDifficulty < 2) || VanillaMode())
+    if (VanillaMode())
         return 0;
     DUDEINFO *pDudeInfoT = &dudeInfo[pTarget->type - kDudeBase];
     int height = (pSprite->yrepeat*pDudeInfo->atb)<<2;
     int height2 = (pTarget->yrepeat*pDudeInfoT->atb)<<2;
     return height-height2;
+}
+
+inline void thinkAirBrakes(int nSprite)
+{
+    if (VanillaMode() || nSprite < 0 || nSprite >= kMaxSprites)
+        return;
+    xvel[nSprite] = -(xvel[nSprite]>>2);
+    yvel[nSprite] = -(yvel[nSprite]>>2);
 }
 
 static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
@@ -446,15 +455,18 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                         case 3:
                             if (sprite[gHitInfo.hitsprite].type != pSprite->type && sprite[gHitInfo.hitsprite].type != 207)
                             {
+                                thinkAirBrakes(pSprite->index);
                                 sfxPlay3DSound(pSprite, 1406, 0);
                                 aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             }
                             break;
                         case -1:
+                            thinkAirBrakes(pSprite->index);
                             sfxPlay3DSound(pSprite, 1406, 0);
                             aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             break;
                         default:
+                            thinkAirBrakes(pSprite->index);
                             sfxPlay3DSound(pSprite, 1406, 0);
                             aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             break;
@@ -502,6 +514,7 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                         switch (hit)
                         {
                         case -1:
+                            thinkAirBrakes(pSprite->index);
                             aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             break;
                         case 0:
@@ -509,9 +522,13 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                             break;
                         case 3:
                             if (sprite[gHitInfo.hitsprite].type != pSprite->type && sprite[gHitInfo.hitsprite].type != 206)
+                            {
+                                thinkAirBrakes(pSprite->index);
                                 aiNewState(pSprite, pXSprite, &gargoyleFSlash);
+                            }
                             break;
                         default:
+                            thinkAirBrakes(pSprite->index);
                             aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             break;
                         }

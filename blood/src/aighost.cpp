@@ -22,6 +22,7 @@
 #include "db.h"
 #include "dude.h"
 #include "gameutil.h"
+#include "globals.h"
 #include "misc.h"
 #include "player.h"
 #include "seq.h"
@@ -65,6 +66,26 @@ AISTATE ghostDodgeDown = { 0, -1, 120, NULL, MoveDodgeDown, NULL, &ghostChase };
 AISTATE ghostDodgeDownRight = { 0, -1, 90, NULL, MoveDodgeDown, NULL, &ghostChase };
 AISTATE ghostDodgeDownLeft = { 0, -1, 90, NULL, MoveDodgeDown, NULL, &ghostChase };
 
+inline void SlashSeqCallbackFixed(SPRITE *pSprite, XSPRITE *pXSprite, SPRITE *pTarget)
+{
+    int tx = pXSprite->at20_0-pSprite->x;
+    int ty = pXSprite->at24_0-pSprite->y;
+    int nAngle = getangle(tx, ty);
+    int dx = Cos(nAngle)>>16;
+    int dy = Sin(nAngle)>>16;
+    int dz = pTarget->z-pSprite->z;
+    const int bakVecDist = gVectorData[kVectorGhostSlash].at9;
+    gVectorData[kVectorGhostSlash].at9 += gVectorData[kVectorGhostSlash].at9>>2; // increase slash distance by 25%
+    actFireVector(pSprite, 0, 0, dx, dy, dz, kVectorGhostSlash);
+    int r1 = Random(50);
+    int r2 = Random(50);
+    actFireVector(pSprite, 0, 0, dx+r2, dy-r1, dz, kVectorGhostSlash);
+    r1 = Random(50);
+    r2 = Random(50);
+    actFireVector(pSprite, 0, 0, dx-r2, dy+r1, dz, kVectorGhostSlash);
+    gVectorData[kVectorGhostSlash].at9 = bakVecDist;
+}
+
 static void SlashSeqCallback(int, int nXSprite)
 {
     XSPRITE *pXSprite = &xsprite[nXSprite];
@@ -73,6 +94,11 @@ static void SlashSeqCallback(int, int nXSprite)
     SPRITE *pTarget = &sprite[pXSprite->target];
     DUDEINFO *pDudeInfo = &dudeInfo[pSprite->type-kDudeBase];
     DUDEINFO *pDudeInfoT = &dudeInfo[pTarget->type-kDudeBase];
+    if (!VanillaMode()) // use fixed calculation and increase vector distance
+    {
+        SlashSeqCallbackFixed(pSprite, pXSprite, pTarget);
+        return;
+    }
     int height = (pSprite->yrepeat*pDudeInfo->atb)<<2;
     int height2 = (pTarget->yrepeat*pDudeInfoT->atb)<<2;
     int dx = Cos(pSprite->ang)>>16;
@@ -142,7 +168,11 @@ static void BlastSeqCallback(int, int nXSprite)
         int top, bottom;
         GetSpriteExtents(pSprite2, &top, &bottom);
         if (bottom < tz-tsr || top > tz+tsr)
+        {
+            if (IsDudeSprite(pSprite2) && !VanillaMode()) // use fixed calculation for ghost projectile
+                aim.dz = divscale10(pSprite2->z-pSprite->z, ClipHigh(nDist, 0x1800));
             continue;
+        }
         int nDist2 = Dist3d(tx - x2, ty - y2, tz - z2);
         if (nDist2 >= nClosest)
             continue;
@@ -299,6 +329,24 @@ static void MoveDodgeDown(SPRITE *pSprite, XSPRITE *pXSprite)
     zvel[nSprite] = 0x44444;
 }
 
+inline int thinkChaseGetTargetHeight(SPRITE *pSprite, DUDEINFO *pDudeInfo, SPRITE *pTarget)
+{
+    if (VanillaMode())
+        return 0;
+    DUDEINFO *pDudeInfoT = &dudeInfo[pTarget->type - kDudeBase];
+    int height = (pSprite->yrepeat*pDudeInfo->atb)<<2;
+    int height2 = (pTarget->yrepeat*pDudeInfoT->atb)<<2;
+    return height-height2;
+}
+
+inline void thinkAirBrakes(int nSprite)
+{
+    if (VanillaMode() || nSprite < 0 || nSprite >= kMaxSprites)
+        return;
+    xvel[nSprite] = -(xvel[nSprite]>>1);
+    yvel[nSprite] = -(yvel[nSprite]>>1);
+}
+
 static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
 {
     if (pXSprite->target == -1)
@@ -349,7 +397,8 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                 case 210:
                     if (nDist < 0x2000 && nDist > 0x1000 && klabs(nDeltaAngle) < 85)
                     {
-                        int hit = HitScan(pSprite, pSprite->z, dx, dy, 0, CLIPMASK1, 0);
+                        int dz = thinkChaseGetTargetHeight(pSprite, pDudeInfo, pTarget);
+                        int hit = HitScan(pSprite, pSprite->z, dx, dy, dz, CLIPMASK1, 0);
                         switch (hit)
                         {
                         case 0:
@@ -369,7 +418,8 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                     }
                     else if (nDist < 0x400 && klabs(nDeltaAngle) < 85)
                     {
-                        int hit = HitScan(pSprite, pSprite->z, dx, dy, 0, CLIPMASK1, 0);
+                        int dz = thinkChaseGetTargetHeight(pSprite, pDudeInfo, pTarget);
+                        int hit = HitScan(pSprite, pSprite->z, dx, dy, dz, CLIPMASK1, 0);
                         switch (hit)
                         {
                         case 0:
@@ -377,12 +427,17 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                             break;
                         case 3:
                             if (sprite[gHitInfo.hitsprite].type != pSprite->type && sprite[gHitInfo.hitsprite].type != 210)
+                            {
+                                thinkAirBrakes(pSprite->index);
                                 aiNewState(pSprite, pXSprite, &ghostSlash);
+                            }
                             break;
                         case -1:
+                            thinkAirBrakes(pSprite->index);
                             aiNewState(pSprite, pXSprite, &ghostSlash);
                             break;
                         default:
+                            thinkAirBrakes(pSprite->index);
                             aiNewState(pSprite, pXSprite, &ghostSlash);
                             break;
                         }
