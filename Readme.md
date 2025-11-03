@@ -63,6 +63,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix choking hands to run at a constant framerate
 * Fix secrets for maps with glitched secret triggers
 * Fix projectiles glitching when autoaim is disabled
+* Stone gargoyles in idle state is ignored by autoaim
 * Fix pod enemy projectiles using walls as enemy index
 * Cheogh blasting/attacking can now hit prone players
 * Phantasm spirit attack/slashing can now hit prone players

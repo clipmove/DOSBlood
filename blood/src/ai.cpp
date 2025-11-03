@@ -1660,6 +1660,13 @@ void aiInitSprite(SPRITE *pSprite)
     case 244:
         pSprite->flags = 7;
         break;
+    case 208:
+    case 209:
+        if (!VanillaMode())
+        {
+            pSprite->flags = 7; // disable autoaim
+            break;
+        }
     default:
         pSprite->flags = 15;
         break;
