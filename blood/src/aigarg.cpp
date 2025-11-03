@@ -464,18 +464,21 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                         case 3:
                             if (sprite[gHitInfo.hitsprite].type != pSprite->type && sprite[gHitInfo.hitsprite].type != 207)
                             {
-                                thinkAirBrakes(pSprite->index);
+                                if (IsPlayerSprite(pTarget) && (gPlayer[pTarget->type-kDudePlayer1].at2f == 2)) // if crouching, hit the brakes
+                                    thinkAirBrakes(pSprite->index);
                                 sfxPlay3DSound(pSprite, 1406, 0);
                                 aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             }
                             break;
                         case -1:
-                            thinkAirBrakes(pSprite->index);
+                            if (IsPlayerSprite(pTarget) && (gPlayer[pTarget->type-kDudePlayer1].at2f == 2)) // if crouching, hit the brakes
+                                thinkAirBrakes(pSprite->index);
                             sfxPlay3DSound(pSprite, 1406, 0);
                             aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             break;
                         default:
-                            thinkAirBrakes(pSprite->index);
+                            if (IsPlayerSprite(pTarget) && (gPlayer[pTarget->type-kDudePlayer1].at2f == 2)) // if crouching, hit the brakes
+                                thinkAirBrakes(pSprite->index);
                             sfxPlay3DSound(pSprite, 1406, 0);
                             aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             break;
@@ -523,7 +526,8 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                         switch (hit)
                         {
                         case -1:
-                            thinkAirBrakes(pSprite->index);
+                            if (IsPlayerSprite(pTarget) && (gPlayer[pTarget->type-kDudePlayer1].at2f == 2)) // if crouching, hit the brakes
+                                thinkAirBrakes(pSprite->index);
                             aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             break;
                         case 0:
@@ -532,12 +536,14 @@ static void thinkChase(SPRITE *pSprite, XSPRITE *pXSprite)
                         case 3:
                             if (sprite[gHitInfo.hitsprite].type != pSprite->type && sprite[gHitInfo.hitsprite].type != 206)
                             {
-                                thinkAirBrakes(pSprite->index);
+                                if (IsPlayerSprite(pTarget) && (gPlayer[pTarget->type-kDudePlayer1].at2f == 2)) // if crouching, hit the brakes
+                                    thinkAirBrakes(pSprite->index);
                                 aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             }
                             break;
                         default:
-                            thinkAirBrakes(pSprite->index);
+                            if (IsPlayerSprite(pTarget) && (gPlayer[pTarget->type-kDudePlayer1].at2f == 2)) // if crouching, hit the brakes
+                                thinkAirBrakes(pSprite->index);
                             aiNewState(pSprite, pXSprite, &gargoyleFSlash);
                             break;
                         }
