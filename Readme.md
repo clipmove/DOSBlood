@@ -56,17 +56,17 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix inventory items resetting between levels
 * Fix shotgun akimbo animation glitch on loop
 * Fixed underwater issue with hitscan weapons
-* Restore unused gargoyle stone animation morph
 * Allow cheat phrases to be said in multiplayer
 * Reset view bob/view sway inertia on level start
-* Fix weapon state not resetting on weapon change
 * Fix fall scream triggering after player has died
+* Restore unused gargoyle stone animation morph
+* Fix weapon state not resetting on weapon change
 * Fix choking hands to run at a constant framerate
 * Fix secrets for maps with glitched secret triggers
 * Fix projectiles glitching when autoaim is disabled
 * Stone gargoyles in idle state is ignored by autoaim
-* Fix pod enemy projectiles using walls as enemy index
 * Cheogh blasting/attacking can now hit prone players
+* Fix pod enemy projectiles using walls as enemy index
 * Phantasm spirit attack/slashing can now hit prone players
 * Fix spray can glitching when alt-firing and entering water
 * Fix demos desyncing if launched with -noaim argument
