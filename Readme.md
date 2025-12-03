@@ -60,11 +60,11 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Reset view bob/view sway inertia on level start
 * Fix fall scream triggering after player has died
 * Restore unused gargoyle stone animation morph
+* Gargoyles in statue state is ignored by autoaim
 * Fix weapon state not resetting on weapon change
 * Fix choking hands to run at a constant framerate
 * Fix secrets for maps with glitched secret triggers
 * Fix projectiles glitching when autoaim is disabled
-* Stone gargoyles in idle state is ignored by autoaim
 * Cheogh blasting/attacking can now hit prone players
 * Fix pod enemy projectiles using walls as enemy index
 * Phantasm spirit attack/slashing can now hit prone players
@@ -78,6 +78,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix demo recording desyncing when pausing/opening menu
 * Fix bloated butcher knife attack not hitting player while crouched
 * Don't reset inertia when traveling through room-over-room sectors
+* Gargoyles in statue state is not added to total enemies until activated
 * Force TNT/spray cans to explode if directly landed on enemy's head
 * Limit impulse damage when shooting enemies downward at point-blank
 * Correct ear velocity when transitioning through room-over-room sectors

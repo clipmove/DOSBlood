@@ -43,6 +43,7 @@
 #include "debug4g.h"
 #include "dude.h"
 #include "error.h"
+#include "endgame.h"
 #include "eventq.h"
 #include "gameutil.h"
 #include "globals.h"
@@ -665,6 +666,8 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
         break;
     }
     case 208:
+        if (!VanillaMode()) // stone activated, add to total count
+            gKillMgr.AddCount(1);
         if (Chance(0x4000))
             aiPlay3DSound(pSprite, 1401, AI_SFX_PRIORITY_1);
         else
@@ -672,6 +675,8 @@ void aiActivateDude(SPRITE *pSprite, XSPRITE *pXSprite)
         aiNewState(pSprite, pXSprite, !VanillaMode() ? &statueFBreakSEQ : &gargoyleFMorph);
         break;
     case 209:
+        if (!VanillaMode()) // stone activated, add to total count
+            gKillMgr.AddCount(1);
         if (Chance(0x4000))
             aiPlay3DSound(pSprite, 1401, AI_SFX_PRIORITY_1);
         else
@@ -1663,10 +1668,10 @@ void aiInitSprite(SPRITE *pSprite)
     case 208:
     case 209:
         if (!VanillaMode())
-        {
             pSprite->flags = 7; // disable autoaim
-            break;
-        }
+        else
+            pSprite->flags = 15; // default
+        break;
     default:
         pSprite->flags = 15;
         break;

@@ -129,6 +129,8 @@ BOOL CKillMgr::AllowedType(SPRITE *pSprite)
         return 0;
     if (pSprite->statnum != 6)
         return 0;
+    if (pSprite->type == 208 || pSprite->type == 209) // if statue gargoyle, do not count as enemy until they activate
+        return VanillaMode();
     return pSprite->type != 219 && pSprite->type != 220 && pSprite->type != 245 && pSprite->type != 239;
 }
 
