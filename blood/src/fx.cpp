@@ -24,11 +24,13 @@
 #include "debug4g.h"
 #include "eventq.h"
 #include "fx.h"
+#include "globals.h"
 #include "levels.h"
 #include "misc.h"
 #include "seq.h"
 #include "trig.h"
 #include "view.h"
+#include "warp.h"
 
 CFX gFX;
 
@@ -315,9 +317,22 @@ void func_74818(SPRITE *pSprite, int z, int a3, int a4)
 {
     int x = pSprite->x+mulscale28(pSprite->clipdist-4, Cos(pSprite->ang));
     int y = pSprite->y+mulscale28(pSprite->clipdist-4, Sin(pSprite->ang));
+    int nSector = pSprite->sectnum;
     x += mulscale30(a3, Cos(pSprite->ang+512));
     y += mulscale30(a3, Sin(pSprite->ang+512));
-    SPRITE *pShell = gFX.fxSpawn((FX_ID)(FX_37+Random(3)), pSprite->sectnum, x, y, z, 0);
+    if (!VanillaMode()) // fix weird edge case when spawning casings over ror
+    {
+        long cX = x, cY = y, cZ = z;
+        int nSector2 = nSector;
+        if (CheckLink(&cX, &cY, &cZ, &nSector2)) // if casing spawn position is overlapping into ror sector, move origin to ror sector
+        {
+            x = (int)cX;
+            y = (int)cY;
+            z = (int)cZ;
+            nSector = nSector2;
+        }
+    }
+    SPRITE *pShell = gFX.fxSpawn((FX_ID)(FX_37+Random(3)), nSector, x, y, z, 0);
     if (pShell)
     {
         int t2 = Random2(((a4/4)<<18)/120);
@@ -332,9 +347,22 @@ void func_74A18(SPRITE *pSprite, int z, int a3, int a4)
 {
     int x = pSprite->x+mulscale28(pSprite->clipdist-4, Cos(pSprite->ang));
     int y = pSprite->y+mulscale28(pSprite->clipdist-4, Sin(pSprite->ang));
+    int nSector = pSprite->sectnum;
     x += mulscale30(a3, Cos(pSprite->ang+512));
     y += mulscale30(a3, Sin(pSprite->ang+512));
-    SPRITE *pShell = gFX.fxSpawn((FX_ID)(FX_40+Random(3)), pSprite->sectnum, x, y, z, 0);
+    if (!VanillaMode()) // fix weird edge case when spawning casings over ror
+    {
+        long cX = x, cY = y, cZ = z;
+        int nSector2 = nSector;
+        if (CheckLink(&cX, &cY, &cZ, &nSector2)) // if casing spawn position is overlapping into ror sector, move origin to ror sector
+        {
+            x = (int)cX;
+            y = (int)cY;
+            z = (int)cZ;
+            nSector = nSector2;
+        }
+    }
+    SPRITE *pShell = gFX.fxSpawn((FX_ID)(FX_40+Random(3)), nSector, x, y, z, 0);
     if (pShell)
     {
         int t2 = Random2(((a4/4)<<18)/120);
