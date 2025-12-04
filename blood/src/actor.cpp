@@ -4408,6 +4408,10 @@ static void MoveDude(SPRITE *pSprite)
     if (nLink)
     {
         GetZRange(pSprite, &var54, &var50, &var4c, &var48, clipdist, 0x13001);
+        if (!VanillaMode() && !IsUnderwaterSector(pSprite->sectnum)) // clear any bubble callbacks when transitioned out from an underwater sector
+        {
+            evKill(nSprite, 3, pPlayer ? CALLBACK_ID_10 : CALLBACK_ID_11);
+        }
         if (pPlayer)
         {
             if (VanillaMode())

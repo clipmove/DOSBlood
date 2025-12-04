@@ -75,6 +75,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Prevent whitespace only messages being sent in multiplayer
 * Fix reverb state not resetting on level change/loading game
 * Check if voxel exists before attempting to draw tile as voxel
+* Fix underwater bubble effect spawning in non-water sectors
 * Fix demo recording desyncing when pausing/opening menu
 * Fix bloated butcher knife attack not hitting player while crouched
 * Don't reset inertia when traveling through room-over-room sectors
