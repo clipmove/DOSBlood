@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <sys/stat.h>
+#include <time.h>
 #include "typedefs.h"
 #include "types.h"
 #include "build.h"
@@ -1474,7 +1476,15 @@ void CGameMenuItemZEditBitmap::Draw(void)
     int shade = 32;
     if (pMenu->IsFocusItem(this))
     {
+        struct stat st;
+        char sSaveName[16];
         shade = 32-(totalclock&63);
+        sprintf(sSaveName, "GAME%04d.SAV", at28&15);
+        if (stat(sSaveName, &st) == 0)
+        {
+            sprintf(buffer[0], "%s", ctime(&st.st_mtime));
+            gMenuTextMgr.DrawText(buffer[0], at8, 20, 43, 32, 0, TRUE);
+        }
         sprintf(buffer[0], "DIFFICULTY: %s", zDiffStrings[ClipRange(gSaveGameOptions[at28].nDifficulty, 0, 4)]);
         gMenuTextMgr.DrawText(buffer[0], at8, 20, 50, 32, 0, TRUE);
     }
