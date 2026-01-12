@@ -290,8 +290,17 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
     // calculate wind offsets
     if (nWindX || nWindY)
     {
-        nWindXOffset += mulscale16(nWindX, nDelta);
-        nWindYOffset += mulscale16(nWindY, nDelta);
+        const int nWindDeltaX = mulscale16(nWindX, nDelta);
+        const int nWindDeltaY = mulscale16(nWindY, nDelta);
+        nWindXOffset += nWindDeltaX;
+        nWindYOffset += nWindDeltaY;
+        const short nAntiWindX = nWindDeltaX>>2;
+        const short nAntiWindY = nWindDeltaY>>2;
+        for (int i = 0; i < nCount; i += 40) // add random variance by slowing the wind down for a few particles
+        {
+            nPos[i][1] += nAntiWindX;
+            nPos[i][0] += nAntiWindY;
+        }
     }
     nX += nWindXOffset;
     nY += nWindYOffset;
@@ -492,6 +501,7 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
         SetWeatherOverride(WEATHERTYPE_RAIN, WEATHERTYPE_DUST, 0, -16, 96);
         break;
     case 0xC3B72664: // e3m7
+    case 0xFA3CEC6B: // e4m5
         SetWeatherOverride(WEATHERTYPE_LAVA, WEATHERTYPE_LAVA, 0, 0, 6);
         break;
     default:
@@ -717,7 +727,7 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather, unsigned int uMapCRC)
             SetFade(32, 64);
             SetShape(1);
             SetStaticView(0);
-            nLimit = kMaxVectors-(kMaxVectors>>1);
+            nLimit = kMaxVectors>>1;
             break;
         default:
             SetFade(255, 255);
