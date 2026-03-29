@@ -150,7 +150,7 @@ void scaleAxis32792(int32 *);
 parm [ebx] \
 modify exact [eax ecx edx]
 
-void CONTROL_GetMouseDeltaNew(int32 *x, int32 *y)
+void CONTROL_GetMouseDeltaNew(int32 *x, int32 *y, char bUseOldScale)
 {
     int32 dx, dy;
     static int32 mouse_y_leftover = 0;
@@ -172,7 +172,10 @@ void CONTROL_GetMouseDeltaNew(int32 *x, int32 *y)
     if (dy != 0)
     {
         // scale up Y
-        dy = (dy<<4) + (dy<<5); // * 48
+        if (bUseOldScale)
+            dy = (dy<<5) + (dy<<6); // * 96
+        else
+            dy = (dy<<4) + (dy<<5); // * 48
 
         // multiply by CONTROL_MouseSensitivity
         dy *= CONTROL_MouseSensitivity;
@@ -218,12 +221,15 @@ extern "C" void CONTROL_GetMouseDelta(int32 *x, int32 *y) // this 'hack' ensures
     switch (gMouseCalculation)
     {
         case 0: // new (based off of sMouse)
-            CONTROL_GetMouseDeltaNew(x, y);
+            CONTROL_GetMouseDeltaNew(x, y, 0);
             break;
-        case 1: // build mouse fix (https://ctpax-cheater.losthost.org/htmldocs/trouble.htm#buildmfx)
+        case 1:
+            CONTROL_GetMouseDeltaNew(x, y, 1);
+            break;
+        case 2: // build mouse fix (https://ctpax-cheater.losthost.org/htmldocs/trouble.htm#buildmfx)
             CONTROL_GetMouseDeltaBuildMfx(x, y);
             break;
-        case 2: // original code (use original MACT386.LIB function)
+        case 3: // original code (use original MACT386.LIB function)
             CONTROL_GetMouseDeltaOrig(x, y);
             break;
         default:

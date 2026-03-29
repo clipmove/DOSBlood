@@ -171,7 +171,8 @@ char *zLoadSaveOnDeathStrings[] =
 
 char *zMouseCalculationStrings[] =
 {
-    "New",
+    "New (Native Scale)",
+    "New (Build Scale)",
     "buildmfx",
     "Original"
 };
@@ -281,7 +282,7 @@ CGameMenuItemZCycle cycleLoadSaveOnDeath("LOAD SAVE ON DEATH:", 1, 10, 180, 300,
 
 CGameMenuItemTitle itemControlsTitle("CONTROLS", 1, 160, 20, 2038);
 CGameMenuItemSlider sliderMouseSpeed("Mouse Sensitivity:", 1, 10, 50, 300, gMouseSensitivity, 0, 0x20000, 0x1000, SetMouseSensitivity);
-CGameMenuItemZCycle cycleMouseCalculation("Mouse Calculation:", 1, 10, 70, 300, 0, SetMouseCalculation, zMouseCalculationStrings, 3, 0);
+CGameMenuItemZCycle cycleMouseCalculation("Mouse Calculation:", 1, 10, 70, 300, 0, SetMouseCalculation, zMouseCalculationStrings, 4, 0);
 CGameMenuItemZBool boolMouseFlipped("Invert Mouse Aim:", 1, 10, 90, 300, gMouseAimingFlipped, SetMouseAimFlipped);
 CGameMenuItemSlider sliderTurnSpeed("Key Turn Speed:", 1, 10, 110, 300, gTurnSpeed, 64, 128, 4, SetTurnSpeed);
 CGameMenuItemZBool boolCouchAuto("Crouch Auto:", 1, 10, 130, 300, gCrouchAuto, SetCrouchAuto);
