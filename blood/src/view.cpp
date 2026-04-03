@@ -1257,26 +1257,27 @@ void viewDrawStats(int x, int y)
 {
     const int nFont = 3;
 
+    y += 20;
     int nHeight, nLevelTime = gFrameClock;
     viewGetFontInfo(nFont, NULL, NULL, &nHeight);
+    if (gGameOptions.nGameType <= GAMETYPE_1) // only show secrets counter for single-player/co-op mode
+    {
+        sprintf(buffer, "S:%d/%d", gSecretMgr.at4, VanillaMode() ? gSecretMgr.at0 : ClipLow(gSecretMgr.at4, gSecretMgr.at0)); // if we found more than there are, increase the total - some levels have a bugged counter
+        viewDrawText(3, buffer, x, y, 20, 0, 0, true);
+        y -= (nHeight + 1);
+    }
+    if ((gGameOptions.nMonsterSettings > 0) && (ClipLow(gKillMgr.at4, gKillMgr.at0) > 0))
+    {
+        sprintf(buffer, "K:%d/%d", gKillMgr.at4, ClipLow(gKillMgr.at4, gKillMgr.at0));
+        viewDrawText(3, buffer, x, y, 20, 0, 0, true);
+        y -= (nHeight + 1);
+    }
     sprintf(buffer, "T:%d:%02d.%02d",
         (nLevelTime/(120*60)),
         (nLevelTime/120)%60,
         ((nLevelTime%120)*33)/40
         );
     viewDrawText(3, buffer, x, y, 20, 0, 0, true);
-    if ((gGameOptions.nMonsterSettings > 0) && (ClipLow(gKillMgr.at4, gKillMgr.at0) > 0))
-    {
-        y += nHeight+1;
-        sprintf(buffer, "K:%d/%d", gKillMgr.at4, ClipLow(gKillMgr.at4, gKillMgr.at0));
-        viewDrawText(3, buffer, x, y, 20, 0, 0, true);
-    }
-    if (gGameOptions.nGameType <= GAMETYPE_1) // only show secrets counter for single-player/co-op mode
-    {
-        y += nHeight+1;
-        sprintf(buffer, "S:%d/%d", gSecretMgr.at4, VanillaMode() ? gSecretMgr.at0 : ClipLow(gSecretMgr.at4, gSecretMgr.at0)); // if we found more than there are, increase the total - some levels have a bugged counter
-        viewDrawText(3, buffer, x, y, 20, 0, 0, true);
-    }
 }
 
 #define nPowerUps 11
