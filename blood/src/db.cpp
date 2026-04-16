@@ -29,6 +29,7 @@
 #include "error.h"
 #include "globals.h"
 #include "iob.h"
+#include "levels.h"
 #include "misc.h"
 #include "resource.h"
 
@@ -662,6 +663,82 @@ void PropagateMarkerReferences(void)
         }
         DeleteSprite(nSprite);
     }
+}
+
+char dbIsBannedSpriteType(int nType)
+{
+    if (VanillaMode())
+        return 0;
+    const unsigned long nBannedType = (~(kNetGameFlagNoChaseView|kNetGameFlagNoTeleFrag|kNetGameFlagNoHolstering))&gGameOptions.uNetGameFlags;
+    if (nBannedType == 0) // no items banned, return
+        return 0;
+    switch (nType)
+    {
+    // weapons
+    case 43:
+    case 76:
+        return (nBannedType&kNetGameFlagNoFlare) != 0;
+    case 41:
+    case 67:
+    case 68:
+        return (nBannedType&kNetGameFlagNoShotgun) != 0;
+    case 42:
+    case 69:
+    case 72:
+        return (nBannedType&kNetGameFlagNoTommygun) != 0;
+    case 46:
+    case 79:
+        return (nBannedType&kNetGameFlagNoNapalm) != 0;
+    case 49:
+    case 62:
+    case 63:
+        return (nBannedType&kNetGameFlagNoTNT) != 0;
+    case 48:
+    case 60:
+        return (nBannedType&kNetGameFlagNoSprayCan) != 0;
+    case 45:
+    case 73:
+        return (nBannedType&kNetGameFlagNoTesla) != 0;
+    case 50:
+    case 66:
+        return (nBannedType&kNetGameFlagNoLifeLeech) != 0;
+    case 44:
+    case 70:
+        return (nBannedType&kNetGameFlagNoVoodoo) != 0;
+    case 64:
+        return (nBannedType&kNetGameFlagNoProxy) != 0;
+    case 65:
+        return (nBannedType&kNetGameFlagNoRemote) != 0;
+
+    // items
+    case 107:
+        return (nBannedType&kNetGameFlagNoMedkit) != 0;
+    case 108:
+    case 109:
+    case 111:
+        return (nBannedType&kNetGameFlagNoLifeEssence) != 0;
+    case 110:
+        return (nBannedType&kNetGameFlagNoLifeseed) != 0;
+    case 144:
+        return (nBannedType&kNetGameFlagNoSuperArmor) != 0;
+    case 121:
+        return (nBannedType&kNetGameFlagNoCrystalBall) != 0;
+
+    // powerups
+    case 115:
+        return (nBannedType&kNetGameFlagNoJumpboots) != 0;
+    case 113:
+        return (nBannedType&kNetGameFlagNoCloak) != 0;
+    case 114:
+        return (nBannedType&kNetGameFlagNoDeathmask) != 0;
+    case 117:
+        return (nBannedType&kNetGameFlagNoAkimbo) != 0;
+    case 124:
+        return (nBannedType&kNetGameFlagNoReflect) != 0;
+    default:
+        break;
+    }
+    return 0;
 }
 
 BOOL char_1A76C6, char_1A76C7, char_1A76C8;

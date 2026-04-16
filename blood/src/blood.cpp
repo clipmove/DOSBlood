@@ -530,6 +530,11 @@ void StartLevel(GAMEOPTIONS *gameOptions)
     for (i = 0; i < kMaxSprites; i++)
     {
         SPRITE *pSprite = &sprite[i];
+        if (dbIsBannedSpriteType(pSprite->type)) // if sprite is banned type, remove sprite
+        {
+            DeleteSprite(i);
+            continue;
+        }
         if (pSprite->statnum < kMaxStatus && pSprite->extra > 0)
         {
             XSPRITE *pXSprite = &xsprite[pSprite->extra];

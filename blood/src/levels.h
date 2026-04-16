@@ -73,6 +73,33 @@ enum NETFLAGSETTINGS
     kNetGameFlagNoChaseView         = 1 << 0,
     kNetGameFlagNoTeleFrag          = 1 << 1,
     kNetGameFlagNoHolstering        = 1 << 2,
+
+    // weapons
+    kNetGameFlagNoFlare             =  1 << 11,
+    kNetGameFlagNoShotgun           =  1 << 12,
+    kNetGameFlagNoTommygun          =  1 << 13,
+    kNetGameFlagNoNapalm            =  1 << 14,
+    kNetGameFlagNoTNT               =  1 << 15,
+    kNetGameFlagNoSprayCan          =  1 << 16,
+    kNetGameFlagNoTesla             =  1 << 17,
+    kNetGameFlagNoLifeLeech         =  1 << 18,
+    kNetGameFlagNoVoodoo            =  1 << 19,
+    kNetGameFlagNoProxy             =  1 << 20,
+    kNetGameFlagNoRemote            =  1 << 21,
+
+    // items
+    kNetGameFlagNoMedkit            =  1 << 22,
+    kNetGameFlagNoLifeEssence       =  1 << 23,
+    kNetGameFlagNoLifeseed          =  1 << 24,
+    kNetGameFlagNoSuperArmor        =  1 << 25,
+    kNetGameFlagNoCrystalBall       =  1 << 26,
+
+    // powerups
+    kNetGameFlagNoJumpboots         =  1 << 27,
+    kNetGameFlagNoCloak             =  1 << 28,
+    kNetGameFlagNoDeathmask         =  1 << 29,
+    kNetGameFlagNoAkimbo            =  1 << 30,
+    kNetGameFlagNoReflect           =  1 << 31, // max u32 flag possible
 };
 
 #define kMaxFileKeyLen 16

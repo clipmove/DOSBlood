@@ -187,6 +187,7 @@ CGameMenu menuMainWithSave;
 CGameMenu menuNetMain;
 CGameMenu menuNetStart;
 CGameMenu menuNetOptions;
+CGameMenu menuNetBannedItems;
 CGameMenu menuEpisode;
 CGameMenu menuDifficulty;
 CGameMenu menuDifficultyCustom;
@@ -346,6 +347,30 @@ CGameMenuItemTitle itemNetOptionsTitle("EXTRA OPTIONS", 1, 160, 20, 2038);
 CGameMenuItemZBool itemNetOptionsNetcode("NETCODE SUPPORT", 1, 20, 60, 280, 0, SetNetcode, "BLOOD 1.21", "DOSBLOOD");
 CGameMenuItemZBool itemNetOptionsChaseView("CHASE VIEW", 1, 20, 100, 280, 1, NULL, NULL, NULL);
 CGameMenuItemZBool itemNetOptionsHolstering("HOLSTERING", 1, 20, 120, 280, 1, NULL, NULL, NULL);
+CGameMenuItemChain itemNetOptionsChainBannedItems("SET ITEMS", 1, 20, 160, 280, 1, &menuNetBannedItems);
+
+CGameMenuItemTitle itemNetBannedItemsTitle("SET ITEMS", 1, 160, 20, 2038);
+CGameMenuItemZBool itemNetBannedItemsFlare("FLARE PISTOL:", 3, 75, 32, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsShotgun("SAWED-OFF:", 3, 75, 40, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsTommyGun("TOMMY GUN:", 3, 75, 48, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsNapalm("NAPALM LAUNCHER:", 3, 75, 56, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsTNT("DYNAMITE:", 3, 75, 64, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsSpray("SPRAY CAN:", 3, 75, 72, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsTesla("TESLA CANNON:", 3, 75, 80, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsLifeLeech("LIFE LEECH:", 3, 75, 88, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsVoodoo("VOODOO DOLL:", 3, 75, 96, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsProxy("PROXIMITY TNT:", 3, 75, 104, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsRemote("REMOTE TNT:", 3, 75, 112, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsMedKit("DOCTOR'S BAG:", 3, 75, 120, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsLifeEssence("LIFE ESSENCE/MED POUCH:", 3, 75, 128, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsLifeSeed("LIFE SEED:", 3, 75, 136, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsSuperArmor("SUPER ARMOR:", 3, 75, 144, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsCrystalBall("CRYSTAL BALL:", 3, 75, 152, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsJumpBoots("JUMP BOOTS:", 3, 75, 160, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsCloak("INVISIBILITY CLOAK:", 3, 75, 168, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsDeathMask("INVULNERABILITY MASK:", 3, 75, 176, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsAkimbo("GUNS AKIMBO:", 3, 75, 184, 161, 0, NULL, "REMOVE", "KEEP");
+CGameMenuItemZBool itemNetBannedItemsReflect("REFLECTIVE SHOTS:", 3, 75, 192, 161, 0, NULL, "REMOVE", "KEEP");
 
 CGameMenuItemText itemLoadingText("LOADING...", 1, 160, 100, 1);
 
@@ -664,7 +689,33 @@ void SetupNetOptionsMenu(void)
     menuNetOptions.Add(&itemNetOptionsNetcode, 1);
     menuNetOptions.Add(&itemNetOptionsChaseView, 0);
     menuNetOptions.Add(&itemNetOptionsHolstering, 0);
+    menuNetOptions.Add(&itemNetOptionsChainBannedItems, 0);
     menuNetOptions.Add(&itemBloodQAV, 0);
+
+    menuNetBannedItems.Add(&itemNetBannedItemsTitle, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsFlare, true);
+    menuNetBannedItems.Add(&itemNetBannedItemsShotgun, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsTommyGun, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsNapalm, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsTNT, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsSpray, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsTesla, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsLifeLeech, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsVoodoo, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsProxy, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsRemote, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsMedKit, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsLifeEssence, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsLifeSeed, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsSuperArmor, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsCrystalBall, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsJumpBoots, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsCloak, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsDeathMask, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsAkimbo, false);
+    menuNetBannedItems.Add(&itemNetBannedItemsReflect, false);
+    menuNetBannedItems.Add(&itemBloodQAV, false);
+
     SetNetcode(NULL);
 }
 
@@ -1284,6 +1335,54 @@ void StartNetGame(CGameMenuItemChain *pItem)
             gPacketStartGame.uGameFlags |= kNetGameFlagNoChaseView;
         if (!itemNetOptionsHolstering.at20)
             gPacketStartGame.uGameFlags |= kNetGameFlagNoHolstering;
+
+        // weapons
+        if (itemNetBannedItemsFlare.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoFlare;
+        if (itemNetBannedItemsShotgun.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoShotgun;
+        if (itemNetBannedItemsTommyGun.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoTommygun;
+        if (itemNetBannedItemsNapalm.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoNapalm;
+        if (itemNetBannedItemsTNT.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoTNT;
+        if (itemNetBannedItemsSpray.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoSprayCan;
+        if (itemNetBannedItemsTesla.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoTesla;
+        if (itemNetBannedItemsLifeLeech.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoLifeLeech;
+        if (itemNetBannedItemsVoodoo.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoVoodoo;
+        if (itemNetBannedItemsProxy.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoProxy;
+        if (itemNetBannedItemsRemote.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoRemote;
+
+        // items
+        if (itemNetBannedItemsMedKit.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoMedkit;
+        if (itemNetBannedItemsLifeEssence.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoLifeEssence;
+        if (itemNetBannedItemsLifeSeed.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoLifeseed;
+        if (itemNetBannedItemsSuperArmor.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoSuperArmor;
+        if (itemNetBannedItemsCrystalBall.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoCrystalBall;
+
+        // powerups
+        if (itemNetBannedItemsJumpBoots.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoJumpboots;
+        if (itemNetBannedItemsCloak.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoCloak;
+        if (itemNetBannedItemsDeathMask.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoDeathmask;
+        if (itemNetBannedItemsAkimbo.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoAkimbo;
+        if (itemNetBannedItemsReflect.at20)
+            gPacketStartGame.uGameFlags |= kNetGameFlagNoReflect;
     }
     gPacketStartGame.userMapName[0] = 0;
     strncpy(gPacketStartGame.userMapName, itemNetStart9.getId(), 13);
@@ -1313,6 +1412,7 @@ void SetNetcode(CGameMenuItemZBool *pItem)
     {
         itemNetOptionsChaseView.Clear1();
         itemNetOptionsHolstering.Clear1();
+        itemNetOptionsChainBannedItems.Clear1();
         itemNetOptionsChaseView.at20 = TRUE;
         itemNetOptionsHolstering.at20 = TRUE;
     }
@@ -1320,6 +1420,7 @@ void SetNetcode(CGameMenuItemZBool *pItem)
     {
         itemNetOptionsChaseView.Set1();
         itemNetOptionsHolstering.Set1();
+        itemNetOptionsChainBannedItems.Set1();
         itemNetOptionsChaseView.at20 = FALSE;
         itemNetOptionsHolstering.at20 = FALSE;
     }

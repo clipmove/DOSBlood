@@ -23,8 +23,9 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * New 'KRAVITZ' cheat code for fly mode
 * Improved aim vector response by 33ms
 * Restored unused weather effect system
-* Show modified date for load/save game menu
+* Add item removal options for multiplayer
 * Increased max sector interpolations by 512
+* Show modified date for load/save game menu
 * Vanilla mode option to restore original enemy bugs
 * Supports multiplayer with Blood version 1.21 clients
 * NBlood-style power-ups and level stats HUD display

@@ -487,7 +487,7 @@ void CGameMenuItemZBool::Draw(void)
     int shade = 32;
     if (pMenu->IsFocusItem(this))
         shade = 32-(totalclock&63);
-    else if (!CanFocus()) // gray out disabled save slots
+    else if (!CanFocus()) // gray out disabled item
     {
         shade = 48;
     }
@@ -549,6 +549,10 @@ void CGameMenuItemChain::Draw(void)
     int shade = 32;
     if (pMenu->IsFocusItem(this))
         shade = 32-(totalclock&63);
+    else if (!CanFocus()) // gray out disabled item
+    {
+        shade = 48;
+    }
     int width2;
     int width1;
     int x = atc;
@@ -1488,7 +1492,7 @@ void CGameMenuItemZEditBitmap::Draw(void)
         sprintf(buffer[0], "DIFFICULTY: %s", zDiffStrings[ClipRange(gSaveGameOptions[at28].nDifficulty, 0, 4)]);
         gMenuTextMgr.DrawText(buffer[0], at8, 20, 50, 32, 0, TRUE);
     }
-    else if (!CanFocus()) // gray out disabled save slots
+    else if (!CanFocus()) // gray out disabled item
     {
         shade = 48;
     }

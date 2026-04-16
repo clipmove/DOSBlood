@@ -305,6 +305,7 @@ void dbDeleteXSprite(int nXSprite);
 int ChangeSpriteSect(int nSprite, int nSector);
 int ChangeSpriteStat(int nSprite, int nStatus);
 ushort dbInsertXSprite(int nSprite);
+char dbIsBannedSpriteType(int nType);
 
 ulong dbReadMapCRC(char *pPath);
 

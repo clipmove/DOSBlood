@@ -2609,6 +2609,8 @@ SPRITE *actSpawnFloor(SPRITE *pSprite)
 
 static SPRITE *actDropAmmo(SPRITE *pSprite, int nType)
 {
+    if (dbIsBannedSpriteType(nType))
+        return NULL;
     SPRITE *pSprite2 = NULL;
     if (pSprite && pSprite->statnum < kMaxStatus && nType >= 60 && nType < 81)
     {
@@ -2628,6 +2630,8 @@ static SPRITE *actDropAmmo(SPRITE *pSprite, int nType)
 
 static SPRITE *actDropWeapon(SPRITE *pSprite, int nType)
 {
+    if (dbIsBannedSpriteType(nType))
+        return NULL;
     SPRITE *pSprite2 = NULL;
     if (pSprite && pSprite->statnum < kMaxStatus && nType >= 40 && nType < 51)
     {
@@ -2647,6 +2651,8 @@ static SPRITE *actDropWeapon(SPRITE *pSprite, int nType)
 
 static SPRITE *actDropItem(SPRITE *pSprite, int nType)
 {
+    if (dbIsBannedSpriteType(nType))
+        return NULL;
     SPRITE *pSprite2 = NULL;
     if (pSprite && pSprite->statnum < kMaxStatus && nType >= 100 && nType < 149)
     {
