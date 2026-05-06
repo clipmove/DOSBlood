@@ -476,7 +476,12 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
     case 0xFA1A3218: // e4m1
     case 0x2D6A6F3D: // e4m3
     case 0x98FDBE0E: // e6m4
+    case 0xD36FCE2C: // dwe2m5
+    case 0xEAD60AD8: // dwe2m7
         SetWeatherOverride(WEATHERTYPE_RAINHARD, WEATHERTYPE_DUST, 32, 0, 96);
+        break;
+    case 0xDD0134A5: // dwe2m1
+        SetWeatherOverride(WEATHERTYPE_RAINHARD, WEATHERTYPE_DUST, 0, -96, 96);
         break;
     case 0x76937196: // e1m1
     case 0xBA5DB227: // e1m2
@@ -485,6 +490,9 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
     case 0xE6B88CA6: // e2m3
     case 0x6AF2A719: // e2m4
     case 0xA0639DE5: // e4m6
+    case 0x08E13935: // dwe2m8
+    case 0x2DDDF1C7: // dwe3m10
+    case 0x0FCD5D63: // dwe4m10
         SetWeatherOverride(WEATHERTYPE_SNOW, WEATHERTYPE_DUST, 0, 4, 24);
         break;
     case 0xD64D2666: // e2m5
@@ -498,11 +506,32 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
         SetWeatherOverride(WEATHERTYPE_DUST, WEATHERTYPE_DUST, 0, 1, 1);
         break;
     case 0xCB7A97D6: // e6m2
+    case 0xA1CCA0BB: // dwe2m12
+    case 0xB62F2696: // dwe3m3
+    case 0xF87D299D: // dwe3m4
+    case 0x39B69AE0: // dwe3m6
+    case 0xF108B090: // dwe3m8
         SetWeatherOverride(WEATHERTYPE_RAIN, WEATHERTYPE_DUST, 0, -16, 96);
         break;
     case 0xC3B72664: // e3m7
     case 0xFA3CEC6B: // e4m5
+    case 0x9C722FD2: // dwe2m9
         SetWeatherOverride(WEATHERTYPE_LAVA, WEATHERTYPE_LAVA, 0, 0, 6);
+        break;
+    case 0x68339F0E: // dwe3m1
+    case 0x13E99900: // dwe3m5
+    case 0x59A0D871: // dwe3m7
+        SetWeatherOverride(WEATHERTYPE_NONE, WEATHERTYPE_DUST, 0, -16, 96);
+        break;
+    case 0xC1F2EA93: // dwe3m9
+        SetWeatherOverride(WEATHERTYPE_NONE, WEATHERTYPE_NONE, 0, -16, 96);
+        break;
+    case 0x20B49994: // dwe4m1
+    case 0x0304987F: // dwe4m3
+    case 0x93B50A9F: // dwe4m4
+    case 0xFA05C913: // dwe4m7
+    case 0x58778C35: // dwe4m9
+        SetWeatherOverride(WEATHERTYPE_RAIN, WEATHERTYPE_NONE, 0, -16, 96);
         break;
     default:
         if (nWeatherOverride)
