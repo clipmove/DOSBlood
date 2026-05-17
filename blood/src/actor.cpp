@@ -2491,7 +2491,7 @@ void func_2A620(int nSprite, int x, int y, int z, int nSector, int nDist, int a7
     nOwner = actSpriteIdToOwnerId(nSprite);
     gAffectedSectors[0] = -1;
     gAffectedXWalls[0] = -1;
-    const BOOL bAccurateCheck = (nOwner >= 0) && !VanillaMode() && IsDudeSprite(&sprite[nOwner]); // use new sector checking logic
+    const BOOL bAccurateCheck = (nOwner >= 0) && (nOwner < kMaxSprites) && !VanillaMode() && IsDudeSprite(&sprite[nOwner]); // use new sector checking logic
     GetClosestSpriteSectors(nSector, x, y, nDist, gAffectedSectors, va0, gAffectedXWalls, bAccurateCheck);
     nDist <<= 4;
     if (a10 & 2)
@@ -5299,7 +5299,7 @@ void actProcessSprites(void)
         // GetClosestSpriteSectors() has issues checking some sectors due to optimizations
         // the new flag bAccurateCheck for GetClosestSpriteSectors() does rectify these issues, but this may cause unintended side effects for level scripted explosions
         // so only allow this new checking method for dude spawned explosions
-        const BOOL bAccurateCheck = (nOwner >= 0) && !VanillaMode() && IsDudeSprite(&sprite[nOwner]); // use new sector checking logic
+        const BOOL bAccurateCheck = (nOwner >= 0) && (nOwner < kMaxSprites) && !VanillaMode() && IsDudeSprite(&sprite[nOwner]); // use new sector checking logic
         GetClosestSpriteSectors(nSector, x, y, pExplodeInfo->at3, gAffectedSectors, v24c, gAffectedXWalls, bAccurateCheck);
         for (int i = 0; i < kMaxXWalls; i++)
         {

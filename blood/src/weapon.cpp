@@ -2558,7 +2558,7 @@ void func_51340(SPRITE *pMissile, int a2)
     int nOwner = actSpriteOwnerToSpriteId(pMissile);
     gAffectedSectors[0] = -1;
     gAffectedXWalls[0] = -1;
-    const BOOL bAccurateCheck = (nOwner >= 0) && !VanillaMode() && IsDudeSprite(&sprite[nOwner]); // use new sector checking logic
+    const BOOL bAccurateCheck = (nOwner >= 0) && (nOwner < kMaxSprites) && !VanillaMode() && IsDudeSprite(&sprite[nOwner]); // use new sector checking logic
     GetClosestSpriteSectors(nSector, x, y, nDist, gAffectedSectors, va4, gAffectedXWalls, bAccurateCheck);
     BOOL v4 = 1;
     int v24 = -1;
