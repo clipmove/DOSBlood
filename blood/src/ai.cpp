@@ -117,6 +117,18 @@ BOOL aiDudeImmune(SPRITE* pSprite, DAMAGE_TYPE nDmgType, int nMinScale)
     return 1;
 }
 
+inline BOOL aiCheckForFakeFloors(SPRITE *pSprite, long x, long y, long z, int nSector, long nBottom)
+{
+    long ceilZ, ceilHit, floorZ, floorHit;
+    const ushort bakCstat = pSprite->cstat;
+    pSprite->cstat &= ~257;
+    GetZRangeAtXYZ(x, y, z, nSector, &ceilZ, &ceilHit, &floorZ, &floorHit, pSprite->clipdist<<2, CLIPMASK0);
+    pSprite->cstat = bakCstat;
+   if ((floorHit & 0xe000) != 0xc000)
+        return false;
+    return (floorZ - nBottom <= 0x2000) && (sprite[floorHit&0x1fff].cstat & (0x1|0x20)) == (0x1|0x20);
+}
+
 BOOL CanMove(SPRITE *pSprite, int a2, int nAngle, int nRange)
 {
     int top, bottom;
@@ -220,10 +232,12 @@ BOOL CanMove(SPRITE *pSprite, int a2, int nAngle, int nRange)
     case 245:
         if (vdh)
             return 0;
-        if (vdl || vbl)
+        if (vdl || vbl || floorZ - bottom > 0x2000)
+        {
+            if (!VanillaMode() && aiCheckForFakeFloors(pSprite, x, y, z, nSector, bottom))
+                return 1;
             return 0;
-        if (floorZ - bottom > 0x2000)
-            return 0;
+        }
         break;
     case 203:
     case 210:
@@ -231,7 +245,11 @@ BOOL CanMove(SPRITE *pSprite, int a2, int nAngle, int nRange)
         if (vdh)
             return 0;
         if (!xsector[nXSector].at13_4 && !xsector[nXSector].at13_5 && floorZ - bottom > 0x2000)
+        {
+            if (!VanillaMode() && aiCheckForFakeFloors(pSprite, x, y, z, nSector, bottom))
+                return 1;
             return 0;
+        }
         break;
     }
     return 1;

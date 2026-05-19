@@ -69,6 +69,7 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Fix projectiles glitching when autoaim is disabled
 * Cheogh blasting/attacking can now hit prone players
 * Fix pod enemy projectiles using walls as enemy index
+* Fix enemies unable to path over sprite-floors (bridges)
 * Phantasm spirit attack/slashing can now hit prone players
 * Fix spray can glitching when alt-firing and entering water
 * Fix demos desyncing if launched with -noaim argument
