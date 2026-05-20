@@ -1762,6 +1762,10 @@ void CGameMenuItemZCycle::Draw(void)
     int shade = 32;
     if (pMenu->IsFocusItem(this))
         shade = 32-(totalclock&63);
+    else if (!CanFocus()) // gray out disabled item
+    {
+        shade = 48;
+    }
     int x = atc;
     int y = at10;
     if (at4)

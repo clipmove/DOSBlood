@@ -48,7 +48,7 @@ struct POSTURE {
 };
 
 struct PROFILE {
-    BOOL at0;
+    char at0;
     int skill;
     char name[12];
 };
