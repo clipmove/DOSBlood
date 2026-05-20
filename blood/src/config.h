@@ -68,6 +68,7 @@ extern int32 gLevelStats;
 extern int32 gWeaponSmoothing;
 extern int32 gLoadSaveOnDeath;
 extern int32 gSkill;
+extern int32 gAutoAim;
 extern BOOL gViewInterpolate;
 extern BOOL gShowWeapon;
 extern BOOL gViewHBobbing;
@@ -78,7 +79,6 @@ extern BOOL gOverlayMap;
 extern char gzAdultPassword[12];
 extern BOOL gFullMap;
 extern BOOL gInfiniteAmmo;
-extern BOOL gAutoAim;
 extern BOOL gWeatherEffect;
 extern BOOL gAutosaveOnLevelStart;
 

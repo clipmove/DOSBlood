@@ -337,7 +337,29 @@ static void UpdateAimVector(PLAYER * pPlayer)
     WEAPONTRACK *pWeaponTrack = &gWeaponTrack[pPlayer->atbd];
     int nTarget = -1;
     pPlayer->at1da = 0;
-    if (gProfile[pPlayer->at57].at0 || pPlayer->atbd == 10 || pPlayer->atbd == 9)
+    char bDoAutoAim = 0;
+    if (gProfile[pPlayer->at57].at0 == 1)
+    {
+        bDoAutoAim = 1;
+    }
+    else
+    {
+        switch (pPlayer->atbd)
+        {
+        case 1:
+            bDoAutoAim = !VanillaMode();
+            break;
+        case 3:
+        case 4:
+            bDoAutoAim = gProfile[pPlayer->at57].at0 == 2;
+            break;
+        case 9:
+        case 10:
+            bDoAutoAim = 1;
+            break;
+        }
+    }
+    if (bDoAutoAim)
     {
         int nClosest = 0x7fffffff;
         if (!VanillaMode()) // check for ror so autoaim can work peering above water

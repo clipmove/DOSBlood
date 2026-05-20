@@ -1412,10 +1412,10 @@ void main(void)
     if (MusicDevice != -1 && gUse8250 && numplayers > 1)
         Banner8250();
     ctrlClearAllInput();
-    if(bDisableAutoAim) // given -noaim argument, force off
-        gAutoAim = FALSE;
-    else if(numplayers > 1) // always force on for multiplayer
-        gAutoAim = TRUE;
+    if (bDisableAutoAim) // given -noaim argument, force off
+        gAutoAim = 0;
+    else if (numplayers > 1) // always force on for multiplayer
+        gAutoAim = 1;
     netBroadcastPlayerInfo(myconnectindex);
     netBroadcastVersion();
     tioPrint("Waiting for network players!");

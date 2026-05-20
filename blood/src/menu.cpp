@@ -54,7 +54,7 @@ void SetShowWeapons(CGameMenuItemZBool *);
 void SetShowPowerUps(CGameMenuItemZCycle *);
 void SetLevelStats(CGameMenuItemZCycle *);
 void SetCenterHorizon(CGameMenuItemZBool *);
-void SetAutoAim(CGameMenuItemZBool *);
+void SetAutoAim(CGameMenuItemZCycle *);
 void SetSlopeTilting(CGameMenuItemZBool *);
 void SetViewBobbing(CGameMenuItemZBool *);
 void SetViewSwaying(CGameMenuItemZBool *);
@@ -139,6 +139,13 @@ char *zDiffStrings[] =
     "LIGHTLY BROILED",
     "WELL DONE",
     "EXTRA CRISPY",
+};
+
+char *zAutoAimStrings[] =
+{
+    "OFF",
+    "ON",
+    "HITSCAN ONLY"
 };
 
 char *zShowPowerUpsStrings[] =
@@ -273,7 +280,7 @@ CGameMenuItemChain itemChainParentalLock("PARENTAL LOCK", 3, 0, 187, 320, 1, &me
 
 CGameMenuItemTitle itemOptionsExtraTitle("EXTRAS", 1, 160, 20, 2038);
 CGameMenuItemZBool boolCenterHorizon("CENTER HORIZON LINE:", 1, 10, 40, 300, gCenterHoriz, SetCenterHorizon);
-CGameMenuItemZBool boolAutoAim("AUTOAIM:", 1, 10, 60, 300, gAutoAim, SetAutoAim);
+CGameMenuItemZCycle cycleAutoAim("AUTOAIM:", 1, 10, 60, 300, 0, SetAutoAim, zAutoAimStrings, 3, 0);
 CGameMenuItemZCycle cycleLevelStats("LEVEL STATS:", 1, 10, 80, 300, 0, SetLevelStats, zLevelStatsStrings, 3, 0);
 CGameMenuItemZCycle cycleShowPowerUps("SHOW POWERUPS:", 1, 10, 100, 300, 0, SetShowPowerUps, zShowPowerUpsStrings, 3, 0);
 CGameMenuItemZCycle cycleWeaponSmoothing("WEAPON SMOOTHING:", 1, 10, 120, 300, 0, SetWeaponSmoothing, zWeaponSmoothingStrings, 3, 0);
@@ -495,7 +502,7 @@ void SetupOptionsMenu(void)
 void SetupOptionsExtraMenu(void)
 {
     boolCenterHorizon.at20 = gCenterHoriz;
-    boolAutoAim.at20 = gAutoAim;
+    cycleAutoAim.at24 = ClipRange(gAutoAim, 0, cycleAutoAim.at2c);
     cycleLevelStats.at24 = ClipRange(gLevelStats, 0, cycleLevelStats.at2c);
     cycleShowPowerUps.at24 = ClipRange(gShowPowerUps, 0, cycleShowPowerUps.at2c);
     cycleWeaponSmoothing.at24 = ClipRange(gWeaponSmoothing, 0, cycleWeaponSmoothing.at2c);
@@ -505,7 +512,7 @@ void SetupOptionsExtraMenu(void)
 
     menuOptionsExtra.Add(&itemOptionsExtraTitle, 0);
     menuOptionsExtra.Add(&boolCenterHorizon, 1);
-    menuOptionsExtra.Add(&boolAutoAim, 0);
+    menuOptionsExtra.Add(&cycleAutoAim, 0);
     menuOptionsExtra.Add(&cycleLevelStats, 0);
     menuOptionsExtra.Add(&cycleShowPowerUps, 0);
     menuOptionsExtra.Add(&cycleWeaponSmoothing, 0);
@@ -515,7 +522,7 @@ void SetupOptionsExtraMenu(void)
     menuOptionsExtra.Add(&itemBloodQAV, 0);
 
     if(numplayers > 1)
-        boolAutoAim.Clear1(); // don't allow autoaim slot to be selected for multiplayer
+        cycleAutoAim.Clear1(); // don't allow autoaim slot to be selected for multiplayer
 }
 
 void SetupDifficultyMenu(void)
@@ -969,9 +976,9 @@ void SetCenterHorizon(CGameMenuItemZBool *pItem)
     gCenterHoriz = pItem->at20;
 }
 
-void SetAutoAim(CGameMenuItemZBool *pItem)
+void SetAutoAim(CGameMenuItemZCycle *pItem)
 {
-    gAutoAim = pItem->at20;
+    gAutoAim = ClipRange(pItem->at24, 0, pItem->at2c);
     if (gGameOptions.nGameType > GAMETYPE_0 || numplayers > 1 || gDemo.RecordStatus() || gDemo.PlaybackStatus())
         return;
     for (int i = connecthead; i >= 0; i = connectpoint2[i])
