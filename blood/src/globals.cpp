@@ -77,6 +77,8 @@ void UnlockClockStrobe(void) {}
 
 char *GetVersionString(void)
 {
+    if (!VanillaMode())
+        return "1.22";
     if (!gVersionString)
     {
         gVersionString = gVersionStringBuf;
