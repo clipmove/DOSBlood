@@ -41,7 +41,9 @@ void SaveGame(CGameMenuItemZEditBitmap *, CGameMenuEvent *);
 
 void SaveGameProcess(CGameMenuItemChain *);
 void SetDifficultyAndStart(CGameMenuItemChain *);
+void SetCustomDifficultyMenu(CGameMenuItemChain *);
 void SetDifficultyCustomAndStart(CGameMenuItemChain *);
+void SetStartLevel(CGameMenuItemSlider *);
 void SetDetail(CGameMenuItemSlider *);
 void SetGamma(CGameMenuItemSlider *);
 void SetFov(CGameMenuItemSlider *);
@@ -188,6 +190,7 @@ char zUserMapName[13];
 char *zEpisodeNames[kMaxEpisodes];
 char *zLevelNames[kMaxEpisodes][16];
 char zFov[] = "FOV (XXX):";
+char zLevel[] = "LEVEL XX:";
 
 CGameMenu menuMain;
 CGameMenu menuMainWithSave;
@@ -250,13 +253,14 @@ CGameMenuItemChain itemDifficulty2("PINK ON THE INSIDE", 1, 0, 70, 320, 1, NULL,
 CGameMenuItemChain itemDifficulty3("LIGHTLY BROILED", 1, 0, 90, 320, 1, NULL, -1, SetDifficultyAndStart, 2);
 CGameMenuItemChain itemDifficulty4("WELL DONE", 1, 0, 110, 320, 1, NULL, -1, SetDifficultyAndStart, 3);
 CGameMenuItemChain itemDifficulty5("EXTRA CRISPY", 1, 0, 130, 320, 1, NULL, -1, SetDifficultyAndStart, 4);
-CGameMenuItemChain itemDifficulty6("CUSTOM", 1, 0, 150, 320, 1, &menuDifficultyCustom, -1, NULL, 0);
+CGameMenuItemChain itemDifficulty6("CUSTOM", 1, 0, 150, 320, 1, &menuDifficultyCustom, -1, SetCustomDifficultyMenu, 0);
 
 CGameMenuItemTitle itemDifficultyCustomTitle("CUSTOM", 1, 160, 20, 2038);
-CGameMenuItemSlider sliderDifficultyCustomQuantity("ENEMIES QUANTITY:", 3, 66, 50, 180, 2, 0, 4, 1, NULL, -1, -1);
-CGameMenuItemSlider sliderDifficultyCustomHealth("ENEMIES HEALTH:", 3, 66, 62, 180, 2, 0, 4, 1, NULL, -1, -1);
-CGameMenuItemSlider sliderDifficultyCustomDifficulty("ENEMIES DIFFICULTY:", 3, 66, 74, 180, 2, 0, 4, 1, NULL, -1, -1);
-CGameMenuItemSlider sliderDifficultyCustomDamage("PLAYER DAMAGE SCALE:", 3, 66, 86, 180, 2, 0, 4, 1, NULL, -1, -1);
+CGameMenuItemSlider sliderDifficultyCustomStartLevel(zLevel, 3, 66, 50, 180, 0, 0, 0, 1, SetStartLevel, -1, -1);
+CGameMenuItemSlider sliderDifficultyCustomQuantity("ENEMIES QUANTITY:", 3, 66, 62, 180, 2, 0, 4, 1, NULL, -1, -1);
+CGameMenuItemSlider sliderDifficultyCustomHealth("ENEMIES HEALTH:", 3, 66, 74, 180, 2, 0, 4, 1, NULL, -1, -1);
+CGameMenuItemSlider sliderDifficultyCustomDifficulty("ENEMIES DIFFICULTY:", 3, 66, 86, 180, 2, 0, 4, 1, NULL, -1, -1);
+CGameMenuItemSlider sliderDifficultyCustomDamage("PLAYER DAMAGE SCALE:", 3, 66, 98, 180, 2, 0, 4, 1, NULL, -1, -1);
 CGameMenuItemChain itemDifficultyCustomStart("START GAME", 1, 0, 150, 320, 1, NULL, -1, SetDifficultyCustomAndStart, 0);
 
 CGameMenuItemTitle itemOptionsTitle("OPTIONS", 1, 160, 20, 2038);
@@ -537,6 +541,7 @@ void SetupDifficultyMenu(void)
     menuDifficulty.Add(&itemBloodQAV, 0);
 
     menuDifficultyCustom.Add(&itemDifficultyCustomTitle, false);
+    menuDifficultyCustom.Add(&sliderDifficultyCustomStartLevel, false);
     menuDifficultyCustom.Add(&sliderDifficultyCustomQuantity, true);
     menuDifficultyCustom.Add(&sliderDifficultyCustomHealth, false);
     menuDifficultyCustom.Add(&sliderDifficultyCustomDifficulty, false);
@@ -1114,6 +1119,31 @@ void SetDifficultyAndStart(CGameMenuItemChain *pItem)
     gGameMenuMgr.Deactivate();
 }
 
+void SetCustomDifficultyMenu(CGameMenuItemChain *pItem)
+{
+    sliderDifficultyCustomStartLevel.at24 = 0;
+    dassert(gGameOptions.nEpisode >= 0 && gGameOptions.nEpisode < gEpisodeCount, __LINE__);
+    EPISODEINFO *pEpisodeInfo = &gEpisodeInfo[gGameOptions.nEpisode];
+    if (pEpisodeInfo->nLevels <= 1)
+    {
+        sliderDifficultyCustomStartLevel.Clear0();
+        sliderDifficultyCustomStartLevel.Clear1();
+        sliderDifficultyCustomStartLevel.at2c = 0;
+    }
+    else
+    {
+        sliderDifficultyCustomStartLevel.Set0();
+        sliderDifficultyCustomStartLevel.Set1();
+        sliderDifficultyCustomStartLevel.at2c = pEpisodeInfo->nLevels-1;
+    }
+    SetStartLevel(&sliderDifficultyCustomStartLevel);
+}
+
+void SetStartLevel(CGameMenuItemSlider *pItem)
+{
+    sprintf(zLevel, "LEVEL %d:", ClipRange(pItem->at24, 0, pItem->at2c)+1);
+}
+
 void SetDifficultyCustomAndStart(CGameMenuItemChain *pItem)
 {
     gGameOptions.nDifficulty = (DIFFICULTY)ClipRange(sliderDifficultyCustomDifficulty.at24, DIFFICULTY_0, DIFFICULTY_4);
@@ -1126,6 +1156,8 @@ void SetDifficultyCustomAndStart(CGameMenuItemChain *pItem)
         gDemo.StopPlayback();
     gStartNewGame = 1;
     gCheatMgr.func_5BCF4();
+    if (sliderDifficultyCustomStartLevel.at24 > 0)
+        gGameOptions.nLevel = sliderDifficultyCustomStartLevel.at24;
     gGameMenuMgr.Deactivate();
 }
 
