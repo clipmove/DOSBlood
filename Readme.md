@@ -73,13 +73,14 @@ Backup your retail copy of `BLOOD.EXE` then replace with DOSBlood's `BLOOD.EXE`
 * Phantasm spirit attack/slashing can now hit prone players
 * Fix spray can glitching when alt-firing and entering water
 * Fix demos desyncing if launched with -noaim argument
+* Fix demo recording desyncing when pausing/opening menu
 * Replaced sector based damage logic for player explosions
 * Fix shotgun getting stuck in single gun state while akimbo
+* Fix floor/ceiling view clamping for room-over-room sectors
 * Prevent whitespace only messages being sent in multiplayer
 * Fix reverb state not resetting on level change/loading game
 * Check if voxel exists before attempting to draw tile as voxel
 * Fix underwater bubble effect spawning in non-water sectors
-* Fix demo recording desyncing when pausing/opening menu
 * Fix bloated butcher knife attack not hitting player while crouched
 * Don't reset inertia when traveling through room-over-room sectors
 * Gargoyles in statue state is not added to total enemies until activated

@@ -3171,11 +3171,11 @@ void viewDrawScreen(void)
                 visibility = ClipLow(gVisibility-pOther->at362*32, 0);
                 int vc8, vc4;
                 getzsofslope(vcc, vd8, vd4, &vc8, &vc4);
-                if (vd0 >= vc4)
+                if (VanillaMode() ? (vd0 >= vc4) : (vd0 > vc4-(8<<4)) && (gUpperLink[vcc] == -1)) // clamp to floor
                 {
                     vd0 = vc4-(8<<4);
                 }
-                if (vd0 <= vc8)
+                if (VanillaMode() ? (vd0 <= vc8) : (vd0 < vc8+(8<<4)) && (gLowerLink[vcc] == -1)) // clamp to ceiling
                 {
                     vd0 = vc8+(8<<4);
                 }
@@ -3238,11 +3238,11 @@ void viewDrawScreen(void)
             cA = (cA + deliriumTurn) & 2047;
         int vfc, vf8;
         getzsofslope(nSectnum, cX, cY, &vfc, &vf8);
-        if (cZ >= vf8)
+        if (VanillaMode() ? (cZ >= vf8) : (cZ > vf8-(8<<4)) && (gUpperLink[nSectnum] == -1)) // clamp to floor
         {
             cZ = vf8-(8<<4);
         }
-        if (cZ <= vfc)
+        if (VanillaMode() ? (cZ <= vfc) : (cZ < vfc+(8<<4)) && (gLowerLink[nSectnum] == -1)) // clamp to ceiling
         {
             cZ = vfc+(8<<4);
         }
