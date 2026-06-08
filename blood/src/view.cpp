@@ -1620,13 +1620,10 @@ static void UpdateStatusBar(int arg)
             TileHGauge(2260, 124, 175, pPlayer->at1ba, 65536);
         }
     }
-    if (gViewSize <= 2)
-    {
-        if (gShowPowerUps)
-            viewDrawPowerUps(pPlayer);
-        if ((gLevelStats == 1) || (gLevelStats == 2 && gViewMode == 4))
-            viewDrawStats(2, gViewSize == 2 ? 115 : 140);
-    }
+    if (gShowPowerUps && gViewSize <= 2)
+        viewDrawPowerUps(pPlayer);
+    if ((gLevelStats == 1 && (gViewSize <= 2 || gViewMode == 4)) || (gLevelStats == 2 && gViewMode == 4))
+        viewDrawStats(2, gViewSize >= 2 ? 115 : (gViewSize == 0 ? 170 : 140));
     if (gGameOptions.nGameType >= GAMETYPE_1 || int_28E3D4 == 4)
     {
         if (gGameOptions.nGameType == GAMETYPE_3)
