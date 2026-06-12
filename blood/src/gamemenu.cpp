@@ -275,7 +275,7 @@ BOOL CGameMenu::Event(CGameMenuEvent &event)
     {
     case 0x8000:
     case 0x8001:
-        if (at8 >= 0)
+        if ((m_nFocus < 0 || !CanSelectItem(m_nFocus)) && at8 >= 0) // check if focus was set to menu item (and is still selectable)
             m_nFocus = at8;
         InitializeItems(event);
         return FALSE;
