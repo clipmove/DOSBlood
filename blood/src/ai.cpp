@@ -230,26 +230,24 @@ BOOL CanMove(SPRITE *pSprite, int a2, int nAngle, int nRange)
     case 211:
     case 220:
     case 245:
+        if ((floorZ - bottom > 0x2000) && !VanillaMode() && aiCheckForFakeFloors(pSprite, x, y, z, nSector, bottom)) // check for bridge
+            return 1;
         if (vdh)
             return 0;
-        if (vdl || vbl || floorZ - bottom > 0x2000)
-        {
-            if (!VanillaMode() && aiCheckForFakeFloors(pSprite, x, y, z, nSector, bottom))
-                return 1;
+        if (vdl || vbl)
             return 0;
-        }
+        if (floorZ - bottom > 0x2000)
+            return 0;
         break;
     case 203:
     case 210:
     default:
+        if ((floorZ - bottom > 0x2000) && !VanillaMode() && aiCheckForFakeFloors(pSprite, x, y, z, nSector, bottom)) // check for bridge
+            return 1;
         if (vdh)
             return 0;
         if (!xsector[nXSector].at13_4 && !xsector[nXSector].at13_5 && floorZ - bottom > 0x2000)
-        {
-            if (!VanillaMode() && aiCheckForFakeFloors(pSprite, x, y, z, nSector, bottom))
-                return 1;
             return 0;
-        }
         break;
     }
     return 1;
