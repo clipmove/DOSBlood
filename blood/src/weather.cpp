@@ -476,11 +476,17 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
     case 0xFA1A3218: // e4m1
     case 0x2D6A6F3D: // e4m3
     case 0x98FDBE0E: // e6m4
-    case 0xD36FCE2C: // dwe2m5
-    case 0xEAD60AD8: // dwe2m7
+    case 0xEEC4C591: // dwe2m5 (2.0.1)
+    case 0xD36FCE2C: // dwe2m5 (2.0)
+    case 0xF53BE871: // dwe2m7 (2.0.1)
+    case 0xEAD60AD8: // dwe2m7 (2.0)
         SetWeatherOverride(WEATHERTYPE_RAINHARD, WEATHERTYPE_DUST, 32, 0, 96);
         break;
-    case 0xDD0134A5: // dwe2m1
+    case 0xD2230111: // dwe2m1 (2.0.1)
+    case 0xDD0134A5: // dwe2m1 (2.0)
+    case 0x2C3E5A1D: // dwe2m6
+    case 0x81BC32DB: // dwe4m3 (2.0.1)
+    case 0x0304987F: // dwe4m3 (2.0)
         SetWeatherOverride(WEATHERTYPE_RAINHARD, WEATHERTYPE_DUST, 0, -96, 96);
         break;
     case 0x76937196: // e1m1
@@ -490,9 +496,14 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
     case 0xE6B88CA6: // e2m3
     case 0x6AF2A719: // e2m4
     case 0xA0639DE5: // e4m6
+    case 0xAD4AB780: // dwe1m3
     case 0x08E13935: // dwe2m8
-    case 0x2DDDF1C7: // dwe3m10
-    case 0x0FCD5D63: // dwe4m10
+    case 0x46FE750F: // dwe3m10 (2.0.1)
+    case 0x2DDDF1C7: // dwe3m10 (2.0)
+    case 0x3C75227E: // dwe3m12
+    case 0xB221E1D3: // dwe4m10 (2.0.1)
+    case 0x0FCD5D63: // dwe4m10 (2.0)
+    case 0x816F43E4: // dwe4m12
         SetWeatherOverride(WEATHERTYPE_SNOW, WEATHERTYPE_DUST, 0, 4, 24);
         break;
     case 0xD64D2666: // e2m5
@@ -506,12 +517,26 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
         SetWeatherOverride(WEATHERTYPE_DUST, WEATHERTYPE_DUST, 0, 1, 1);
         break;
     case 0xCB7A97D6: // e6m2
-    case 0xA1CCA0BB: // dwe2m12
-    case 0xB62F2696: // dwe3m3
-    case 0xF87D299D: // dwe3m4
-    case 0x39B69AE0: // dwe3m6
-    case 0xF108B090: // dwe3m8
-    case 0x7A914A32: // dwe4m6
+    case 0xED3F7DDD: // dwe1m1
+    case 0xE6300128: // dwe1m2
+    case 0x46CD9019: // dwe2m2
+    case 0x2C5C62ED: // dwe2m4
+    case 0xB1CECBA0: // dwe2m12 (2.0.1)
+    case 0xA1CCA0BB: // dwe2m12 (2.0)
+    case 0x4906E33F: // dwe3m2
+    case 0x576BD280: // dwe3m3 (2.0.1)
+    case 0xB62F2696: // dwe3m3 (2.0)
+    case 0x553C726B: // dwe3m4 (2.0.1)
+    case 0xF87D299D: // dwe3m4 (2.0)
+    case 0x13E99900: // dwe3m5
+    case 0x7DC075E8: // dwe3m6 (2.0.1)
+    case 0x39B69AE0: // dwe3m6 (2.0)
+    case 0x53A7E95F: // dwe3m8 (2.0.1)
+    case 0xF108B090: // dwe3m8 (2.0)
+    case 0x5E335E92: // dwe4m2
+    case 0x163E6891: // dwe4m6 (2.0.1)
+    case 0x7A914A32: // dwe4m6 (2.0)
+    case 0x06DC56EC: // dwe4m8
         SetWeatherOverride(WEATHERTYPE_RAIN, WEATHERTYPE_DUST, 0, -16, 96);
         break;
     case 0xC3B72664: // e3m7
@@ -519,19 +544,24 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
     case 0x9C722FD2: // dwe2m9
         SetWeatherOverride(WEATHERTYPE_LAVA, WEATHERTYPE_LAVA, 0, 0, 6);
         break;
-    case 0x68339F0E: // dwe3m1
-    case 0x13E99900: // dwe3m5
-    case 0x59A0D871: // dwe3m7
+    case 0x9AF82E43: // dwe3m1 (2.0.1)
+    case 0x68339F0E: // dwe3m1 (2.0)
+    case 0x23942FBB: // dwe3m7 (2.0.1)
+    case 0x59A0D871: // dwe3m7 (2.0)
         SetWeatherOverride(WEATHERTYPE_NONE, WEATHERTYPE_DUST, 0, -16, 96);
         break;
-    case 0xC1F2EA93: // dwe3m9
+    case 0x86E14FD4: // dwe3m9 (2.0.1)
+    case 0xC1F2EA93: // dwe3m9 (2.0)
         SetWeatherOverride(WEATHERTYPE_NONE, WEATHERTYPE_NONE, 0, -16, 96);
         break;
-    case 0x20B49994: // dwe4m1
-    case 0x0304987F: // dwe4m3
-    case 0x93B50A9F: // dwe4m4
-    case 0xFA05C913: // dwe4m7
-    case 0x58778C35: // dwe4m9
+    case 0xC583C1D3: // dwe4m1 (2.0.1)
+    case 0x20B49994: // dwe4m1 (2.0)
+    case 0xA3757FD5: // dwe4m4 (2.0.1)
+    case 0x93B50A9F: // dwe4m4 (2.0)
+    case 0x606DC94F: // dwe4m7 (2.0.1)
+    case 0xFA05C913: // dwe4m7 (2.0)
+    case 0xBAD00C54: // dwe4m9 (2.0.1)
+    case 0x58778C35: // dwe4m9 (2.0)
         SetWeatherOverride(WEATHERTYPE_RAIN, WEATHERTYPE_NONE, 0, -16, 96);
         break;
     default:
