@@ -437,7 +437,7 @@ void CWeather::Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHor
 {
     if (!Status() || !pBuffer)
         return;
-    nClock += mulscale16(1, nInterpolate<<2);
+    nClock += nInterpolate>>14; // get sub-tick clock
     int nDelta = (nClock - nLastFrameClock)<<16;
     nLastFrameClock = nClock;
     int nCountLimited = GetCount(); // get count with limit applied
@@ -705,7 +705,7 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather, unsigned int uMapCRC)
             SetTranslucency(0);
             SetGravity(32, 1);
             RandomWind(0, uMapCRC);
-            SetColor(32);
+            SetColor(31);
             SetColorShift(0);
             SetFade(16, 56);
             SetShape(0);
@@ -782,7 +782,7 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather, unsigned int uMapCRC)
             SetTranslucency(0);
             SetGravity(128, 1);
             RandomWind(1, uMapCRC);
-            SetColor(32);
+            SetColor(31);
             SetColorShift(0);
             SetFade(32, 64);
             SetShape(1);
