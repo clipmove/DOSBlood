@@ -3290,7 +3290,7 @@ void viewDrawScreen(void)
         if (gWeatherEffect)
         {
             gWeather.Process(cX, cY, cZ, cA, nSectnum, gView->at316 != 0, gFrame, gView->pSprite->clipdist<<2, gGameOptions.uMapCRC);
-            gWeather.Draw((char*)frameplace, cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitchI, gFrameClock, gInterpolate, gGameOptions.uMapCRC);
+            gWeather.Draw((char*)frameplace, cX, cY, cZ, cA, defaultHoriz + va0 + deliriumPitchI, nSectnum, gFrameClock, gInterpolate, gGameOptions.uMapCRC);
         }
         if (gViewPos == VIEWPOS_0)
         {
