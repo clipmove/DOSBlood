@@ -620,7 +620,7 @@ const byte bAngDiff[8][8] = {
     {0, 1, 1, 1, 1, 1, 0, 0},
 };
 
-void CWeather::Process(long nX, long nY, long nZ, int nAng, int nSector, char bSpinning, long nTime, int nClipDist, unsigned int uMapCRC)
+void CWeather::Process(long nX, long nY, long nZ, int nAng, short nSector, char bSpinning, long nTime, int nClipDist, unsigned int uMapCRC)
 {
     if (nWeatherCheat > WEATHERTYPE_NONE)
     {
