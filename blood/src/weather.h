@@ -85,7 +85,7 @@ public:
 
     WEATHERTYPE nWeatherCheat : 8;
 private:
-    void Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nHoriz, short nSector, int nCount, int nDelta);
+    void Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int* pYLookup, long nX, long nY, long nZ, int nAng, int nHoriz, short nSector, int nCount, int nDelta, char bCheckClip);
     void UpdateColorTable(void);
     union {
         byte b;

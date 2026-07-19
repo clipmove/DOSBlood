@@ -267,17 +267,20 @@ void CWeather::Restart(void)
     SetParticles(0);
 }
 
-void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int *pYLookup, long nX, long nY, long nZ, int nAng, int nHoriz, short nSector, int nCount, int nDelta)
+void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nOffsetY, int *pYLookup, long nX, long nY, long nZ, int nAng, int nHoriz, short nSector, int nCount, int nDelta, char bCheckClip)
 {
     dassert(pBuffer != NULL, __LINE__);
     dassert(pYLookup != NULL, __LINE__);
     dassert(nCount > 0 && nCount <= kMaxVectors, __LINE__);
+    dassert(nSector >= 0 && nSector < kMaxSectors, __LINE__);
 
     // move to first pixel within framebuffer
     pBuffer += pYLookup[nOffsetY] + nOffsetX;
 
     // adjust to starfield relative scale
     const long origX = nX, origY = nY, origZ = nZ;
+    const char bFloorBelow = (sector[nSector].floorpicnum < 4080) || (sector[nSector].floorpicnum > 4095); // check if we're in an open air room-over-room sector
+    const int nFloor = getflorzofslope(nSector, nX, nY);
     const char bStaticView = nDraw.bStaticView;
     if (!bStaticView)
     {
@@ -293,7 +296,7 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
     }
 
     // calculate wind offsets
-    if (nWindX || nWindY)
+    if ((nWindX || nWindY) && nDelta)
     {
         const int nWindDeltaX = mulscale16(nWindX, nDelta);
         const int nWindDeltaY = mulscale16(nWindY, nDelta);
@@ -318,7 +321,7 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
     const int bShape = nDraw.bShape;
     const int bTransparent = nDraw.nTransparent;
     const int nMaxPixelSize = (nScaleFactor>>16)+1; // use screen res as factor for pixel size
-    const int nGrav = mulscale16(nGravity, nDelta);
+    const int nGrav = nGravity && nDelta ? ClipLow(mulscale16(nGravity, nDelta), 1) : 0;
     const int nGravityFast = nDraw.bGravityVariance && (nGrav != 0) ? nGrav - (nGrav >> 2) : nGrav;
 
     for (int i = 0; i < nCount; i++)
@@ -348,14 +351,18 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
             unsigned int screenY = nHoriz + ((nScale * relZ)>>16);
             if (screenY < (unsigned)nHeight) // if within screen bounds
             {
-                if (!bStaticView) // check if particle is clipping wall
+                // check if particle is clipping wall/floor
+                if (!bStaticView)
                 {
                     if (TestBitString(clipbit, i<<1)) // this particle is flagged as clipped, ignore
                         continue;
-                    if ((!TestBitString(clipbit, (i<<1)+1) || !(nDepth&3)) && !cansee(origX, origY, origZ, nSector, (relX>>1)+origX, (relY>>1)+origY, (relZ<<3)+origZ, nSector)) // test if valid position
+                    if (!TestBitString(clipbit, (i<<1)+1) || (bCheckClip && !(nDepth&1))) // test if valid position
                     {
-                        SetBitString(clipbit, i<<1);
-                        continue;
+                        if ((bFloorBelow && ((relZ<<3)+origZ > nFloor)) || !cansee(origX, origY, origZ, nSector, (relX>>1)+origX, (relY>>1)+origY, (relZ<<3)+origZ, nSector))
+                        {
+                            SetBitString(clipbit, i<<1);
+                            continue;
+                        }
                     }
                     SetBitString(clipbit, (i<<1)+1);
                 }
@@ -446,13 +453,10 @@ void CWeather::Draw(char *pBuffer, int nWidth, int nHeight, int nOffsetX, int nO
                 }
                 }
             }
-            else if (!bStaticView) // only clear bit when gone off screen on Y axis
+            else if (!bStaticView && bCheckClip && !(nDepth&3) && TestBitString(clipbit, i<<1)) // only clear bit when gone off screen on Y axis
             {
-                if (!(nDepth&3)) // randomly clear the clipbit
-                {
-                    ClearBitString(clipbit, i<<1);
-                    ClearBitString(clipbit, (i<<1)+1);
-                }
+                ClearBitString(clipbit, i<<1);
+                ClearBitString(clipbit, (i<<1)+1);
             }
         }
     }
@@ -462,12 +466,15 @@ void CWeather::Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHor
 {
     if (!Status() || !pBuffer)
         return;
+
     nClock += nInterpolate>>14; // get sub-tick clock
-    int nDelta = (nClock - nLastFrameClock)<<16;
+    const int nClockDiff = nClock - nLastFrameClock;
+    int nDelta = nClockDiff<<16;
     nLastFrameClock = nClock;
     int nCountLimited = GetCount(); // get count with limit applied
     if (nCountLimited > 0)
-        Draw(pBuffer, nWidth, nHeight, nOffsetX, nOffsetY, YLookup, nX, nY, nZ, nAng, nHoriz, nSector, nCountLimited, nDelta);
+        Draw(pBuffer, nWidth, nHeight, nOffsetX, nOffsetY, YLookup, nX, nY, nZ, nAng, nHoriz, nSector, nCountLimited, nDelta, nClockDiff != 0);
+
     nDelta >>= 16;
     if (nWeatherForecast == nWeatherCur) // increase until reached weather limit
     {
