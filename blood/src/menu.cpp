@@ -1254,7 +1254,7 @@ void SaveGame(CGameMenuItemZEditBitmap *pItem, CGameMenuEvent *event)
                 gGameOptions.nSaveGameSlot = nSlot;
                 if (!gSaveGamePic[nSlot])
                     gSaveGamePic[nSlot] = (byte*)Resource::Alloc(0xfa00);
-                func_1EC78(2518, "Saving", "Saving Your Game", strRestoreGameStrings[nSlot]);
+                func_1EC78(gMenuPicnum, "Saving", "Saving Your Game", strRestoreGameStrings[nSlot]);
                 gSaveGameNum = nSlot;
                 LoadSave::SaveGame(strSaveGameName);
                 gQuickSaveSlot = nSlot;
@@ -1280,7 +1280,7 @@ void QuickSaveGame(void)
     strcpy(gGameOptions.szUserGameName, strRestoreGameStrings[gQuickSaveSlot]);
     sprintf(gGameOptions.szSaveGameName, strSaveGameName);
     gGameOptions.nSaveGameSlot = gQuickSaveSlot;
-    func_1EC78(2518, "Saving", "Saving Your Game", strRestoreGameStrings[gQuickSaveSlot]);
+    func_1EC78(gMenuPicnum, "Saving", "Saving Your Game", strRestoreGameStrings[gQuickSaveSlot]);
     LoadSave::SaveGame(strSaveGameName);
     gGameOptions.picEntry = gSavedOffset;
     memcpy(&gSaveGameOptions[gQuickSaveSlot], &gGameOptions, sizeof(GAMEOPTIONS));
@@ -1302,7 +1302,7 @@ void AutosaveGame(void)
     sprintf(gGameOptions.szUserGameName, "E%dM%d START", gGameOptions.nEpisode+1, gGameOptions.nLevel+1);
     sprintf(gGameOptions.szSaveGameName, strSaveGameName);
     gGameOptions.nSaveGameSlot = 10;
-    func_1EC78(2518, "Saving", "Saving Your Game", strRestoreGameStrings[10]);
+    func_1EC78(gMenuPicnum, "Saving", "Saving Your Game", strRestoreGameStrings[10]);
     LoadSave::SaveGame(strSaveGameName);
     gGameOptions.picEntry = gSavedOffset;
     memcpy(&gSaveGameOptions[10], &gGameOptions, sizeof(GAMEOPTIONS));
@@ -1322,7 +1322,7 @@ void LoadGame(CGameMenuItemZEditBitmap *pItem, CGameMenuEvent *event)
     BOOL t = gDemo.at1;
     if (t)
         gDemo.Close();
-    func_1EC78(2518, "Loading", "Loading Saved Game", strRestoreGameStrings[nSlot]);
+    func_1EC78(gMenuPicnum, "Loading", "Loading Saved Game", strRestoreGameStrings[nSlot]);
     LoadSave::LoadGame(strLoadGameName);
     gGameMenuMgr.Deactivate();
     gQuickLoadSlot = nSlot;
@@ -1340,7 +1340,7 @@ void QuickLoadGame(void)
     sprintf(strLoadGameName, "GAME00%02d.SAV", gQuickLoadSlot);
     if (access(strLoadGameName, 4) == -1)
         return;
-    func_1EC78(2518, "Loading", "Loading Saved Game", strRestoreGameStrings[gQuickLoadSlot]);
+    func_1EC78(gMenuPicnum, "Loading", "Loading Saved Game", strRestoreGameStrings[gQuickLoadSlot]);
     LoadSave::LoadGame(strLoadGameName);
     gGameMenuMgr.Deactivate();
     if (gQuickLoadSlot == 10) // if we quickloaded the autosave slot, set to true

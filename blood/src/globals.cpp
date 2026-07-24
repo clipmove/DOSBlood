@@ -39,6 +39,7 @@ INPUT_MODE gInputMode;
 BOOL gQuitGame;
 BOOL gQuitRequest;
 BOOL gPaused;
+unsigned int gMenuPicnum = 2518; // default menu picnum
 int gNetPlayers;
 BOOL gSaveGameActive;
 BOOL gSavingGame;

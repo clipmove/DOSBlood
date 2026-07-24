@@ -20,6 +20,7 @@
 #include <io.h>
 #include "typedefs.h"
 #include "build.h"
+#include "crc32.h"
 #include "debug4g.h"
 #include "qheap.h"
 #include "globals.h"
@@ -908,7 +909,7 @@ void ProcessFrame(void)
             }
             else if (gLoadSaveOnDeath && gAutosaveInCurLevel && !gDemo.RecordStatus() && !gDemo.PlaybackStatus()) // load autosave
             {
-                func_1EC78(2518, "Loading", "Loading Saved Game", strRestoreGameStrings[10]);
+                func_1EC78(gMenuPicnum, "Loading", "Loading Saved Game", strRestoreGameStrings[10]);
                 LoadSave::LoadGame("GAME0010.SAV");
                 gAutosaveInCurLevel = 1;
                 return;
@@ -1346,6 +1347,9 @@ void main(void)
         if (!tileInit(0,NULL))
             ThrowError(2248)("TILES###.ART files not found");
     }
+    byte *pSplashTile = tileLoadTile(2046);
+    if (pSplashTile && (CRC32((void*)pSplashTile, tilesizx[2046] * tilesizy[2046]) != 0x114C3B8E)) // if menu pic has been changed, use over plasma pak default
+        gMenuPicnum = 2046;
     powerupInit();
     tioPrint("Loading cosine table");
     trigInit(gSysRes);
@@ -1461,14 +1465,14 @@ _RESTARTNOLOGO:
     if (!bAddUserMap && !char_148EEB && !gGameStarted)
         gGameMenuMgr.Push(&menuMain);
     else if (char_148EEB)
-        func_1EC78(2518,"Starting Game","Auto-Starting Network Game",0);
+        func_1EC78(gMenuPicnum,"Starting Game","Auto-Starting Network Game",0);
     ready2send = 1;
     if (char_148EED)
         func_86910();
     else if (char_148EEC || char_148EEB)
     {
         func_10324();
-        func_1EC78(2518,"Starting Game","Auto-Starting Network Game",0);
+        func_1EC78(gMenuPicnum,"Starting Game","Auto-Starting Network Game",0);
     }
     while (!gQuitGame && !gTenQuit)
     {
@@ -1519,7 +1523,7 @@ _RESTARTNOLOGO:
         else
         {
             clearview(0);
-            rotatesprite(160<<16,100<<16,65536,0,2518,gGameMenuMgr.m_bActive ? 40 : 0,0,0x4a,0,0,xdim-1,ydim-1);
+            rotatesprite(160<<16,100<<16,65536,0,gMenuPicnum,gGameMenuMgr.m_bActive ? 40 : 0,0,0x4a,0,0,xdim-1,ydim-1);
             netGetPackets();
             if (gQuitRequest && !gQuitGame)
                 netBroadcastMyLogoff();

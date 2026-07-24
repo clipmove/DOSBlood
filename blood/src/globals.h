@@ -65,6 +65,8 @@ extern BOOL gSaveGameActive;
 
 extern BOOL gPaused;
 
+extern unsigned int gMenuPicnum;
+
 extern int gNetPlayers;
 
 extern int gFrame;
