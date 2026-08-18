@@ -615,11 +615,11 @@ BOOL CCheatMgr::m_bPlayerCheated;
 
 BOOL CCheatMgr::Check(char *pzString)
 {
-    int i, j;
+    int i, j, nLen = strlen(pzString);
     char buffer[80];
     strcpy(buffer, pzString);
     strupr(buffer);
-    for (j = 0; j < strlen(pzString); j++)
+    for (j = 0; j < nLen; j++)
         buffer[j]++;
     for (i = 0; i < 39UL; i++)
     {

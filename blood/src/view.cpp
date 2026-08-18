@@ -1234,9 +1234,10 @@ void DrawStatMaskedSpriteScale(int nTile, int x, int y, int nShade = 0, int nPal
 void DrawStatNumber(char *pFormat, int nNumber, int nTile, int x, int y, int nShade = 0, int nPalette = 0)
 {
     char tempbuf[80];
-    int width = tilesizx[nTile] + 1;
+    int width = tilesizx[nTile] + 1, nLen;
     sprintf(tempbuf, pFormat, nNumber);
-    for (uint i = 0; i < strlen(tempbuf); i++, x += width)
+    nLen = strlen(tempbuf);
+    for (uint i = 0; i < nLen; i++, x += width)
     {
         if (tempbuf[i] == ' ') continue;
         DrawStatMaskedSprite(nTile+tempbuf[i]-'0', x, y, nShade, nPalette);
