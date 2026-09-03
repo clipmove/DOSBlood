@@ -57,7 +57,7 @@ public:
     void Initialize(void);
     void Restart(void);
     void Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHoriz, short nSector, long nClock, int nInterpolate, unsigned int uMapCRC);
-    void LoadPreset(unsigned int uMapCRC);
+    void LoadPreset(int nEpisode, int nLevel, unsigned int uMapCRC);
     void UnloadPreset(void);
     void SetWeatherOverride(WEATHERTYPE nOverride, WEATHERTYPE nOverrideInside, short nX, short nY, short nZ);
     void Process(long nX, long nY, long nZ, int nAng, short nSector, char bSpinning, long nTime, int nClipDist, unsigned int uMapCRC);

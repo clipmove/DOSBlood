@@ -212,7 +212,7 @@ void levelLoadMapInfo(IniFile *pIni, LEVELINFO *pLevelInfo, char *pzSection)
     pLevelInfo->ate4 = pIni->GetKeyInt(pzSection, "EndingA", -1);
     pLevelInfo->ate8 = pIni->GetKeyInt(pzSection, "EndingB", -1);
     pLevelInfo->at8ec = pIni->GetKeyInt(pzSection, "Fog", -0);
-    pLevelInfo->at8ed = pIni->GetKeyInt(pzSection, "Weather", -0);
+    pLevelInfo->nWeatherType = pIni->GetKeyInt(pzSection, "WeatherType", -1);
     for (int i = 0; i < kMaxMessages; i++)
     {
         sprintf(buffer, "Message%d", i+1);

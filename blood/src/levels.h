@@ -149,7 +149,7 @@ struct LEVELINFO
     int ate8; // EndingB
     char atec[kMaxMessages][64]; // Messages
     BOOL at8ec; // Fog
-    BOOL at8ed; // Weather
+    char nWeatherType; // Weather
 }; // 0x8ee bytes
 
 struct EPISODEINFO

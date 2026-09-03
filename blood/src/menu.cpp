@@ -1016,7 +1016,7 @@ void SetWeatherEffect(CGameMenuItemZBool *pItem)
     if (gWeatherEffect)
     {
         gWeather.Initialize();
-        gWeather.LoadPreset(gGameOptions.uMapCRC);
+        gWeather.LoadPreset(gGameOptions.nEpisode, gGameOptions.nLevel, gGameOptions.uMapCRC);
         gWeather.SetParticles(0, -1);
         viewResizeView(gViewSize);
     }

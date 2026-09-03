@@ -495,9 +495,33 @@ void CWeather::Draw(char *pBuffer, long nX, long nY, long nZ, int nAng, int nHor
     }
 }
 
-void CWeather::LoadPreset(unsigned int uMapCRC)
+void CWeather::LoadPreset(int nEpisode, int nLevel, unsigned int uMapCRC)
 {
     nWeatherCheat = WEATHERTYPE_NONE;
+    if (nWeatherOverride)
+        UnloadPreset();
+
+    switch (gEpisodeInfo[nEpisode].at28[nLevel].nWeatherType) // check if episode INI has existing weather preset
+    {
+    case 0: // none
+        SetWeatherOverride(WEATHERTYPE_NONE, WEATHERTYPE_NONE, 0, -16, 96);
+        return;
+    case 1: // rain
+        SetWeatherOverride(WEATHERTYPE_RAINHARD, WEATHERTYPE_DUST, (uMapCRC&0x3f) - 0x20, ((uMapCRC>>16)&0x3f) - 0x20, 96);
+        return;
+    case 2: // snow
+        SetWeatherOverride(WEATHERTYPE_SNOW, WEATHERTYPE_DUST, (uMapCRC&0x3f) - 0x20, ((uMapCRC>>16)&0x3f) - 0x20, 24);
+        return;
+    case 3: // blood
+        SetWeatherOverride(WEATHERTYPE_BLOOD, WEATHERTYPE_DUST, (uMapCRC&0x3f) - 0x20, ((uMapCRC>>16)&0x3f) - 0x20, 64);
+        return;
+    case 4: // custom weather (DOSBlood does not support this type)
+        break;
+    case -1:
+    default:
+        break;
+    }
+
     switch (uMapCRC)
     {
     case 0xBBF1A5D5: // e1m3
@@ -598,8 +622,6 @@ void CWeather::LoadPreset(unsigned int uMapCRC)
         SetWeatherOverride(WEATHERTYPE_RAIN, WEATHERTYPE_NONE, 0, -16, 96);
         break;
     default:
-        if (nWeatherOverride)
-            UnloadPreset();
         break;
     }
 }
@@ -744,7 +766,7 @@ void CWeather::SetWeatherType(WEATHERTYPE nWeather, unsigned int uMapCRC)
             SetFade(16, 56);
             SetShape(0);
             SetStaticView(0);
-            nLimit = kMaxVectors>>1;
+            nLimit = (kMaxVectors>>1)-(kMaxVectors>>2);
             break;
         case WEATHERTYPE_BLOOD:
             SetTranslucency(0);
