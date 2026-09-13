@@ -2958,10 +2958,9 @@ void viewDrawScreen(void)
 #if 1 // optimized gInterpolate calculation
     {
         // blood renders at max of 120hz, and the game logic runs at 30hz - so our interpolation precision is 0-3 units before we're onto the next game tick
-        // we can *cheaply* get our interpolation step fraction by using the coefficiency delta between game ticks, and using an array lookup
-        static int nTableFracts[4] = {0x0000, 0x4000, 0x8000, 0xC000}; // 0, 0.25, 0.5, 0.75
+        // we can *cheaply* get our interpolation step fraction by using the coefficiency delta between game ticks, and using bitshift
         gInterpolate = gGameClock-gNetFifoClock+4;
-        gInterpolate = nTableFracts[gInterpolate&3];
+        gInterpolate = (gInterpolate&3)<<14; // 0, 0.25, 0.5, 0.75
     }
     else
     {
